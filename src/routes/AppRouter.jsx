@@ -1,14 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "../layouts/MainLayout";
-import KpiList from "../pages/KpiList";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import MainLayout from '../layouts/MainLayout';
+import Login from '../pages/Login';
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<KpiList />} />
-        </Route>
+          <Route path="/" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
