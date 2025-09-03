@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import "../assets/css/login.css";
+import { useNavigate } from 'react-router-dom';
+import '../assets/css/login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
@@ -10,6 +12,7 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    navigate('/home');
   };
 
   return (
