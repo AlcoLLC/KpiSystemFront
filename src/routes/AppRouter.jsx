@@ -1,8 +1,8 @@
-import { Routes, Route } from 'react-router-dom';
-import MainLayout from '../layouts/MainLayout';
-import Login from '../pages/Login';
-import Home from '../pages/Home';
-import PrivateRoute from '../components/PrivateRoute'; // -> PrivateRoute import edilir
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "../layouts/MainLayout";
+import Login from "../pages/Login";
+import Home from "../pages/Home";
+import PrivateRoute from "../components/PrivateRoute"; //
 
 export default function AppRouter() {
   return (
@@ -11,9 +11,9 @@ export default function AppRouter() {
 
       <Route
         element={
-          // <PrivateRoute>
-          <MainLayout />
-          // </PrivateRoute>
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
         }
       >
         <Route path="/" element={<Home />} />
