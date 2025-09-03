@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import { BsSun, BsMoon, BsBell } from 'react-icons/bs';
-import { FiUser } from 'react-icons/fi';
-import { useDispatch, useSelector } from 'react-redux';
-import { toggleTheme } from '../features/theme/themeSlice';
+import { useState, useEffect, useRef } from "react";
+import { Outlet, Link } from "react-router-dom";
+import { BsSun, BsMoon, BsBell } from "react-icons/bs";
+import { FiUser } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../features/theme/themeSlice";
 
 export default function MainLayout() {
   const dispatch = useDispatch();
@@ -13,16 +13,15 @@ export default function MainLayout() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef();
 
-  // Klik xaricində dropdown-u bağlamaq üçün
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
 
@@ -31,7 +30,7 @@ export default function MainLayout() {
       {/* Aside */}
       <aside
         className={`w-80 p-6 shadow-md border-gray-200 ${
-          isDark ? 'bg-[#1B232D] text-white' : 'bg-white text-black'
+          isDark ? "bg-[#1B232D] text-white" : "bg-white text-black"
         }`}
       >
         <div className="mb-6 flex justify-center">
@@ -43,8 +42,8 @@ export default function MainLayout() {
               <Link
                 className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
                   isDark
-                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
-                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                    ? "bg-[#1B232D] hover:bg-[#2A3442] text-white"
+                    : "bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]"
                 }`}
                 to="/home"
               >
@@ -57,12 +56,14 @@ export default function MainLayout() {
 
       {/* Main */}
       <main
-        className={`flex-1 p-6 ${isDark ? 'bg-[#131920]' : 'bg-[#EFF3F9]'} transition duration-500`}
+        className={`flex-1 p-6 ${
+          isDark ? "bg-[#131920]" : "bg-[#EFF3F9]"
+        } transition duration-500`}
       >
         {/* Navbar */}
         <nav
           className={`p-4 shadow-md border-gray-200 mb-6 rounded-lg ${
-            isDark ? 'bg-[#1B232D] text-white' : 'bg-white text-black'
+            isDark ? "bg-[#1B232D] text-white" : "bg-white text-black"
           }`}
         >
           <div className="flex justify-end items-center space-x-4">
@@ -102,28 +103,28 @@ export default function MainLayout() {
               {dropdownOpen && (
                 <div
                   className={`absolute right-0 mt-2 w-48 rounded-lg shadow-lg p-3 z-50 ${
-                    isDark ? 'bg-[#1B232D] text-white' : 'bg-white text-black'
+                    isDark ? "bg-[#1B232D] text-white" : "bg-white text-black"
                   }`}
                 >
                   <Link
                     to="/profile"
                     className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
                       isDark
-                        ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
-                        : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                        ? "bg-[#1B232D] hover:bg-[#2A3442] text-white"
+                        : "bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]"
                     }`}
                   >
-                    <div className='flex items-center gap-2'>
-                    <FiUser className="w-5 h-5 text-[#3379F5]" />
-                    Profilim
+                    <div className="flex items-center gap-2">
+                      <FiUser className="w-5 h-5 text-[#3379F5]" />
+                      Profilim
                     </div>
                   </Link>
                   <Link
                     to="/logout"
                     className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
                       isDark
-                        ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
-                        : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                        ? "bg-[#1B232D] hover:bg-[#2A3442] text-white"
+                        : "bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]"
                     }`}
                   >
                     Çıxış

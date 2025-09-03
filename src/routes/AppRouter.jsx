@@ -11,9 +11,9 @@ export default function AppRouter() {
 
       <Route
         element={
-          <PrivateRoute>
-            <MainLayout />
-          </PrivateRoute>
+          // <PrivateRoute>
+          <MainLayout />
+          // </PrivateRoute>
         }
       >
         <Route path="/" element={<Home />} />
