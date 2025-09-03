@@ -1,19 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "./app/store";
-import AppRouter from "./routes/AppRouter";
-import { AuthProvider } from "./context/AuthContext";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import AppRouter from './routes/AppRouter';
+import { AuthProvider } from './context/AuthContext';
+import "antd/dist/reset.css";
 import "./styles/globals.css";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <AuthProvider>
-          <AppRouter />
-        </AuthProvider>
+        {/* <AuthProvider> */}
+        <AppRouter />
+        {/* </AuthProvider> */}
       </BrowserRouter>
     </Provider>
   </React.StrictMode>

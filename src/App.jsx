@@ -1,12 +1,23 @@
-import AppRouter from "./routes/AppRouter";
-import { AuthProvider } from "./context/AuthContext";
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from '../layouts/MainLayout';
+import Login from '../pages/Login';
+import Home from '../pages/Home';
+import PrivateRoute from '../components/PrivateRoute'; // -> PrivateRoute import edilir
 
-function App() {
+export default function AppRouter() {
   return (
-    <AuthProvider>
-      <AppRouter />
-    </AuthProvider>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+
+      <Route
+        element={
+          // <PrivateRoute>
+          <MainLayout />
+          // </PrivateRoute>
+        }
+      >
+        <Route path="/" element={<Home />} />
+      </Route>
+    </Routes>
   );
 }
-
-export default App;
