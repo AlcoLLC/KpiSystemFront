@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // -> 1. useEffect-i import edirik
+import { useState, useEffect } from "react";
 import useAuth from "../hooks/useAuth";
 import "../assets/css/login.css";
 
@@ -7,22 +7,23 @@ const Login = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    remember: false, // -> 2. "remember" üçün state əlavə edirik
+    remember: false,
   });
 
-  // -> 3. Komponent yüklənəndə saxlanılmış e-poçtu yoxlayır
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("rememberedEmail");
-    if (rememberedEmail) {
+    const rememberedPassword = localStorage.getItem("rememberedPassword");
+
+    if (rememberedEmail && rememberedPassword) {
       setForm((prevForm) => ({
         ...prevForm,
         email: rememberedEmail,
+        password: rememberedPassword,
         remember: true,
       }));
     }
-  }, []); // Boş array yalnız bir dəfə işləməsini təmin edir
+  }, []);
 
-  // -> 4. Checkbox-ı da idarə etmək üçün handleChange yenilənir
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({
@@ -33,11 +34,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // -> 5. "Remember me" seçilibsə, e-poçtu saxlayır, seçilməyibsə silir
     if (form.remember) {
       localStorage.setItem("rememberedEmail", form.email);
+      localStorage.setItem("rememberedPassword", form.password);
     } else {
       localStorage.removeItem("rememberedEmail");
+      localStorage.removeItem("rememberedPassword");
     }
     await login(form.email, form.password);
   };
@@ -57,7 +59,6 @@ const Login = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
           <div>
             <label className="block text-md font-medium mb-5">E-poçt</label>
             <input
@@ -70,7 +71,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-md font-medium mb-5">Şifrə</label>
             <input
@@ -83,13 +83,11 @@ const Login = () => {
             />
           </div>
 
-          {/* Remember Me */}
           <div className="flex items-center">
             <input
               type="checkbox"
               id="remember"
               name="remember"
-              // -> 6. Checkbox-ı state-ə bağlayırıq
               checked={form.remember}
               onChange={handleChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
@@ -102,7 +100,6 @@ const Login = () => {
             </label>
           </div>
 
-          {/* Button */}
           <button
             type="submit"
             disabled={isLoading}

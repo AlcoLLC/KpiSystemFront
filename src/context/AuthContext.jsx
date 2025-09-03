@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // 2. Proqram hər açıldıqda və ya səhifə yeniləndikdə token varsa, onu axios-a əlavə edirik
   useEffect(() => {
     if (tokens?.access) {
       axiosClient.defaults.headers.common[
@@ -30,21 +29,16 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const response = await accountsApi.login({ email, password });
-
-      // 3. Cavabdan access, refresh token və user məlumatlarını alırıq
       const { access, refresh, user: userData } = response.data;
       const tokensData = { access, refresh };
 
-      // State-ləri yeniləyirik
       setTokens(tokensData);
       setUser(userData);
 
-      // 4. Həm tokenləri, həm də istifadəçi məlumatını localStorage-a yazırıq
       localStorage.setItem("tokens", JSON.stringify(tokensData));
       localStorage.setItem("user", JSON.stringify(userData));
 
       axiosClient.defaults.headers.common["Authorization"] = `Bearer ${access}`;
-
       navigate("/");
     } catch (err) {
       const errorMessage =
@@ -55,14 +49,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    // 5. Logout zamanı hər şeyi təmizləyirik
-    setUser(null);
-    setTokens(null);
-    localStorage.removeItem("tokens");
-    localStorage.removeItem("user");
-    delete axiosClient.defaults.headers.common["Authorization"];
-    navigate("/login");
+  const logout = async () => {
+    try {
+      if (tokens?.refresh) {
+        await accountsApi.logout({ refresh: tokens.refresh });
+      }
+    } catch (err) {
+      console.error("Logout API sorğusu uğursuz oldu:", err);
+    } finally {
+      setUser(null);
+      setTokens(null);
+      localStorage.removeItem("tokens");
+      localStorage.removeItem("user");
+      delete axiosClient.defaults.headers.common["Authorization"];
+      navigate("/login");
+    }
   };
 
   const value = {

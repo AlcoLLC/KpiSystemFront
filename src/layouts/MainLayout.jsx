@@ -5,6 +5,9 @@ import { BsSun, BsMoon, BsBell } from "react-icons/bs";
 import { FiUser } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "../features/theme/themeSlice";
+import { MdLogout } from "react-icons/md";
+
+import useAuth from "../hooks/useAuth";
 
 export default function MainLayout() {
   const dispatch = useDispatch();
@@ -25,6 +28,8 @@ export default function MainLayout() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef]);
+
+  const { logout } = useAuth();
 
   return (
     <div className="flex h-screen">
@@ -120,16 +125,19 @@ export default function MainLayout() {
                       Profilim
                     </div>
                   </Link>
-                  <Link
-                    to="/logout"
+                  <button
+                    onClick={logout}
                     className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
                       isDark
                         ? "bg-[#1B232D] hover:bg-[#2A3442] text-white"
                         : "bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]"
                     }`}
                   >
-                    Çıxış
-                  </Link>
+                    <div className="flex items-center gap-2">
+                      <MdLogout className="w-5 h-5 text-[#3379F5]" />
+                      Çıxış
+                    </div>
+                  </button>
                 </div>
               )}
             </div>
