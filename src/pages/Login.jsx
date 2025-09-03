@@ -1,29 +1,52 @@
-import { useState } from "react";
-import useAuth from "../hooks/useAuth"; // -> Funksionallıq üçün hook import edilir
+import { useState, useEffect } from "react"; // -> 1. useEffect-i import edirik
+import useAuth from "../hooks/useAuth";
 import "../assets/css/login.css";
 
 const Login = () => {
-  // -> 1. AuthContext-dən lazımi funksiya və state-lər alınır
   const { login, isLoading, error } = useAuth();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    remember: false, // -> 2. "remember" üçün state əlavə edirik
+  });
 
+  // -> 3. Komponent yüklənəndə saxlanılmış e-poçtu yoxlayır
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    if (rememberedEmail) {
+      setForm((prevForm) => ({
+        ...prevForm,
+        email: rememberedEmail,
+        remember: true,
+      }));
+    }
+  }, []); // Boş array yalnız bir dəfə işləməsini təmin edir
+
+  // -> 4. Checkbox-ı da idarə etmək üçün handleChange yenilənir
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({
+      ...form,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  // -> 2. Form submit edildikdə context-dəki login funksiyası çağırılır
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // -> 5. "Remember me" seçilibsə, e-poçtu saxlayır, seçilməyibsə silir
+    if (form.remember) {
+      localStorage.setItem("rememberedEmail", form.email);
+    } else {
+      localStorage.removeItem("rememberedEmail");
+    }
     await login(form.email, form.password);
   };
 
   return (
-    // -> Orijinal class-lar və struktur qorunur
     <div className="flex items-center justify-center min-h-screen login-background">
       <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-12">
         <h1 className="text-4xl font-bold text-center mb-8">Giriş</h1>
 
-        {/* -> 3. Xəta mesajı bloku bura əlavə edilir */}
         {error && (
           <div
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4"
@@ -60,12 +83,15 @@ const Login = () => {
             />
           </div>
 
-          {/* Remember Me (Orijinal strukturdan qaldı) */}
+          {/* Remember Me */}
           <div className="flex items-center">
             <input
               type="checkbox"
               id="remember"
               name="remember"
+              // -> 6. Checkbox-ı state-ə bağlayırıq
+              checked={form.remember}
+              onChange={handleChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
             <label
@@ -77,7 +103,6 @@ const Login = () => {
           </div>
 
           {/* Button */}
-          {/* -> 4. Düyməyə yüklənmə məntiqi (disabled və mətn) əlavə edilir */}
           <button
             type="submit"
             disabled={isLoading}
