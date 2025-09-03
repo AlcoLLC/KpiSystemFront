@@ -1,8 +1,10 @@
-import { configureStore } from "@reduxjs/toolkit";
-import kpiReducer from "../features/kpi/kpiSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import themeReducer from '../features/theme/themeSlice';
+import kpiReducer from '../features/kpi/kpiSlice';
 
 export const store = configureStore({
   reducer: {
-    kpi: kpiReducer,
-  },
+    theme: themeReducer,
+    kpi: kpiReducer
+  }
 });
