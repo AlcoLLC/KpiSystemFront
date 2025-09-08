@@ -52,7 +52,9 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       if (tokens?.refresh) {
-        await accountsApi.logout({ refresh: tokens.refresh });
+        // DƏYİŞİKLİK BURADADIR
+        // Funksiyaya obyekt əvəzinə, sadəcə token'in özünü göndərin
+        await accountsApi.logout(tokens.refresh);
       }
     } catch (err) {
       console.error("Logout API sorğusu uğursuz oldu:", err);
