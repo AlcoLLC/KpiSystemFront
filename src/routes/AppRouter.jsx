@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import Home from "../pages/Home";
 import PrivateRoute from "../components/PrivateRoute";
 import PublicRoute from "../components/PublicRoute";
+import Profile from "../pages/Profile";
 
 export default function AppRouter() {
   return (
@@ -25,6 +26,7 @@ export default function AppRouter() {
         }
       >
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );
