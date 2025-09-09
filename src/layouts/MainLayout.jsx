@@ -51,9 +51,19 @@ export default function MainLayout() {
                     ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
                     : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
                 }`}
-                to="/home"
+                to="/"
               >
-                Dashboard
+                Ana səhifə
+              </Link>
+              <Link
+                className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
+                  isDark
+                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
+                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                }`}
+                to="/task"
+              >
+                Tapşırıqlar
               </Link>
             </li>
           </ul>

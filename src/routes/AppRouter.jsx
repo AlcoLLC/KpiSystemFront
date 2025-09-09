@@ -1,10 +1,11 @@
-import { Routes, Route } from "react-router-dom";
-import MainLayout from "../layouts/MainLayout";
-import Login from "../pages/Login";
-import Home from "../pages/Home";
-import PrivateRoute from "../components/PrivateRoute";
-import PublicRoute from "../components/PublicRoute";
-import Profile from "../pages/Profile";
+import { Routes, Route } from 'react-router-dom';
+import MainLayout from '../layouts/MainLayout';
+import Login from '../pages/Login';
+import Home from '../pages/Home';
+import Task from '../pages/Task';
+import PrivateRoute from '../components/PrivateRoute';
+import PublicRoute from '../components/PublicRoute';
+import Profile from '../pages/Profile';
 
 export default function AppRouter() {
   return (
@@ -27,6 +28,7 @@ export default function AppRouter() {
       >
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/task" element={<Task />} />
       </Route>
     </Routes>
   );
