@@ -6,9 +6,9 @@ const accountsApi = {
     axiosClient.post("/accounts/refresh/", { refresh }),
   logout: (refreshToken) =>
     axiosClient.post("/accounts/logout/", { refresh: refreshToken }),
-  getProfiles: () => axiosClient.get("/profiles/"),
-  updateProfile: (id, profileData) =>
-    axiosClient.patch(`/profiles/${id}/`, profileData, {
+  getProfile: () => axiosClient.get("/accounts/profiles/"),
+  updateProfile: (profileData) =>
+    axiosClient.post(`/accounts/profiles/`, profileData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

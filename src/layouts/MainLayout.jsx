@@ -32,7 +32,7 @@ export default function MainLayout() {
   const { logout } = useAuth();
 
   return (
-    <div className="flex h-screen">
+    <div className="flex">
       {/* Aside */}
       <aside
         className={`w-80 p-6 shadow-md border-gray-200 ${
@@ -55,6 +55,8 @@ export default function MainLayout() {
               >
                 Ana səhifə
               </Link>
+            </li>
+             <li className="mt-5 w-full">
               <Link
                 className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
                   isDark
@@ -64,6 +66,66 @@ export default function MainLayout() {
                 to="/task"
               >
                 Tapşırıqlar
+              </Link>
+            </li>
+             <li className="mt-5 w-full">
+              <Link
+                className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
+                  isDark
+                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
+                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                }`}
+                to="/kpi_system"
+              >
+                Kpi Sistem
+              </Link>
+            </li>
+            <li className="mt-5 w-full">
+              <Link
+                className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
+                  isDark
+                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
+                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                }`}
+                to="/performans"
+              >
+                Performans
+              </Link>
+            </li>
+            <li className="mt-5 w-full">
+              <Link
+                className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
+                  isDark
+                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
+                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                }`}
+                to="/dolum_sexi"
+              >
+                Dolum Sexi
+              </Link>
+            </li>
+            <li className="mt-5 w-full">
+              <Link
+                className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
+                  isDark
+                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
+                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                }`}
+                to="/calendar"
+              >
+                Təqvim
+              </Link>
+            </li>
+             <li className="mt-5 w-full">
+              <Link
+                className={`block w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
+                  isDark
+                    ? 'bg-[#1B232D] hover:bg-[#2A3442] text-white'
+                    : 'bg-white hover:bg-[#ECF0FF] hover:text-[#3379F5]'
+                }`}
+                to="/report"
+              >
+                Hesabat
               </Link>
             </li>
           </ul>
