@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import {
-  Tag,
-  Space,
-  Table,
-  Modal,
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  Descriptions,
-} from 'antd';
+import { Tag, Space, Table, Modal, Form, Input, Select, DatePicker, Descriptions } from 'antd';
 import dayjs from 'dayjs';
 
 const { Option } = Select;
@@ -37,11 +27,11 @@ const columnsFactory = (onEdit, onDelete) => [
         IN_PROGRESS: 'In Progress',
         DONE: 'Done',
         Pending: 'Pending',
-        Completed: 'Completed',
+        Completed: 'Completed'
       };
       const label = labelMap[status] || status;
       return <Tag color={color}>{label}</Tag>;
-    },
+    }
   },
   {
     title: 'Action',
@@ -49,22 +39,22 @@ const columnsFactory = (onEdit, onDelete) => [
     render: (_, record) => (
       <Space size="middle">
         <EditOutlined
-          style={{ color: '#1890ff', cursor: 'pointer' }}
+          style={{ color: '#1890ff', cursor: 'pointer', fontSize: '20px' }}
           onClick={(e) => {
             e.stopPropagation();
             onEdit(record);
           }}
         />
         <DeleteOutlined
-          style={{ color: '#ff4d4f', cursor: 'pointer' }}
+          style={{ color: '#ff4d4f', cursor: 'pointer', fontSize: '20px' }}
           onClick={(e) => {
             e.stopPropagation();
             onDelete(record);
           }}
         />
       </Space>
-    ),
-  },
+    )
+  }
 ];
 
 const initialData = [
@@ -77,7 +67,7 @@ const initialData = [
     priority: 'HIGH',
     assignee: 'User 1',
     description: 'Booking & room management.',
-    estimated_hours: 120,
+    estimated_hours: 120
   },
   {
     id: '#547',
@@ -88,8 +78,8 @@ const initialData = [
     priority: 'MEDIUM',
     assignee: 'User 2',
     description: 'New product v2.',
-    estimated_hours: 80,
-  },
+    estimated_hours: 80
+  }
 ];
 
 function Task() {
@@ -122,7 +112,7 @@ function Task() {
       start_date: record.start_date ? dayjs(record.start_date, 'DD MMM, YYYY') : null,
       due_date: record.due_date ? dayjs(record.due_date, 'DD MMM, YYYY') : null,
       estimated_hours: record.estimated_hours,
-      status: record.status,
+      status: record.status
     });
     setIsAddEditOpen(true);
   };
@@ -136,7 +126,7 @@ function Task() {
       cancelText: 'Ləğv et',
       onOk() {
         setData((prev) => prev.filter((r) => r.id !== record.id));
-      },
+      }
     });
   };
 
@@ -156,7 +146,7 @@ function Task() {
         start_date: values.start_date ? values.start_date.format('DD MMM, YYYY') : null,
         due_date: values.due_date ? values.due_date.format('DD MMM, YYYY') : null,
         estimated_hours: values.estimated_hours,
-        status: values.status || 'TODO',
+        status: values.status || 'TODO'
       };
 
       if (mode === 'add') {
@@ -184,7 +174,7 @@ function Task() {
 
   return (
     <div>
-      <h2 className={`px-1 text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-black'}`}>
+      <h2 className={`px-1 text-xl font-medium mb-6 ${isDark ? 'text-white' : 'text-black'}`}>
         Tapşırıqlar
       </h2>
 
@@ -195,7 +185,7 @@ function Task() {
       >
         <button
           onClick={handleAddClick}
-          className={`p-2 text-xl mb-6 transition duration-500 border rounded
+          className={`p-2  mb-6 transition duration-500 border rounded
             ${
               isDark
                 ? 'text-white border-white hover:bg-gray-500'
@@ -205,11 +195,15 @@ function Task() {
           + Tapşırıq əlavə et
         </button>
 
-        <div className={`p-4 rounded-lg shadow transition duration-500 ${isDark ? 'bg-[#131920]' : ''}`}>
+        <div
+          className={`p-4 rounded-lg shadow transition duration-500 ${
+            isDark ? 'bg-[#131920]' : ''
+          }`}
+        >
           <Table
             columns={columns}
             dataSource={data}
-            pagination={false}
+            pagination={{ pageSize: 10 }}
             rowKey="id"
             className={isDark ? 'dark-table' : 'light-table'}
             rowClassName={() =>
@@ -224,7 +218,11 @@ function Task() {
 
       {/* Add / Edit Modal */}
       <Modal
-        title={<span className={isDark ? 'text-white' : 'text-black'}>{mode === 'add' ? 'Yeni Tapşırıq' : 'Tapşırığı Redaktə et'}</span>}
+        title={
+          <span className={isDark ? 'text-white' : 'text-black'}>
+            {mode === 'add' ? 'Yeni Tapşırıq' : 'Tapşırığı Redaktə et'}
+          </span>
+        }
         open={isAddEditOpen}
         onOk={handleAddEditOk}
         onCancel={handleAddEditCancel}
@@ -232,25 +230,27 @@ function Task() {
         cancelText="Ləğv et"
         width={800}
         className={isDark ? 'dark-modal' : ''}
-        closeIcon={<span style={{ color: isDark ? '#fff' : '#000', fontWeight: 'bold', fontSize: '16px' }}>×</span>}
+        closeIcon={
+          <span style={{ color: isDark ? '#fff' : '#000', fontWeight: 'bold', fontSize: '16px' }}>
+            ×
+          </span>
+        }
         bodyStyle={{
           backgroundColor: isDark ? '#1B232D' : '#fff',
           color: isDark ? 'white' : 'black',
-          borderRadius: '12px',
+          borderRadius: '12px'
         }}
         okButtonProps={{
-          style: isDark
-            ? { backgroundColor: '#3379F5', borderColor: '#3379F5', color: '#fff' }
-            : {},
+          style: isDark ? { backgroundColor: '#3379F5', borderColor: '#3379F5', color: '#fff' } : {}
         }}
         cancelButtonProps={{
-          style: isDark ? { color: '#fff', borderColor: '#2A3442', backgroundColor: '#131920' } : {},
+          style: isDark ? { color: '#fff', borderColor: '#2A3442', backgroundColor: '#131920' } : {}
         }}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="title"
-            label={<span className={isDark ? 'text-white' : 'text-black'}>Başlıq</span>}
+            label={<span>Başlıq</span>}
             rules={[{ required: true, message: 'Zəhmət olmasa başlıq daxil edin!' }]}
           >
             <Input className={isDark ? 'antd-dark-input' : ''} />
@@ -272,7 +272,6 @@ function Task() {
               <Select
                 className={isDark ? 'antd-dark-select' : ''}
                 dropdownClassName={isDark ? 'antd-dark-select-dropdown' : ''}
-                placeholder="Seçin"
               >
                 <Option value="CRITICAL">Kritik</Option>
                 <Option value="HIGH">Yüksək</Option>
@@ -289,7 +288,6 @@ function Task() {
               <Select
                 className={isDark ? 'antd-dark-select' : ''}
                 dropdownClassName={isDark ? 'antd-dark-select-dropdown' : ''}
-                placeholder="Seçin"
               >
                 <Option value="User 1">User 1</Option>
                 <Option value="User 2">User 2</Option>
@@ -302,14 +300,22 @@ function Task() {
               name="start_date"
               label={<span className={isDark ? 'text-white' : 'text-black'}>Başlama tarixi</span>}
             >
-              <DatePicker format="DD MMM, YYYY" className={isDark ? 'antd-dark-picker' : ''} />
+              <DatePicker
+                placeholder=""
+                format="DD MMM, YYYY"
+                className={isDark ? 'antd-dark-picker' : ''}
+              />
             </Form.Item>
 
             <Form.Item
               name="due_date"
               label={<span className={isDark ? 'text-white' : 'text-black'}>Bitmə tarixi</span>}
             >
-              <DatePicker format="DD MMM, YYYY" className={isDark ? 'antd-dark-picker' : ''} />
+              <DatePicker
+                placeholder=""
+                format="DD MMM, YYYY"
+                className={isDark ? 'antd-dark-picker' : ''}
+              />
             </Form.Item>
 
             <Form.Item
@@ -325,7 +331,10 @@ function Task() {
             label={<span className={isDark ? 'text-white' : 'text-black'}>Status</span>}
             initialValue={'TODO'}
           >
-            <Select className={isDark ? 'antd-dark-select' : ''} dropdownClassName={isDark ? 'antd-dark-select-dropdown' : ''}>
+            <Select
+              className={isDark ? 'antd-dark-select' : ''}
+              dropdownClassName={isDark ? 'antd-dark-select-dropdown' : ''}
+            >
               <Option value="TODO">To Do</Option>
               <Option value="IN_PROGRESS">In Progress</Option>
               <Option value="DONE">Done</Option>
@@ -341,10 +350,14 @@ function Task() {
         onCancel={handleViewClose}
         width={700}
         className={isDark ? 'dark-modal' : ''}
-        closeIcon={<span style={{ color: isDark ? '#fff' : '#000', fontWeight: 'bold', fontSize: '16px' }}>×</span>}
+        closeIcon={
+          <span style={{ color: isDark ? '#fff' : '#000', fontWeight: 'bold', fontSize: '16px' }}>
+            ×
+          </span>
+        }
         footer={null}
         bodyStyle={{
-          backgroundColor: isDark ? '#1B232D' : '#fff',
+          backgroundColor: isDark ? '#1B232D' : '#fff'
         }}
       >
         {currentRecord && (
@@ -361,9 +374,15 @@ function Task() {
             <Descriptions.Item label="İcraçı">{currentRecord.assignee || '-'}</Descriptions.Item>
             <Descriptions.Item label="Prioritet">{currentRecord.priority || '-'}</Descriptions.Item>
             <Descriptions.Item label="Status">{currentRecord.status || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Başlama tarixi">{currentRecord.start_date || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Bitmə tarixi">{currentRecord.due_date || '-'}</Descriptions.Item>
-            <Descriptions.Item label="Planlanan saat">{currentRecord.estimated_hours || '-'}</Descriptions.Item>
+            <Descriptions.Item label="Başlama tarixi">
+              {currentRecord.start_date || '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Bitmə tarixi">
+              {currentRecord.due_date || '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Planlanan saat">
+              {currentRecord.estimated_hours || '-'}
+            </Descriptions.Item>
           </Descriptions>
         )}
       </Modal>

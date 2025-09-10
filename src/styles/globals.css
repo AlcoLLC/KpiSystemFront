@@ -15,50 +15,53 @@
 }
 /* Dark mode üçün table head */
 .dark-table .ant-table-thead > tr > th {
-  background-color: #2A3440 !important;
+  background-color: #2a3440 !important;
   color: #ffffff !important;
   border-color: #1f2a37 !important;
+  font-size: 16px !important;
 }
 
 /* Light mode üçün table head */
 .light-table .ant-table-thead > tr > th {
   background-color: #f5f5f5 !important;
   color: #000000 !important;
+  font-size: 16px !important;
 }
+
 
 /* Modal dark mode */
 .dark-modal .ant-modal-content {
-  background-color: #1B232D !important;
+  background-color: #1b232d !important;
   color: white !important;
 }
 .dark-modal .ant-modal-header {
-  background-color: #1B232D !important;
-  border-bottom: 1px solid #2A3442 !important;
+  background-color: #1b232d !important;
+  border-bottom: 1px solid #2a3442 !important;
 }
 .dark-modal .ant-modal-footer {
-  background-color: #1B232D !important;
-  border-top: 1px solid #2A3442 !important;
+  background-color: #1b232d !important;
+  border-top: 1px solid #2a3442 !important;
 }
 
 /* Input / TextArea dark */
 .antd-dark-input {
   background-color: #131920 !important;
   color: white !important;
-  border: 1px solid #2A3442 !important;
+  border: 1px solid #2a3442 !important;
 }
 
 /* Select dark */
 .antd-dark-select .ant-select-selector {
   background-color: #131920 !important;
   color: white !important;
-  border: 1px solid #2A3442 !important;
+  border: 1px solid #2a3442 !important;
 }
 
 /* DatePicker dark */
 .antd-dark-picker {
   background-color: #131920 !important;
   color: white !important;
-  border: 1px solid #2A3442 !important;
+  border: 1px solid #2a3442 !important;
 }
 /* DatePicker Dark */
 .antd-dark-picker .ant-picker-input > input {
@@ -66,14 +69,13 @@
   color: white !important;
 }
 .antd-dark-picker .ant-picker-dropdown {
-  background-color: #1B232D !important;
+  background-color: #1b232d !important;
   color: white !important;
 }
 
-
 /* Dropdown Dark */
 .antd-dark-select-dropdown {
-  background-color: #1B232D !important;
+  background-color: #1b232d !important;
   color: white !important;
 }
 
