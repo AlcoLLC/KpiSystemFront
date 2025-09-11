@@ -1,14 +1,17 @@
-import axiosClient from "./axiosClient";
+import apiService from "./apiService";
 
 const accountsApi = {
-  login: (credentials) => axiosClient.post("/accounts/login/", credentials),
-  refreshToken: (refresh) =>
-    axiosClient.post("/accounts/refresh/", { refresh }),
+  login: (credentials) => apiService.post("/accounts/login/", credentials),
+
+  refreshToken: (refresh) => apiService.post("/accounts/refresh/", { refresh }),
+
   logout: (refreshToken) =>
-    axiosClient.post("/accounts/logout/", { refresh: refreshToken }),
-  getProfile: () => axiosClient.get("/accounts/profiles/"),
+    apiService.post("/accounts/logout/", { refresh: refreshToken }),
+
+  getProfile: () => apiService.get("/accounts/users/me/"),
+
   updateProfile: (profileData) =>
-    axiosClient.post(`/accounts/profiles/`, profileData, {
+    apiService.patch(`/accounts/users/me/`, profileData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

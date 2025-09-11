@@ -26,6 +26,7 @@
   color: #000000 !important;
   font-size: 16px !important;
 }
+
 /* Modal dark mode */
 .dark-modal .ant-modal-content {
   background-color: #1b232d !important;
@@ -79,4 +80,96 @@
 /* Option Text Dark */
 .antd-dark-select-dropdown .ant-select-item-option-content {
   color: rgb(124, 118, 118) !important;
+}
+
+/* Tailwind CSS direktivləri */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Dark Theme Overrides
+   Bu stillər yalnız body.theme-dark olduqda aktivləşir və mövcud
+   Tailwind siniflərini əzərək qaranlıq rejim stillərini tətbiq edir.
+   ========================================================================== */
+
+/* --- MainLayout Komponenti --- */
+body.theme-dark .main-layout-aside,
+body.theme-dark .main-layout-navbar,
+body.theme-dark .main-layout-dropdown {
+  background-color: #1b232d !important;
+  color: white !important;
+  border-color: #4a5568 !important;
+}
+
+body.theme-dark .main-layout-main-content {
+  background-color: #131920 !important;
+}
+
+/* NavLink funksiyasının qaranlıq rejim variantları */
+/* Aktiv olmayan link */
+body.theme-dark .nav-link {
+  background-color: #1b232d !important;
+  color: white !important;
+}
+body.theme-dark .nav-link:hover {
+  background-color: #2a3442 !important;
+}
+/* Aktiv link */
+body.theme-dark .nav-link.active {
+  background-color: #2a3442 !important;
+  color: #3379f5 !important;
+}
+
+/* --- Profile Səhifəsi --- */
+body.theme-dark .profile-page-container {
+  background-color: #1b232d !important;
+  color: white !important;
+}
+body.theme-dark .profile-form-container {
+  background-color: #1b232d !important;
+}
+body.theme-dark .profile-header,
+body.theme-dark .profile-footer {
+  color: white !important;
+  border-color: #4a5568 !important;
+}
+/* isDark ? 'text-blue-300' : 'text-blue-500' üçün override */
+body.theme-dark .ant-upload-drag-icon {
+  color: #90cdf4 !important; /* text-blue-300 */
+}
+
+/* Ant Design komponentlərinin qaranlıq rejim stilləri (əvvəlki kimi) */
+body.theme-dark .form-item-dark .ant-form-item-label > label {
+  color: white !important;
+}
+body.theme-dark .ant-upload-wrapper .ant-upload-drag p.ant-upload-text {
+  color: white !important;
+}
+body.theme-dark .ant-input,
+body.theme-dark .ant-input-password,
+body.theme-dark .ant-select-selector,
+body.theme-dark .ant-input-affix-wrapper {
+  background-color: #2a3441 !important;
+  color: #e2e8f0 !important;
+  border-color: #4a5568 !important;
+}
+body.theme-dark .ant-input::placeholder,
+body.theme-dark .ant-select-selection-placeholder {
+  color: #a0aec0 !important;
+}
+body.theme-dark .ant-select-selection-item,
+body.theme-dark .ant-input-password-icon,
+body.theme-dark .ant-select-arrow {
+  color: #e2e8f0 !important;
+}
+body.theme-dark .ant-upload-drag p.ant-upload-hint,
+body.theme-dark .ant-form-item-extra,
+body.theme-dark .ant-form-item-with-help .ant-form-item-explain {
+  color: #a0aec0 !important;
+}
+body.theme-dark .ant-btn-default {
+  background-color: #2a3441 !important;
+  color: #e2e8f0 !important;
+  border-color: #4a5568 !important;
 }

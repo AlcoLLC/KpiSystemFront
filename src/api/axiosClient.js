@@ -1,5 +1,4 @@
 import axios from "axios";
-import accountsApi from "./accountsApi";
 
 const axiosClient = axios.create({
   baseURL: "http://91.99.112.51:100/api",
@@ -8,13 +7,23 @@ const axiosClient = axios.create({
   },
 });
 
+axiosClient.interceptors.request.use(
+  (config) => {
+    const tokens = JSON.parse(localStorage.getItem("tokens"));
+    if (tokens?.access) {
+      config.headers.Authorization = `Bearer ${tokens.access}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 axiosClient.interceptors.response.use(
   (response) => response,
-
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -24,9 +33,12 @@ axiosClient.interceptors.response.use(
           return Promise.reject(error);
         }
 
-        const response = await accountsApi.refreshToken(tokens.refresh);
-        const newAccessToken = response.data.access;
+        const refreshResponse = await axios.post(
+          `${axiosClient.defaults.baseURL}/accounts/refresh/`,
+          { refresh: tokens.refresh }
+        );
 
+        const newAccessToken = refreshResponse.data.access;
         const newTokens = { ...tokens, access: newAccessToken };
         localStorage.setItem("tokens", JSON.stringify(newTokens));
 
@@ -37,7 +49,7 @@ axiosClient.interceptors.response.use(
 
         return axiosClient(originalRequest);
       } catch (refreshError) {
-        console.error("Refresh token failed:", refreshError);
+        console.error("Token yeniləmə uğursuz oldu:", refreshError);
         localStorage.removeItem("tokens");
         localStorage.removeItem("user");
         delete axiosClient.defaults.headers.common["Authorization"];

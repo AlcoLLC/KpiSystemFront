@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import accountsApi from "../api/accountsApi";
 import axiosClient from "../api/axiosClient";
@@ -16,13 +16,36 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const logout = useCallback(() => {
+    setUser(null);
+    setTokens(null);
+    localStorage.removeItem("tokens");
+    localStorage.removeItem("user");
+    delete axiosClient.defaults.headers.common["Authorization"];
+    navigate("/login");
+  }, [navigate]);
+
   useEffect(() => {
-    if (tokens?.access) {
-      axiosClient.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${tokens.access}`;
-    }
-  }, [tokens]);
+    const syncUserData = async () => {
+      const storedTokens = JSON.parse(localStorage.getItem("tokens"));
+      if (storedTokens?.access) {
+        axiosClient.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${storedTokens.access}`;
+        try {
+          const response = await accountsApi.getProfile();
+          const latestUserData = response.data;
+          setUser(latestUserData);
+          localStorage.setItem("user", JSON.stringify(latestUserData));
+        } catch (err) {
+          console.error("Token ilə məlumat alınmadı, çıxış edilir.", err);
+          logout();
+        }
+      }
+    };
+
+    syncUserData();
+  }, [logout]);
 
   const login = async (email, password) => {
     setIsLoading(true);
@@ -49,32 +72,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    try {
-      if (tokens?.refresh) {
-        // DƏYİŞİKLİK BURADADIR
-        // Funksiyaya obyekt əvəzinə, sadəcə token'in özünü göndərin
-        await accountsApi.logout(tokens.refresh);
+  const handleLogout = async () => {
+    const currentTokens = JSON.parse(localStorage.getItem("tokens"));
+    if (currentTokens?.refresh) {
+      try {
+        await accountsApi.logout(currentTokens.refresh);
+      } catch (err) {
+        console.error("Logout API sorğusu uğursuz oldu:", err);
       }
-    } catch (err) {
-      console.error("Logout API sorğusu uğursuz oldu:", err);
-    } finally {
-      setUser(null);
-      setTokens(null);
-      localStorage.removeItem("tokens");
-      localStorage.removeItem("user");
-      delete axiosClient.defaults.headers.common["Authorization"];
-      navigate("/login");
     }
+    logout();
   };
 
   const value = {
     user,
+    setUser,
     tokens,
     isLoading,
     error,
     login,
-    logout,
+    logout: handleLogout,
     isAuthenticated: !!tokens?.access,
   };
 
