@@ -91,8 +91,7 @@ export default function MainLayout() {
           </nav>
         </div>
       </aside>
-
-      <main className="main-layout-main-content flex-1 p-6 transition duration-500">
+      <main className="main-layout-main-content flex-1 p-6 transition duration-500 bg-[#EFF3F9]">
         <nav className="main-layout-navbar p-4 shadow-md border-gray-200 mb-6 rounded-lg bg-white text-black">
           <div className="flex justify-end items-center space-x-4">
             <button
