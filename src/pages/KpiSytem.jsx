@@ -12,9 +12,9 @@ const { TextArea } = Input;
 
 const BlockContent = ({ name, task, date, onReview }) => (
   <Card
-    className="h-full shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+    className="h-full bg-white dark:bg-[#1B232D] dark:border dark:border-gray-700 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     title={
-      <div className="flex items-center text-blue-600">
+      <div className="flex items-center text-blue-600 dark:text-blue-400">
         <UserOutlined className="mr-2" />
         <span className="font-bold">{name}</span>
       </div>
@@ -23,18 +23,16 @@ const BlockContent = ({ name, task, date, onReview }) => (
   >
     <div className="space-y-4">
       <div className="flex items-start">
-        <MessageOutlined className="text-blue-500 mr-2 mt-1" />
+        <MessageOutlined className="text-blue-500 dark:text-blue-400 mr-2 mt-1" />
         <div>
-          <div className="text-sm text-gray-500 mb-1">Tapşırıq:</div>
-          <div className="font-medium text-gray-800">{task}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Tapşırıq:</div>
+          <div className="font-medium text-gray-800 dark:text-gray-200">{task}</div>
         </div>
       </div>
-
-      <div className="flex items-center text-gray-600">
-        <CalendarOutlined className="text-green-500 mr-2" />
+      <div className="flex items-center text-gray-600 dark:text-gray-400">
+        <CalendarOutlined className="text-green-500 dark:text-green-400 mr-2" />
         <span className="text-sm">{date}</span>
       </div>
-
       <Button
         type="primary"
         block
@@ -76,7 +74,7 @@ const ReviewModal = ({ isOpen, onClose, name }) => {
   };
 
   return (
-    <BaseModal
+     <BaseModal
       open={isOpen}
       onOk={handleSave}
       onCancel={handleClose}
@@ -88,46 +86,33 @@ const ReviewModal = ({ isOpen, onClose, name }) => {
           {isAuthenticated ? (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Qiymətləndirmə (10 üzərindən):
                 </label>
                 <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-lg font-bold min-w-[60px] text-center shadow-md">
                   {starRating}/10
                 </div>
               </div>
-
-              <div className="flex flex-col items-center p-6 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+              <div className="flex flex-col items-center p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700">
                 <div className="mb-3">
                   <StarOutlined className="text-yellow-500 text-lg mr-2" />
-                  <span className="text-gray-600 font-medium">
-                    Yıldız seçin:
+                  <span className="text-gray-600 dark:text-gray-300 font-medium">
+                    Ulduz seçin:
                   </span>
                 </div>
-
                 <Rate
                   count={10}
                   value={starRating}
                   onChange={setStarRating}
                   style={{ fontSize: "28px" }}
-                  className="custom-rate"
                 />
 
-                <div className="flex justify-between w-full mt-3 text-xs text-gray-400 px-2">
-                  <span>1</span>
-                  <span>2</span>
-                  <span>3</span>
-                  <span>4</span>
-                  <span>5</span>
-                  <span>6</span>
-                  <span>7</span>
-                  <span>8</span>
-                  <span>9</span>
-                  <span>10</span>
+                <div className="flex justify-between w-full mt-3 text-xs text-gray-400 dark:text-gray-500 px-2">
+                  {[...Array(10)].map((_, i) => <span key={i}>{i + 1}</span>)}
                 </div>
               </div>
-
               <div className="mt-3 text-center">
-                <div className="text-sm text-gray-500">
+                <div className="text-sm">
                   {starRating <= 3 && (
                     <span className="text-red-500 font-medium">
                       🔴 Performans təkmilləşdirilməlidir
@@ -154,7 +139,7 @@ const ReviewModal = ({ isOpen, onClose, name }) => {
           ) : (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Bal (Score):
                 </label>
                 <div className="bg-blue-500 text-white px-3 py-1 rounded-lg font-bold min-w-[50px] text-center">
@@ -167,20 +152,16 @@ const ReviewModal = ({ isOpen, onClose, name }) => {
                 value={score}
                 onChange={setScore}
                 className="mb-2"
-                trackStyle={{ backgroundColor: "#1890ff" }}
-                handleStyle={{ borderColor: "#1890ff" }}
               />
-              <div className="flex justify-between text-xs text-gray-400">
+              <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
                 <span>1</span>
                 <span>100</span>
               </div>
             </div>
           )}
         </div>
-
-        {/* Note Section */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Qeyd (Note):
           </label>
           <TextArea
@@ -192,28 +173,6 @@ const ReviewModal = ({ isOpen, onClose, name }) => {
           />
         </div>
       </div>
-
-      {/* Custom CSS for Rate component */}
-      <style jsx>{`
-        .custom-rate .ant-rate-star {
-          margin-right: 8px;
-        }
-        .custom-rate .ant-rate-star-zero .ant-rate-star-first,
-        .custom-rate .ant-rate-star-zero .ant-rate-star-second {
-          color: #d9d9d9;
-        }
-        .custom-rate .ant-rate-star-full .ant-rate-star-first,
-        .custom-rate .ant-rate-star-full .ant-rate-star-second {
-          color: #faad14;
-        }
-        .custom-rate .ant-rate-star-half .ant-rate-star-first {
-          color: #faad14;
-        }
-        .custom-rate .ant-rate-star:hover {
-          transform: scale(1.1);
-          transition: transform 0.2s;
-        }
-      `}</style>
     </BaseModal>
   );
 };
@@ -250,27 +209,25 @@ function KpiSytem() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 p-8">
         <div className="mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-blue-600 mb-4">
+            <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-4">
               KPI İdarəetmə Sistemi
             </h1>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
               İşçilərin performansını qiymətləndirin və izləyin
             </p>
 
             {isAuthenticated && (
-              <div className="mt-4 inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg">
+              <div className="mt-4 inline-flex items-center px-4 py-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-lg">
                 <StarOutlined className="mr-2" />
                 <span className="font-medium">
                   Xoş gəldiniz, {user?.first_name || user?.email}!
                 </span>
               </div>
             )}
-
             {!isAuthenticated && (
-              <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-lg">
+              <div className="mt-4 inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-lg">
                 <UserOutlined className="mr-2" />
                 <span className="font-medium">
                   Misafir kullanıcı - 100 üzerinden değerlendirme sistemi
@@ -279,7 +236,6 @@ function KpiSytem() {
             )}
           </div>
 
-          {/* Grid using Ant Design */}
           <Row gutter={[24, 24]}>
             {employees.map((employee, index) => (
               <Col xs={24} sm={12} md={8} key={index}>
@@ -293,7 +249,6 @@ function KpiSytem() {
             ))}
           </Row>
         </div>
-      </div>
 
       <ReviewModal
         isOpen={modalOpen}

@@ -83,7 +83,7 @@ export default function MainLayout() {
               </li>
               <li className="mt-5 w-full">
                 <NavLink to="/report" className={navLinkClasses}>
-                  <HiOutlineDocumentReport size={24} /> Hesabat
+                  <HiOutlineDocumentReport size={24} /> Tarixçə
                 </NavLink>
               </li>
             </ul>
@@ -127,7 +127,7 @@ export default function MainLayout() {
                 )}
               </button>
               {dropdownOpen && (
-                <div className="main-layout-dropdown absolute right-0 mt-2 w-72 rounded-lg shadow-lg p-3 z-50 bg-white text-black">
+                 <div className="main-layout-dropdown absolute right-0 mt-2 w-72 rounded-lg shadow-lg p-3 z-50 bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
                   <div className="flex mb-3 gap-3 items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                       {user && user.profile_photo ? (
@@ -148,7 +148,7 @@ export default function MainLayout() {
                           ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
                           : 'İstifadəçi Adı'}
                       </p>
-                      <p className="text-sm text-gray-500">{user ? user.role_display : 'Vəzifə'}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{user ? user.role_display : 'Vəzifə'}</p> {/* Mətn rəngi dəyişdirildi */}
                     </div>
                   </div>
                   <Link to="/profile" className={navLinkClasses({ isActive: false })}>

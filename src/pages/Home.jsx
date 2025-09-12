@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaArrowRight } from 'react-icons/fa';
 import { Tag } from 'antd';
 import {
   Chart as ChartJS,
@@ -136,20 +138,45 @@ function Home() {
     ];
   };
 
-return (
+  return (
     <div>
       <h2 className="px-1 text-xl font-medium mb-6 text-black dark:text-white">Ana səhifə</h2>
       <div className="p-6 rounded-lg shadow-md transition-colors duration-500 bg-white dark:bg-[#1B232D]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="p-4 rounded-lg shadow bg-gray-50 dark:bg-[#131920]"><Bar options={barOptions} data={barData} /></div>
-          <div className="p-4 rounded-lg shadow bg-gray-50 dark:bg-[#131920] max-w-[400px] mx-auto"><Doughnut data={doughnutData} /></div>
+          <div className="p-4 rounded-lg shadow bg-gray-50 dark:bg-[#131920]">
+            <Bar options={barOptions} data={barData} />
+          </div>
+          <div className="p-4 rounded-lg shadow bg-gray-50 dark:bg-[#131920]">
+            <div className="max-w-[400px] mx-auto">
+              <Doughnut data={doughnutData} />
+            </div>
+          </div>
         </div>
         <div>
           <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">Son Tapşırıqlar</h3>
-          <ReusableTable columns={columns} dataSource={data} onRowClick={handleRowClick} pagination={false} />
+          <ReusableTable
+            columns={columns}
+            dataSource={data}
+            onRowClick={handleRowClick}
+            pagination={false}
+          />
+          <div className="mt-4 flex justify-end">
+            <Link
+              to="/task"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-600 dark:hover:bg-blue-400 hover:text-white dark:hover:text-black transition-colors duration-500"
+            >
+              Bütün tapşırıqlar
+              <FaArrowRight size={14} />
+            </Link>
+          </div>
         </div>
       </div>
-      <BaseModal title="Tapşırıq Məlumatları" open={isViewOpen} onCancel={handleViewClose} footer={null}>
+      <BaseModal
+        title="Tapşırıq Məlumatları"
+        open={isViewOpen}
+        onCancel={handleViewClose}
+        footer={null}
+      >
         <Details items={generateDetailsItems(currentRecord)} />
       </BaseModal>
     </div>
