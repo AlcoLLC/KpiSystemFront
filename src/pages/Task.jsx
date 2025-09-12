@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 import { Form, Modal, Space, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-
-// Universal Komponentlər
 import ReusableTable from '../components/ReusableTable';
 import BaseModal from '../components/BaseModal';
 import Details from '../components/Details';
@@ -20,8 +18,8 @@ const taskFormFields = [
     type: 'text',
     rules: [{ required: true, message: 'Başlıq daxil edin!' }],
     span: 24
-  }, // Tam en
-  { name: 'description', label: 'Təsvir', type: 'textarea', span: 24 }, // Tam en
+  },
+  { name: 'description', label: 'Təsvir', type: 'textarea', span: 24 }, 
 
   {
     name: 'priority',
@@ -35,7 +33,7 @@ const taskFormFields = [
       { value: 'LOW', label: 'Aşağı' }
     ],
     span: 12
-  }, // Yarım en
+  }, 
 
   {
     name: 'assignee',
@@ -49,9 +47,9 @@ const taskFormFields = [
     span: 12
   }, // Yarım en
 
-  { name: 'start_date', label: 'Başlama tarixi', type: 'datepicker', span: 8 }, // Üçdə bir en
-  { name: 'due_date', label: 'Bitmə tarixi', type: 'datepicker', span: 8 }, // Üçdə bir en
-  { name: 'estimated_hours', label: 'Planlanan saat', type: 'number', span: 8 }, // Üçdə bir en
+  { name: 'start_date', label: 'Başlama tarixi', type: 'datepicker', span: 8 }, 
+  { name: 'due_date', label: 'Bitmə tarixi', type: 'datepicker', span: 8 }, 
+  { name: 'estimated_hours', label: 'Planlanan saat', type: 'number', span: 8 }, 
 
   {
     name: 'status',
