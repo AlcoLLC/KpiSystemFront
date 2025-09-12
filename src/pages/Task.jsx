@@ -92,7 +92,6 @@ const initialData = [
 
 // ================== Task Component ==================
 function Task() {
-  const isDark = useSelector((state) => state.theme.isDark);
   const [data, setData] = useState(initialData);
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
@@ -208,47 +207,17 @@ function Task() {
 
   return (
     <div>
-      <h2 className={`px-1 text-xl font-medium mb-6 ${isDark ? 'text-white' : 'text-black'}`}>
-        Tapşırıqlar
-      </h2>
-      <div
-        className={`p-6 rounded-lg shadow-md transition duration-500 ${
-          isDark ? 'bg-[#1B232D]' : 'bg-white'
-        }`}
-      >
-        <button
-          onClick={handleAddClick}
-          className={`p-2 mb-6 transition duration-300 border rounded ${
-            isDark
-              ? 'text-white border-white hover:bg-gray-700'
-              : 'text-blue-500 border-blue-500 hover:bg-gray-100'
-          }`}
-        >
+      <h2 className="px-1 text-xl font-medium mb-6 text-black dark:text-white">Tapşırıqlar</h2>
+      <div className="p-6 rounded-lg shadow-md transition-colors duration-500 bg-white dark:bg-[#1B232D]">
+        <button onClick={handleAddClick} className="p-2 mb-6 transition-colors duration-300 border rounded text-blue-500 border-blue-500 hover:bg-gray-100 dark:text-white dark:border-white dark:hover:bg-gray-700">
           + Yeni tapşırıq
         </button>
-        <ReusableTable
-          columns={columns}
-          dataSource={data}
-          onRowClick={handleRowClick}
-          pagination={{ pageSize: 10 }}
-        />
+        <ReusableTable columns={columns} dataSource={data} onRowClick={handleRowClick} pagination={{ pageSize: 10 }} />
       </div>
-
-      <BaseModal
-        title="Tapşırıq Məlumatları"
-        open={isViewOpen}
-        onCancel={handleViewClose}
-        footer={null}
-      >
+      <BaseModal title="Tapşırıq Məlumatları" open={isViewOpen} onCancel={handleViewClose} footer={null}>
         <Details items={generateDetailsItems(currentRecord)} />
       </BaseModal>
-
-      <BaseModal
-        title={mode === 'add' ? 'Yeni Tapşırıq' : 'Tapşırığı Redaktə et'}
-        open={isAddEditOpen}
-        onOk={() => form.submit()}
-        onCancel={handleAddEditCancel}
-      >
+      <BaseModal title={mode === 'add' ? 'Yeni Tapşırıq' : 'Tapşırığı Redaktə et'} open={isAddEditOpen} onOk={() => form.submit()} onCancel={handleAddEditCancel}>
         <AppForm form={form} fields={taskFormFields} onFinish={handleFormFinish} />
       </BaseModal>
     </div>
