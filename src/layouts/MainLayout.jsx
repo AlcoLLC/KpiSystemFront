@@ -1,14 +1,14 @@
-import { useState, useEffect, useRef } from "react";
-import { Outlet, Link, NavLink } from "react-router-dom";
-import { BsSun, BsMoon, BsBell } from "react-icons/bs";
-import { FiUser } from "react-icons/fi";
-import { AiFillHome, AiOutlineCalendar } from "react-icons/ai";
-import { FaTasks } from "react-icons/fa";
-import { HiOutlineDocumentReport } from "react-icons/hi";
-import { MdOutlineAnalytics, MdSpeed, MdLogout } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleTheme } from "../features/theme/themeSlice";
-import useAuth from "../hooks/useAuth";
+import { useState, useEffect, useRef } from 'react';
+import { Outlet, Link, NavLink } from 'react-router-dom';
+import { BsSun, BsMoon, BsBell } from 'react-icons/bs';
+import { FiUser } from 'react-icons/fi';
+import { AiFillHome, AiOutlineCalendar } from 'react-icons/ai';
+import { FaTasks } from 'react-icons/fa';
+import { HiOutlineDocumentReport } from 'react-icons/hi';
+import { MdOutlineAnalytics, MdSpeed, MdLogout } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '../features/theme/themeSlice';
+import useAuth from '../hooks/useAuth';
 
 export default function MainLayout() {
   const dispatch = useDispatch();
@@ -19,25 +19,32 @@ export default function MainLayout() {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
+    const body = window.document.body;
+    if (isDark) {
+      body.classList.add('dark');
+    } else {
+      body.classList.remove('dark');
+    }
+  }, [isDark]);
+
+  useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownRef]);
 
   const navLinkClasses = ({ isActive }) =>
-    `nav-link flex items-center gap-3 w-full p-3 rounded-md transition duration-500 ease-in-out cursor-pointer ${
-      isActive
-        ? "active bg-[#ECF0FF] text-[#3379F5]"
-        : "hover:bg-[#ECF0FF] hover:text-[#3379F5]"
+    `nav-link flex items-center gap-3 w-full p-3 rounded-md transition-colors duration-300 ease-in-out cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${
+      isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
 
   return (
     <div className="flex">
-      <aside className="main-layout-aside w-80 min-h-screen shadow-md border-gray-200 bg-white text-black">
+      <aside className="main-layout-aside w-80 min-h-screen shadow-md bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border-r dark:border-gray-700">
         <div className="fixed w-80 p-6">
           <div className="my-5 flex justify-center">
             <h1 className="text-xl font-bold">ALCO KPI</h1>
@@ -80,29 +87,17 @@ export default function MainLayout() {
                 </NavLink>
               </li>
             </ul>
-            <button
-              onClick={logout}
-              className={navLinkClasses({ isActive: false })}
-            >
-              <div className="flex items-center gap-2">
-                <MdLogout size={24} /> Çıxış
-              </div>
+             <button onClick={logout} className={navLinkClasses({ isActive: false })}>
+              <div className="flex items-center gap-2"> <MdLogout size={24} /> Çıxış </div>
             </button>
           </nav>
         </div>
       </aside>
-      <main className="main-layout-main-content flex-1 p-6 transition duration-500 bg-[#EFF3F9]">
-        <nav className="main-layout-navbar p-4 shadow-md border-gray-200 mb-6 rounded-lg bg-white text-black">
+       <main className="main-layout-main-content flex-1 p-6 transition-colors duration-500 bg-[#EFF3F9] dark:bg-[#131920]">
+        <nav className="main-layout-navbar p-4 shadow-md mb-6 rounded-lg bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
           <div className="flex justify-end items-center space-x-4">
-            <button
-              onClick={() => dispatch(toggleTheme())}
-              className="p-2 rounded-full hover:bg-gray-400 transition"
-            >
-              {isDark ? (
-                <BsSun className="w-6 h-6 text-yellow-400" />
-              ) : (
-                <BsMoon className="w-6 h-6 text-gray-600" />
-              )}
+            <button onClick={() => dispatch(toggleTheme())} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+              {isDark ? <BsSun className="w-6 h-6 text-yellow-400" /> : <BsMoon className="w-6 h-6 text-gray-600" />}
             </button>
             <div className="relative">
               <button className="p-2 rounded-full hover:bg-gray-400 transition">
@@ -150,20 +145,13 @@ export default function MainLayout() {
                     <div>
                       <p className="font-semibold">
                         {user
-                          ? `${user.first_name || ""} ${
-                              user.last_name || ""
-                            }`.trim()
-                          : "İstifadəçi Adı"}
+                          ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                          : 'İstifadəçi Adı'}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {user ? user.role_display : "Vəzifə"}
-                      </p>
+                      <p className="text-sm text-gray-500">{user ? user.role_display : 'Vəzifə'}</p>
                     </div>
                   </div>
-                  <Link
-                    to="/profile"
-                    className={navLinkClasses({ isActive: false })}
-                  >
+                  <Link to="/profile" className={navLinkClasses({ isActive: false })}>
                     <div className="flex items-center gap-2">
                       <FiUser className="w-5 h-5" /> Profilim
                     </div>
