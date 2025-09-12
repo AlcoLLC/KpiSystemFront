@@ -57,7 +57,7 @@ function BaseModal({
       okText={okText}
       cancelText={cancelText}
       footer={footer}
-      bodyStyle={modalStyles.body}
+      styles={{ body: modalStyles.body }}
       closeIcon={<span style={modalStyles.closeIcon}>×</span>}
       className={isDark ? 'dark-modal' : ''}
       okButtonProps={{ style: modalStyles.okButton }}

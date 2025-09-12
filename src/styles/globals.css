@@ -54,6 +54,19 @@
   background-color: #374151 !important;
 }
 
+/* Əsas yükləmə mətni */
+.dark .ant-upload-text {
+  color: #d1d5db !important; /* text-gray-300 rənginə uyğundur */
+}
+
+/* İkinci dərəcəli mətn (hint) */
+.dark .ant-upload-hint {
+  color: #9ca3af !important; /* text-gray-400 rənginə uyğundur */
+}
+
+.dark .ant-input-password-icon {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
 /* --- Modal --- */
 .dark .ant-modal-content {
   background-color: #1b232d !important;
@@ -104,4 +117,277 @@
 }
 .dark .ant-pagination-item:not(.ant-pagination-item-active):hover a {
   color: white;
+}
+
+/* Seçilməmiş ulduzların içindəki hər iki hissəni hədəf alırıq */
+.dark .ant-rate-star-zero .ant-rate-star-first,
+.dark .ant-rate-star-zero .ant-rate-star-second {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+
+/* ========================================= */
+/* Calendar Dark Mode Styles                 */
+/* Bu kodları mövcud CSS faylınıza əlavə edin */
+/* ========================================= */
+
+/* --- Ant Design Calendar Dark Mode --- */
+.dark .ant-picker-calendar {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-picker-calendar .ant-picker-panel {
+  background: transparent !important;
+}
+
+.dark .ant-picker-calendar-header {
+  border-bottom-color: #4a5568 !important;
+}
+
+.dark .ant-picker-calendar-header .ant-picker-calendar-year-select,
+.dark .ant-picker-calendar-header .ant-picker-calendar-month-select {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-picker-calendar-header .ant-select-selector {
+  background-color: #2a3441 !important;
+  border-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-picker-calendar-header .ant-select-arrow {
+  color: #e2e8f0 !important;
+}
+
+/* Calendar Dates */
+.dark .ant-picker-cell {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-picker-cell-inner {
+  color: #e2e8f0 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ant-picker-cell:hover .ant-picker-cell-inner {
+  background-color: #374151 !important;
+}
+
+.dark .ant-picker-cell-selected .ant-picker-cell-inner {
+  background-color: #1677ff !important;
+  color: white !important;
+}
+
+.dark .ant-picker-cell-today .ant-picker-cell-inner {
+  border-color: #1677ff !important;
+  color: #1677ff !important;
+}
+
+.dark .ant-picker-cell-in-view {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-picker-cell-disabled {
+  color: #6b7280 !important;
+}
+
+/* Calendar Content Area */
+.dark .ant-picker-calendar-date-content {
+  color: #e2e8f0 !important;
+}
+
+/* Week Headers */
+.dark .ant-picker-calendar thead th {
+  color: #d1d5db !important;
+  border-bottom-color: #4a5568 !important;
+}
+
+/* --- Card Dark Mode --- */
+.dark .ant-card {
+  background-color: #1b232d !important;
+  border-color: #374151 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-card-head {
+  background-color: #1b232d !important;
+  border-bottom-color: #374151 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-card-head-title {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-card-body {
+  background-color: #1b232d !important;
+  color: #e2e8f0 !important;
+}
+
+/* --- Empty State Dark Mode --- */
+.dark .ant-empty {
+  color: #9ca3af !important;
+}
+
+.dark .ant-empty-description {
+  color: #9ca3af !important;
+}
+
+.dark .ant-empty-image {
+  opacity: 0.3;
+}
+
+/* --- Badge Dark Mode --- */
+.dark .ant-badge-status-text {
+  color: #e2e8f0 !important;
+}
+
+/* --- Button Dark Mode --- */
+.dark .ant-btn-text {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-btn-text:hover {
+  background-color: #374151 !important;
+  color: #e2e8f0 !important;
+}
+
+/* --- Modal Dark Mode --- */
+.dark .ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .ant-modal-title {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-modal-close {
+  color: #9ca3af !important;
+}
+
+.dark .ant-modal-close:hover {
+  color: #e2e8f0 !important;
+}
+
+/* --- TextArea Dark Mode --- */
+.dark .ant-input {
+  background-color: #2a3441 !important;
+  border-color: #4a5568 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-input:focus,
+.dark .ant-input-focused {
+  border-color: #1677ff !important;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2) !important;
+}
+
+.dark .ant-input::placeholder {
+  color: #9ca3af !important;
+}
+
+/* --- Progress Bar Dark Mode --- */
+.dark .ant-progress-bg {
+  background-color: #1677ff !important;
+}
+
+.dark .ant-progress-inner {
+  background-color: #374151 !important;
+}
+
+.dark .ant-progress-text {
+  color: #e2e8f0 !important;
+}
+
+/* --- Custom Calendar Styles Updated --- */
+.dark .calendar-events {
+  color: #e2e8f0;
+}
+
+.dark .timeline-task {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dark .timeline-task:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dark .note-indicator .ant-badge-status-text {
+  color: #a855f7 !important;
+}
+
+.dark .more-items {
+  color: #9ca3af !important;
+}
+
+/* --- Tooltip Dark Mode --- */
+.dark .ant-tooltip-inner {
+  background-color: #1f2937 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-tooltip-arrow-content {
+  background-color: #1f2937 !important;
+}
+
+/* --- Select Dropdown Dark Mode --- */
+.dark .ant-select-dropdown {
+  background-color: #1f2937 !important;
+  border-color: #4a5568 !important;
+}
+
+.dark .ant-select-item {
+  color: #e2e8f0 !important;
+}
+
+.dark .ant-select-item:hover {
+  background-color: #374151 !important;
+}
+
+.dark .ant-select-item-selected {
+  background-color: #1e40af !important;
+  color: white !important;
+}
+
+/* --- Calendar Cell Content Adjustments --- */
+.dark .custom-calendar .ant-picker-cell-in-view .ant-picker-cell-inner {
+  background-color: transparent;
+  border: 1px solid #374151;
+}
+
+.dark .custom-calendar .ant-picker-cell-selected .ant-picker-cell-inner {
+  background-color: rgba(22, 119, 255, 0.2) !important;
+  border-color: #1677ff !important;
+}
+
+.dark .custom-calendar .ant-picker-cell-today .ant-picker-cell-inner {
+  border-color: #1677ff !important;
+  background-color: rgba(22, 119, 255, 0.1);
+}
+
+.dark .custom-calendar .ant-picker-cell:hover .ant-picker-cell-inner {
+  background-color: #374151 !important;
+  border-color: #6b7280 !important;
+}
+
+/* --- Scrollbar Dark Mode --- */
+.dark ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
