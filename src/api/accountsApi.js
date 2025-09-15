@@ -16,6 +16,8 @@ const accountsApi = {
         "Content-Type": "multipart/form-data",
       },
     }),
+
+  getUsers: () => apiService.get("/accounts/users/"),
 };
 
 export default accountsApi;
