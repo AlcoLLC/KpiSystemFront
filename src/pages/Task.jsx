@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Modal, Space, Tag, message, Spin } from 'antd';
-const { useModal } = Modal;
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import ReusableTable from '../components/ReusableTable';
@@ -50,6 +49,8 @@ const taskFormFields = [
 
 // ================== Task Component ==================
 function Task() {
+  console.log('Task component rendered'); // Debug üçün
+  
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
@@ -58,17 +59,18 @@ function Task() {
   const [mode, setMode] = useState('add');
   const [currentRecord, setCurrentRecord] = useState(null);
   const [form] = Form.useForm();
-  const [modal, contextHolder] = useModal();
 
   // Taskları yüklə
   const fetchTasks = async () => {
     try {
       setLoading(true);
       const response = await tasksApi.getTasks();
+      console.log('Tasks response:', response.data); // Debug üçün
       setData(response.data.results || response.data);
     } catch (error) {
       message.error('Tapşırıqları yükləyərkən xəta baş verdi');
       console.error('Fetch tasks error:', error);
+      setData([]); // Error halında boş array
     } finally {
       setLoading(false);
     }
@@ -77,8 +79,8 @@ function Task() {
   // İstifadəçiləri yüklə (assignee dropdown üçün)
   const fetchUsers = async () => {
     try {
-      // Bu endpoint sizin backend-də olmalıdır
-      const response = await accountsApi.getUsers(); // Bu funksiyanı accountsApi-yə əlavə etmək lazımdır
+      const response = await accountsApi.getUsers();
+      console.log('Users response:', response.data); // Debug üçün
       const userOptions = response.data.map(user => ({
         value: user.id,
         label: user.first_name && user.last_name 
@@ -88,10 +90,14 @@ function Task() {
       setUsers(userOptions);
       
       // Form field-ə options əlavə et
-      taskFormFields[3].options = userOptions;
+      const assigneeField = taskFormFields.find(field => field.name === 'assignee');
+      if (assigneeField) {
+        assigneeField.options = userOptions;
+      }
     } catch (error) {
       message.error('İstifadəçiləri yükləyərkən xəta baş verdi');
       console.error('Fetch users error:', error);
+      setUsers([]); // Error halında boş array
     }
   };
 
@@ -119,7 +125,7 @@ function Task() {
   };
 
   const handleDelete = (record) => {
-    modal.confirm({
+    Modal.confirm({
       title: 'Silinməni təsdiqləyin',
       content: `'${record.title}' adlı tapşırığı silmək istədiyinizə əminsiniz?`,
       okText: 'Sil',
@@ -148,11 +154,15 @@ function Task() {
 
   const handleFormFinish = async (values) => {
     try {
+      console.log('Form values before submit:', values); // Debug üçün
+      
       const payload = {
         ...values,
         start_date: values.start_date ? values.start_date.format('YYYY-MM-DD') : null,
         due_date: values.due_date ? values.due_date.format('YYYY-MM-DD') : null
       };
+
+      console.log('Payload to send:', payload); // Debug üçün
 
       if (mode === 'add') {
         await tasksApi.createTask(payload);
@@ -165,11 +175,11 @@ function Task() {
       setIsAddEditOpen(false);
       fetchTasks(); // Siyahını yenilə
     } catch (error) {
+      console.error('Form submit error:', error); // Debug üçün
       const errorMessage = error.response?.data?.detail || 
                           error.response?.data?.message ||
                           'Xəta baş verdi';
       message.error(errorMessage);
-      console.error('Form submit error:', error);
     }
   };
 
@@ -178,7 +188,7 @@ function Task() {
     
     const getUserName = (userId) => {
       const user = users.find(u => u.value === userId);
-      return user ? user.label : userId;
+      return user ? user.label : `User ${userId}`;
     };
 
     const getPriorityLabel = (priority) => {
@@ -333,8 +343,6 @@ function Task() {
       >
         <Details items={generateDetailsItems(currentRecord)} />
       </BaseModal>
-
-      {contextHolder}
 
       <BaseModal
         title={mode === 'add' ? 'Yeni Tapşırıq' : 'Tapşırığı Redaktə et'}
