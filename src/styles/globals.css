@@ -391,3 +391,11 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
+
+.dark .ant-modal-confirm-title {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.dark .ant-modal-confirm-content {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
