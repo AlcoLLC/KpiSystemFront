@@ -7,6 +7,22 @@ const axiosClient = axios.create({
   },
 });
 
+// Token refresh-i həyata keçirən funksiya
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve(token);
+    }
+  });
+  
+  failedQueue = [];
+};
+
 axiosClient.interceptors.request.use(
   (config) => {
     const tokens = JSON.parse(localStorage.getItem("tokens"));
@@ -18,35 +34,22 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-let isRefreshing = false;
-let failedQueue = [];
-
-const processQueue = (error, token = null) => {
-  failedQueue.forEach(prom => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-  failedQueue = [];
-};
-
 axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
+    // 401 və ya 403 status kodları üçün token refresh etməyə cəhd et
     if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+      
+      // Əgər artıq refresh prosesi gedirsə, növbəyə əlavə et
       if (isRefreshing) {
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        })
-        .then(token => {
+        }).then(token => {
           originalRequest.headers['Authorization'] = 'Bearer ' + token;
           return axiosClient(originalRequest);
-        })
-        .catch(err => {
+        }).catch(err => {
           return Promise.reject(err);
         });
       }
@@ -56,7 +59,12 @@ axiosClient.interceptors.response.use(
 
       try {
         const tokens = JSON.parse(localStorage.getItem("tokens"));
+        
         if (!tokens?.refresh) {
+          processQueue(new Error('No refresh token'), null);
+          localStorage.removeItem("tokens");
+          localStorage.removeItem("user");
+          delete axiosClient.defaults.headers.common["Authorization"];
           window.location.href = "/login";
           return Promise.reject(error);
         }
@@ -67,21 +75,31 @@ axiosClient.interceptors.response.use(
         );
 
         const newAccessToken = refreshResponse.data.access;
-        const newTokens = { ...tokens, access: newAccessToken };
+        const newRefreshToken = refreshResponse.data.refresh || tokens.refresh; // Yeni refresh token gəlməzsə köhnəni saxla
+        
+        const newTokens = { 
+          access: newAccessToken, 
+          refresh: newRefreshToken 
+        };
+        
         localStorage.setItem("tokens", JSON.stringify(newTokens));
-
         axiosClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         
         processQueue(null, newAccessToken);
+        
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         return axiosClient(originalRequest);
+        
       } catch (refreshError) {
         console.error("Token yeniləmə uğursuz oldu:", refreshError);
+        
+        processQueue(refreshError, null);
+        
         localStorage.removeItem("tokens");
         localStorage.removeItem("user");
         delete axiosClient.defaults.headers.common["Authorization"];
-        processQueue(refreshError, null);
         window.location.href = "/login";
+        
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

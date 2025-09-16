@@ -1,23 +1,31 @@
-import apiService from "./apiService";
+import axiosClient from "./axiosClient"; // apiService əvəzinə axiosClient import et
 
 const accountsApi = {
-  login: (credentials) => apiService.post("/accounts/login/", credentials),
+  login: (credentials) => axiosClient.post("/accounts/login/", credentials),
 
-  refreshToken: (refresh) => apiService.post("/accounts/refresh/", { refresh }),
+  refreshToken: (refresh) => axiosClient.post("/accounts/refresh/", { refresh }),
 
   logout: (refreshToken) =>
-    apiService.post("/accounts/logout/", { refresh: refreshToken }),
+    axiosClient.post("/accounts/logout/", { refresh: refreshToken }),
 
-  getProfile: () => apiService.get("/accounts/users/me/"),
+  getProfile: () => axiosClient.get("/accounts/users/me/"),
 
   updateProfile: (profileData) =>
-    apiService.patch(`/accounts/users/me/`, profileData, {
+    axiosClient.patch(`/accounts/users/me/`, profileData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     }),
 
-  getUsers: () => apiService.get("/accounts/users/"),
+  getUsers: () => axiosClient.get("/accounts/users/"),
+
+  // Token yoxlama funksiyası - opsional
+  verifyToken: (token) => 
+    axiosClient.post("/accounts/verify-token/", { token }),
+
+  // Password dəyişmək üçün
+  changePassword: (passwordData) =>
+    axiosClient.post("/accounts/change-password/", passwordData),
 };
 
 export default accountsApi;
