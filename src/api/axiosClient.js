@@ -18,13 +18,41 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise(function(resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+        .then(token => {
+          originalRequest.headers['Authorization'] = 'Bearer ' + token;
+          return axiosClient(originalRequest);
+        })
+        .catch(err => {
+          return Promise.reject(err);
+        });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const tokens = JSON.parse(localStorage.getItem("tokens"));
@@ -42,19 +70,21 @@ axiosClient.interceptors.response.use(
         const newTokens = { ...tokens, access: newAccessToken };
         localStorage.setItem("tokens", JSON.stringify(newTokens));
 
-        axiosClient.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
+        axiosClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-
+        
+        processQueue(null, newAccessToken);
         return axiosClient(originalRequest);
       } catch (refreshError) {
         console.error("Token yeniləmə uğursuz oldu:", refreshError);
         localStorage.removeItem("tokens");
         localStorage.removeItem("user");
         delete axiosClient.defaults.headers.common["Authorization"];
+        processQueue(refreshError, null);
         window.location.href = "/login";
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
