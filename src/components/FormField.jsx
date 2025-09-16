@@ -1,9 +1,7 @@
 import React from 'react';
 import { Input, Select, DatePicker } from 'antd';
 
-const { Option } = Select;
-
-const FormField = ({ fieldConfig, isDark }) => {
+const FormField = ({ fieldConfig, isDark, ...props }) => {
   const commonProps = {
     className: isDark ? `antd-dark-${fieldConfig.type || 'input'}` : '',
     placeholder: fieldConfig.placeholder || ''
@@ -11,21 +9,27 @@ const FormField = ({ fieldConfig, isDark }) => {
 
   switch (fieldConfig.type) {
     case 'textarea':
-      return <Input.TextArea rows={3} {...commonProps} />;
+      return <Input.TextArea rows={3} {...commonProps} {...props} />;
+    
     case 'select':
       return (
-        <Select {...commonProps} dropdownClassName={isDark ? 'antd-dark-select-dropdown' : ''}>
-          {fieldConfig.options?.map(opt => (
-            <Option key={opt.value} value={opt.value}>{opt.label}</Option>
-          ))}
-        </Select>
+        <Select 
+            {...commonProps} 
+            {...props} 
+            options={fieldConfig.options}
+            loading={fieldConfig.loading}
+            dropdownClassName={isDark ? 'antd-dark-select-dropdown' : ''}
+        />
       );
+
     case 'datepicker':
-      return <DatePicker format="DD MMM, YYYY" style={{ width: '100%' }} {...commonProps} />;
+      return <DatePicker format="DD.MM.YYYY" style={{ width: '100%' }} {...commonProps} {...props} />;
+
     case 'number':
-        return <Input type="number" {...commonProps} />;
+        return <Input type="number" {...commonProps} {...props} />;
+
     default: 
-      return <Input {...commonProps} />;
+      return <Input {...commonProps} {...props} />;
   }
 };
 

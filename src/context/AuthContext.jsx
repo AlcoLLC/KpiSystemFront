@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   }, [navigate]);
 
+  // src/context/AuthContext.js
+
   useEffect(() => {
     const syncUserData = async () => {
       const storedTokens = JSON.parse(localStorage.getItem("tokens"));
@@ -38,15 +40,13 @@ export const AuthProvider = ({ children }) => {
           setUser(latestUserData);
           localStorage.setItem("user", JSON.stringify(latestUserData));
         } catch (err) {
-          console.error("Token ilə məlumat alınmadı, çıxış edilir.", err);
-          logout();
+          console.error("İstifadəçi məlumatları sinxronizasiya edilərkən xəta baş verdi:", err);
         }
       }
     };
 
     syncUserData();
-  }, [logout]);
-
+  }, []); 
   const login = async (email, password) => {
     setIsLoading(true);
     setError(null);

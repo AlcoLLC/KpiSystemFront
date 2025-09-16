@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchTasks, addNewTask, updateTask, deleteTask } from '../features/tasks/tasksSlice';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import accountsApi from '../api/accountsApi';
+import tasksApi from '../api/tasksApi'; // accountsApi əvəzinə tasksApi
 import ReusableTable from '../components/ReusableTable';
 import BaseModal from '../components/BaseModal';
 import Details from '../components/Details';
@@ -14,7 +14,7 @@ import AppForm from '../components/AppForm';
 
 const { useModal } = Modal;
 
-// Formun ilkin, şablon konfiqurasiyası
+// Form sahələri konfiqurasiyası
 const taskFormFieldsConfig = [
   {
     name: 'title',
@@ -23,7 +23,12 @@ const taskFormFieldsConfig = [
     rules: [{ required: true, message: 'Başlıq daxil edin!' }],
     span: 24
   },
-  { name: 'description', label: 'Təsvir', type: 'textarea', span: 24 },
+  { 
+    name: 'description', 
+    label: 'Təsvir', 
+    type: 'textarea', 
+    span: 24 
+  },
   {
     name: 'priority',
     label: 'Prioritet',
@@ -43,21 +48,29 @@ const taskFormFieldsConfig = [
     type: 'select',
     rules: [{ required: true, message: 'İcraçı seçin!' }],
     options: [],
-    loading: true,
     span: 12
   },
-  { name: 'start_date', label: 'Başlama tarixi', type: 'datepicker', span: 12 },
-  { name: 'due_date', label: 'Bitmə tarixi', type: 'datepicker', span: 12 }
+  { 
+    name: 'start_date', 
+    label: 'Başlama tarixi', 
+    type: 'datepicker', 
+    span: 12 
+  },
+  { 
+    name: 'due_date', 
+    label: 'Bitmə tarixi', 
+    type: 'datepicker', 
+    span: 12 
+  }
 ];
 
 function Task() {
-  // Redux state
   const dispatch = useDispatch();
   const { items: data, status } = useSelector((state) => state.tasks);
   const loading = status === 'loading';
 
-  // Lokal state (UI üçün)
   const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [mode, setMode] = useState('add');
@@ -65,44 +78,43 @@ function Task() {
   const [form] = Form.useForm();
   const [modal, contextHolder] = useModal();
 
-  // Səhifə yüklənəndə ilkin məlumatları çəkir
+  // İlkin məlumatları yüklə
   useEffect(() => {
     dispatch(fetchTasks());
-
-    const fetchUsers = async () => {
-      try {
-        const response = await accountsApi.getUsers();
-        setUsers(response.data.results || response.data || []);
-      } catch (err) {
-        console.error('İstifadəçiləri yükləmək alınmadı:', err);
-        message.error('İcraçı siyahısını yükləmək mümkün olmadı.');
-      }
-    };
-    fetchUsers();
+    fetchAssignableUsers();
   }, [dispatch]);
 
-  // `users` state-i dəyişdikdə form sahələrini yenidən hesablayır
+  // İcraçı siyahısını yüklə - DÜZƏLİŞ: Düzgün API endpoint
+  const fetchAssignableUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const response = await tasksApi.getAssignableUsers(); // Yeni API method
+      setUsers(response.data.results || response.data || []);
+    } catch (err) {
+      console.error('İstifadəçiləri yükləmək alınmadı:', err);
+      message.error('İcraçı siyahısını yükləmək mümkün olmadı.');
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  // Form sahələrini hazırla
   const formFields = useMemo(() => {
     const userOptions = users.map((user) => ({
       value: user.id,
-      label:
-        user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username
+      label: user.first_name && user.last_name 
+        ? `${user.first_name} ${user.last_name}` 
+        : user.username
     }));
 
     return taskFormFieldsConfig.map((field) =>
       field.name === 'assignee'
-        ? { ...field, options: userOptions, loading: users.length === 0 && loading }
-        : // DİQQƏT: Yüklənmə indikatorunu daha doğru idarə etmək üçün 'loading' statusunu
-          // API sorğusunun öz statusundan asılı etmək daha yaxşıdır.
-          // Məsələn, users üçün ayrı bir 'loading' statusu saxlamaq olar.
-          // Hal-hazırda 'tasks' yüklənərkən 'assignee' də loading göstərəcək.
-          field
+        ? { ...field, options: userOptions, loading: usersLoading }
+        : field
     );
-  }, [users, loading]);
+  }, [users, usersLoading]);
 
-  // =================================================================
-  // DÜZƏLİŞ: Modal açıldıqdan sonra formu doldurmaq üçün useEffect
-  // =================================================================
+  // Modal açıldıqda formu doldur
   useEffect(() => {
     if (isAddEditOpen) {
       if (mode === 'edit' && currentRecord) {
@@ -117,9 +129,7 @@ function Task() {
     }
   }, [isAddEditOpen, mode, currentRecord, form]);
 
-  // =================================================================
-  // DÜZƏLİŞ: Sadələşdirilmiş handler funksiyaları
-  // =================================================================
+  // Handler funksiyaları
   const handleAddClick = () => {
     setMode('add');
     setCurrentRecord(null);
@@ -131,8 +141,6 @@ function Task() {
     setCurrentRecord(record);
     setIsAddEditOpen(true);
   };
-
-  // =================================================================
 
   const handleDelete = (record) => {
     modal.confirm({
@@ -157,15 +165,16 @@ function Task() {
     setIsViewOpen(true);
   };
 
-  const handleAddEditCancel = () => setIsAddEditOpen(false);
-  const handleViewClose = () => setIsViewOpen(false);
-
   const handleFormFinish = async (values) => {
+    console.log('Form values before submit:', values); // Debug üçün
+
     const payload = {
       ...values,
       start_date: values.start_date ? values.start_date.format('YYYY-MM-DD') : null,
       due_date: values.due_date ? values.due_date.format('YYYY-MM-DD') : null
     };
+
+    console.log('Payload to API:', payload); // Debug üçün
 
     try {
       if (mode === 'add') {
@@ -178,11 +187,11 @@ function Task() {
       setIsAddEditOpen(false);
     } catch (err) {
       console.error('Form submit error:', err);
-      const errorMessage = typeof err === 'string' ? err : 'Əməliyyat uğursuz oldu.';
-      message.error(errorMessage);
+      message.error(typeof err === 'string' ? err : 'Əməliyyat uğursuz oldu.');
     }
   };
 
+  // Təfərrüat məlumatları
   const generateDetailsItems = (record) => {
     if (!record) return [];
     return [
@@ -204,6 +213,7 @@ function Task() {
     ];
   };
 
+  // Cədvəl sütunları
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id', width: 70 },
     { title: 'Başlıq', dataIndex: 'title', key: 'title' },
@@ -272,10 +282,15 @@ function Task() {
           >
             Yeni tapşırıq
           </Button>
-          <Button onClick={() => dispatch(fetchTasks())} icon={<SyncOutlined />} loading={loading}>
+          <Button 
+            onClick={() => dispatch(fetchTasks())} 
+            icon={<SyncOutlined />} 
+            loading={loading}
+          >
             Yenilə
           </Button>
         </div>
+        
         <ReusableTable
           columns={columns}
           dataSource={Array.isArray(data) ? data : []}
@@ -287,27 +302,33 @@ function Task() {
         />
       </div>
 
+      {/* Təfərrüat modalı */}
       <BaseModal
         title="Tapşırıq Məlumatları"
         open={isViewOpen}
-        onCancel={handleViewClose}
+        onCancel={() => setIsViewOpen(false)}
         footer={null}
       >
         <Details items={generateDetailsItems(currentRecord)} />
       </BaseModal>
 
-      {contextHolder}
-
+      {/* Əlavə/Redaktə modalı */}
       <BaseModal
         title={mode === 'add' ? 'Yeni Tapşırıq' : 'Tapşırığı Redaktə et'}
         open={isAddEditOpen}
         onOk={() => form.submit()}
-        onCancel={handleAddEditCancel}
+        onCancel={() => setIsAddEditOpen(false)}
         confirmLoading={loading}
         destroyOnClose
       >
-        <AppForm form={form} fields={formFields} onFinish={handleFormFinish} />
+        <AppForm 
+          form={form} 
+          fields={formFields} 
+          onFinish={handleFormFinish} 
+        />
       </BaseModal>
+
+      {contextHolder}
     </div>
   );
 }
