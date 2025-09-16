@@ -67,22 +67,22 @@ export default function MainLayout() {
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="/performance" className={navLinkClasses}>
+                <NavLink to="//" className={navLinkClasses}>
                   <MdSpeed size={24} /> Performans
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="/dolum_sexi" className={navLinkClasses}>
+                <NavLink to="//" className={navLinkClasses}>
                   <FaTasks size={24} /> Dolum Sexi
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="/calendar" className={navLinkClasses}>
+                <NavLink to="//" className={navLinkClasses}>
                   <AiOutlineCalendar size={24} /> Təqvim
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="/report" className={navLinkClasses}>
+                <NavLink to="//" className={navLinkClasses}>
                   <HiOutlineDocumentReport size={24} /> Tarixçə
                 </NavLink>
               </li>
