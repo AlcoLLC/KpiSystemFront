@@ -1,4 +1,4 @@
-// src/pages/Task.js
+// src/pages/Task.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Form, Modal, Space, Tag, message, Button, Input, Select, DatePicker, Row, Col, Card } from 'antd';
@@ -195,7 +195,7 @@ function Task() {
     { key: 'created_by', label: 'Yaradan', value: record.created_by_details || '-' },
     { key: 'priority', label: 'Prioritet', value: record.priority_display || '-' },
     { key: 'status', label: 'Status', value: record.status_display || '-' },
-    { key: 'start_date', label: 'Başlama tarixi', value: dayjs(record.start_at).format('DD MMMM YYYY') || '-' },
+    { key: 'start_date', label: 'Başlama tarixi', value: dayjs(record.start_date).format('DD MMMM YYYY') || '-' },
     { key: 'due_date', label: 'Bitmə tarixi', value: dayjs(record.due_date).format('DD MMMM YYYY') || '-' },
     { key: 'approved', label: 'Təsdiqləndi', value: record.approved ? 'Bəli' : 'Xeyr' },
     { key: 'created_at', label: 'Yaradılma tarixi', value: record.created_at ? dayjs(record.created_at).format('DD MMMM YYYY HH:mm') : '-' }
@@ -237,7 +237,6 @@ function Task() {
           <div className="flex flex-wrap gap-4 items-center justify-between mb-4">
             <div className="flex gap-2">
               <Button onClick={handleAddClick} type="primary" icon={<PlusOutlined />} disabled={loading}>Yeni tapşırıq</Button>
-              <Button onClick={() => { dispatch(fetchTasks()); fetchTasksWithFilters(); }} icon={<SyncOutlined />} loading={loading}>Yenilə</Button>
               <Button onClick={() => setShowFilters(!showFilters)} icon={<FilterOutlined />} type={showFilters ? 'primary' : 'default'}>Filterlər</Button>
               <Button onClick={handleClearFilters} icon={<ClearOutlined />} disabled={!hasActiveFilters}>Təmizlə</Button>
             </div>
@@ -271,7 +270,7 @@ function Task() {
                 </Col>
                 <Col xs={24} sm={12} md={6}>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Tarix aralığı</label>
-                  <RangePicker style={{ width: '100%' }} placeholder={['Başlama', 'Bitmə']} format="DD.MM.YYYY" value={filters.date_range} onChange={dates => handleFilterChange('date_range', dates)} />
+                  <RangePicker  single={true}  style={{ width: '100%' }} placeholder={['Başlama', 'Bitmə']} format="DD.MM.YYYY" value={filters.date_range} onChange={dates => handleFilterChange('date_range', dates)} />
                 </Col>
               </Row>
             </Card>
