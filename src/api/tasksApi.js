@@ -18,6 +18,7 @@ const tasksApi = {
 
   // Task verification (email linkləri üçün)
   verifyTask: (token) => apiService.get(`/tasks/tasks/verify/${token}/`), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
+  getAssignableUsers: () => apiService.get("/tasks/assignable-users/"), // DƏYİŞİKLİK: /tasks/ -> /tasks/assignable-users/
 };
 
 export default tasksApi;
