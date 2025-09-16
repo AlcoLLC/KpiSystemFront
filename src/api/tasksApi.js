@@ -2,22 +2,22 @@ import apiService from './apiService';
 
 const tasksApi = {
   // Bütün taskları əldə et
-  getTasks: (params = {}) => apiService.get('/tasks/', params),
+  getTasks: (params = {}) => apiService.get('/tasks/tasks/', params), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
 
   // Yeni task yarat
-  createTask: (taskData) => apiService.post('/tasks/', taskData),
+  createTask: (taskData) => apiService.post('/tasks/tasks/', taskData), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
 
   // Task-ı yenilə
-  updateTask: (taskId, taskData) => apiService.patch(`/tasks/${taskId}/`, taskData),
+  updateTask: (taskId, taskData) => apiService.patch(`/tasks/tasks/${taskId}/`, taskData), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
 
   // Task-ı sil
-  deleteTask: (taskId) => apiService.delete(`/tasks/${taskId}/`),
+  deleteTask: (taskId) => apiService.delete(`/tasks/tasks/${taskId}/`), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
 
   // Spesifik task əldə et
-  getTask: (taskId) => apiService.get(`/tasks/${taskId}/`),
+  getTask: (taskId) => apiService.get(`/tasks/tasks/${taskId}/`), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
 
   // Task verification (email linkləri üçün)
-  verifyTask: (token) => apiService.get(`/tasks/verify/${token}/`),
+  verifyTask: (token) => apiService.get(`/tasks/tasks/verify/${token}/`), // DƏYİŞİKLİK: /tasks/ -> /tasks/tasks/
 };
 
 export default tasksApi;
