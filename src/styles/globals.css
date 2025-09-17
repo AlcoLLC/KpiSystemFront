@@ -49,6 +49,7 @@
 }
 .dark .ant-table-tbody > tr > td {
   border-color: #4a5568 !important;
+  color: #fff !important ;
 }
 .dark .ant-table-tbody > tr.ant-table-row:hover > td {
   background-color: #374151 !important;
@@ -83,7 +84,7 @@
 
 /* --- Pagination --- */
 .dark .ant-pagination-item a {
-  color: rgba(255, 255, 255, 0.85);
+  color: #1677ff !important; /* Default rəng */
 }
 
 /* Sağ-sol oxlarının olduğu düymələr */
@@ -93,10 +94,15 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-
-/* Aktiv olan səhifənin içindəki rəqəm (ağ rəngdə) */
-.dark .ant-pagination-item-active a {
+.dark .ant-pagination-item {
   color: #1677ff !important;
+  background-color: transparent !important;
+  border: 1px solid #1677ff !important;
+}
+/* Aktiv olan səhifənin içindəki rəqəm (ağ rəngdə) */
+.dark .ant-pagination-item-active {
+  color: #1677ff !important;
+  background-color: rgba(255, 255, 255, 0.726) !important;
 }
 
 /* Passiv (disabled) vəziyyətdəki oxlar və rəqəmlər */
@@ -124,7 +130,6 @@
 .dark .ant-rate-star-zero .ant-rate-star-second {
   color: rgba(255, 255, 255, 0.35) !important;
 }
-
 
 /* ========================================= */
 /* Calendar Dark Mode Styles                 */
@@ -160,47 +165,158 @@
   color: #e2e8f0 !important;
 }
 
-/* Calendar Dates */
+/* Calendar Dark Mode */
+.dark .ant-picker-panel,
+.dark .ant-picker-dropdown,
+.dark .ant-picker-footer {
+  border-color: #374151 !important;
+}
+
+.dark .ant-picker-header {
+  background-color: #1f2937 !important;
+  border-bottom-color: #374151 !important;
+}
+
+.dark .ant-picker-header-view button {
+  color: #f3f4f6 !important;
+}
+
+.dark .ant-picker-header-view button:hover {
+  background-color: #374151 !important;
+}
+
+.dark .ant-picker-content {
+  background-color: #1f2937 !important;
+}
+
 .dark .ant-picker-cell {
-  color: #e2e8f0 !important;
+  color: #d1d5db !important;
 }
 
 .dark .ant-picker-cell-inner {
-  color: #e2e8f0 !important;
-  border-color: #374151 !important;
+  color: #d1d5db !important;
+  background-color: transparent !important;
 }
 
 .dark .ant-picker-cell:hover .ant-picker-cell-inner {
   background-color: #374151 !important;
+  color: #f3f4f6 !important;
 }
 
 .dark .ant-picker-cell-selected .ant-picker-cell-inner {
-  background-color: #1677ff !important;
-  color: white !important;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
 }
 
 .dark .ant-picker-cell-today .ant-picker-cell-inner {
-  border-color: #1677ff !important;
-  color: #1677ff !important;
+  border-color: #2563eb !important;
+  color: #60a5fa !important;
 }
 
-.dark .ant-picker-cell-in-view {
-  color: #e2e8f0 !important;
-}
-
-.dark .ant-picker-cell-disabled {
+.dark .ant-picker-cell-disabled .ant-picker-cell-inner {
   color: #6b7280 !important;
 }
 
-/* Calendar Content Area */
-.dark .ant-picker-calendar-date-content {
-  color: #e2e8f0 !important;
+.dark .ant-picker-cell-range-start .ant-picker-cell-inner,
+.dark .ant-picker-cell-range-end .ant-picker-cell-inner {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
 }
 
-/* Week Headers */
-.dark .ant-picker-calendar thead th {
+.dark .ant-picker-cell-in-range .ant-picker-cell-inner {
+  background-color: #1e40af9d !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-picker-time-panel {
+  background-color: #1f2937 !important;
+  border-left-color: #374151 !important;
+}
+
+.dark .ant-picker-time-panel-column {
+  background-color: #1f2937 !important;
+}
+
+.dark .ant-picker-time-panel-cell {
   color: #d1d5db !important;
-  border-bottom-color: #4a5568 !important;
+}
+
+.dark .ant-picker-time-panel-cell:hover {
+  background-color: #374151 !important;
+}
+
+.dark .ant-picker-time-panel-cell-selected {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Date Range Dark Mode - Complete */
+.dark .ant-picker-range {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ant-picker-range:hover,
+.dark .ant-picker-range-focused {
+  border-color: #2563eb !important;
+}
+
+.dark .ant-picker-range input {
+  background: transparent !important;
+  color: #f3f4f6 !important;
+}
+
+.dark .ant-picker-range input::placeholder,
+.dark .ant-picker-range .ant-picker-separator,
+.dark .ant-picker-range .ant-picker-suffix {
+  color: #9ca3af !important;
+}
+
+.dark .ant-picker-panel-container,
+.dark .ant-picker-panels {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ant-picker-header {
+  background-color: #1f2937 !important;
+  border-bottom-color: #374151 !important;
+}
+
+.dark .ant-picker-header-view button {
+  color: #f3f4f6 !important;
+}
+
+.dark .ant-picker-header-view button:hover {
+  background-color: #374151 !important;
+}
+
+.dark .ant-picker-body thead th {
+  color: #d1d5db !important;
+}
+
+.dark .ant-picker-cell-range-start .ant-picker-cell-inner,
+.dark .ant-picker-cell-range-end .ant-picker-cell-inner {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-picker-cell-in-range .ant-picker-cell-inner {
+  background-color: rgba(37, 100, 235, 0.432) !important;
+}
+
+.dark .ant-picker-header-super-prev-btn,
+.dark .ant-picker-header-prev-btn,
+.dark .ant-picker-header-next-btn,
+.dark .ant-picker-header-super-next-btn,
+.dark .ant-picker-now-btn,
+.dark .ant-picker-suffix
+
+
+
+
+{
+  color: #bdc3cf !important;
 }
 
 /* --- Card Dark Mode --- */
