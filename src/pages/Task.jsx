@@ -60,12 +60,12 @@ function Task() {
   const [filteredData, setFilteredData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [pagination, setPagination] = useState({
-    current: 1, pageSize: 10, total: 0, showSizeChanger: true, showQuickJumper: true,
-    showTotal: (total, range) => <span className="text-gray-600 dark:text-gray-300">{range[0]}-{range[1]} / {total} nəticə</span>
+    current: 1, pageSize: 10, total: 0, showTotal: (total, range) => <span className="text-gray-600 dark:text-gray-300">{range[0]}-{range[1]} / {total} nəticə</span>
   });
 
   const [form] = Form.useForm();
   const [modal, contextHolder] = useModal();
+
 
   // API çağırışları
   const fetchTasksWithFilters = async () => {
@@ -139,8 +139,14 @@ function Task() {
   const handleRowClick = (record) => { setCurrentRecord(record); setIsViewOpen(true); };
   const handleSearch = (value) => { setSearchText(value); setPagination(prev => ({ ...prev, current: 1 })); };
   const handleFilterChange = (name, value) => { setFilters(prev => ({ ...prev, [name]: value })); setPagination(prev => ({ ...prev, current: 1 })); };
-  const handleTableChange = (paginationInfo) => setPagination(prev => ({ ...prev, current: paginationInfo.current, pageSize: paginationInfo.pageSize }));
-
+const handleTableChange = (paginationInfo) => {
+  console.log('Pagination changed:', paginationInfo);
+  setPagination(prev => ({ 
+    ...prev, 
+    current: paginationInfo.current, 
+    pageSize: paginationInfo.pageSize 
+  }));
+};
   const handleClearFilters = () => {
     setSearchText('');
     setFilters({ status: null, priority: null, assignee: null, date_range: null });
@@ -270,7 +276,7 @@ function Task() {
                 </Col>
                 <Col xs={24} sm={12} md={6}>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Tarix aralığı</label>
-                  <RangePicker  single={true}  style={{ width: '100%' }} placeholder={['Başlama', 'Bitmə']} format="DD.MM.YYYY" value={filters.date_range} onChange={dates => handleFilterChange('date_range', dates)} />
+                  <RangePicker style={{ width: '100%' }} placeholder={['Başlama', 'Bitmə']} format="DD.MM.YYYY" value={filters.date_range} onChange={dates => handleFilterChange('date_range', dates)} />
                 </Col>
               </Row>
             </Card>

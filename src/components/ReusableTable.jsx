@@ -2,7 +2,15 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Table } from 'antd';
 
-function ReusableTable({ columns, dataSource, onRowClick, pagination = false, loading = false }) {
+function ReusableTable({
+  columns,
+  dataSource,
+  onRowClick,
+  pagination = false,
+  loading = false,
+  onChange,
+  ...restProps
+}) {
   const isDark = useSelector((state) => state.theme.isDark);
 
   const handleRow = (record) => ({
@@ -23,6 +31,7 @@ function ReusableTable({ columns, dataSource, onRowClick, pagination = false, lo
         pagination={pagination}
         rowKey="id"
         loading={loading}
+        onChange={onChange}
         className={isDark ? 'dark-table' : 'light-table'}
         rowClassName={() =>
           isDark
@@ -30,6 +39,7 @@ function ReusableTable({ columns, dataSource, onRowClick, pagination = false, lo
             : 'bg-white text-black hover:bg-gray-100 cursor-pointer'
         }
         onRow={handleRow}
+        {...restProps}
       />
     </div>
   );
