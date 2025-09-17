@@ -149,6 +149,7 @@ function Home() {
     { key: 'created_at', label: 'Yaradılma tarixi', value: record.created_at ? dayjs(record.created_at).format('DD MMMM YYYY HH:mm') : '-' }
   ];
 
+  
   return (
     <div>
       <h2 className="px-1 text-xl font-medium mb-6 text-black dark:text-white">Ana səhifə</h2>
