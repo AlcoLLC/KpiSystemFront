@@ -93,7 +93,6 @@ function Home() {
 
   // Cədvəl sütunları (Task səhifəsi ilə eyni)
   const columns = [
-    { title: '№', key: 'index', width: 60, render: (_, __, index) => index + 1 },
     { title: 'Başlıq', dataIndex: 'title', key: 'title', width: 200 },
     { title: 'İcraçı', dataIndex: 'assignee_details', key: 'assignee_details', width: 120 },
     { 
