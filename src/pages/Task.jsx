@@ -1,10 +1,10 @@
 // src/pages/Task.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Form, Modal, Space, Tag, message, Button, Input, Select, DatePicker, Row, Col, Card } from 'antd';
+import { Form, Modal, Space, Tag, message, Button, Input, Select, DatePicker, Row, Col, Card, Tooltip  } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchTasks, addNewTask, updateTask, deleteTask } from '../features/tasks/tasksSlice';
-import { EditOutlined, DeleteOutlined, PlusOutlined, SyncOutlined, SearchOutlined, FilterOutlined, ClearOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, CheckCircleOutlined , SearchOutlined, FilterOutlined, ClearOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import tasksApi from '../api/tasksApi';
 import ReusableTable from '../components/ReusableTable';
@@ -17,7 +17,7 @@ const { RangePicker } = DatePicker;
 
 // Konfiqurasiya obyektləri
 const STATUS_COLORS = {
-  Gözləmədə: 'orange', Təsdiqlənib: 'green', 'Davam edir': 'processing', Tamamlanıb: 'success'
+  Gözləmədə: 'orange', Təsdiqlənib: 'green', 'Davam edir': 'processing', Tamamlanıb: 'success', 'Ləğv edilib': 'red'
 };
 
 const PRIORITY_COLORS = {
@@ -26,13 +26,20 @@ const PRIORITY_COLORS = {
 
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'Gözləmədə' }, { value: 'TODO', label: 'Təsdiqlənib' },
-  { value: 'IN_PROGRESS', label: 'Davam edir' }, { value: 'DONE', label: 'Tamamlanıb' }
+  { value: 'CANCELLED', label: 'Ləğv edilib' },{ value: 'IN_PROGRESS', label: 'Davam edir' }, 
+  { value: 'DONE', label: 'Tamamlanıb' }
 ];
 
 const PRIORITY_OPTIONS = [
   { value: 'CRITICAL', label: 'Çox vacib' }, { value: 'HIGH', label: 'Yüksək' },
   { value: 'MEDIUM', label: 'Orta' }, { value: 'LOW', label: 'Aşağı' }
 ];
+
+// Status keçidləri mapping
+const STATUS_TRANSITIONS = {
+  'TODO': { next: 'IN_PROGRESS', label: 'İcraya başla', color: 'processing' },
+  'IN_PROGRESS': { next: 'DONE', label: 'Tamamla', color: 'success' }
+};
 
 const FORM_CONFIG = [
   { name: 'title', label: 'Başlıq', type: 'text', rules: [{ required: true, message: 'Başlıq daxil edin!' }], span: 24 },
@@ -65,7 +72,6 @@ function Task() {
 
   const [form] = Form.useForm();
   const [modal, contextHolder] = useModal();
-
 
   // API çağırışları
   const fetchTasksWithFilters = async () => {
@@ -139,18 +145,51 @@ function Task() {
   const handleRowClick = (record) => { setCurrentRecord(record); setIsViewOpen(true); };
   const handleSearch = (value) => { setSearchText(value); setPagination(prev => ({ ...prev, current: 1 })); };
   const handleFilterChange = (name, value) => { setFilters(prev => ({ ...prev, [name]: value })); setPagination(prev => ({ ...prev, current: 1 })); };
-const handleTableChange = (paginationInfo) => {
-  console.log('Pagination changed:', paginationInfo);
-  setPagination(prev => ({ 
-    ...prev, 
-    current: paginationInfo.current, 
-    pageSize: paginationInfo.pageSize 
-  }));
-};
+  
+  const handleTableChange = (paginationInfo) => {
+    console.log('Pagination changed:', paginationInfo);
+    setPagination(prev => ({ 
+      ...prev, 
+      current: paginationInfo.current, 
+      pageSize: paginationInfo.pageSize 
+    }));
+  };
+  
   const handleClearFilters = () => {
     setSearchText('');
     setFilters({ status: null, priority: null, assignee: null, date_range: null });
     setPagination(prev => ({ ...prev, current: 1 }));
+  };
+
+  // Status dəyişmə funksiyası
+  const handleStatusChange = (record) => {
+    const transition = STATUS_TRANSITIONS[record.status];
+    if (!transition) return;
+
+    const currentStatusLabel = STATUS_OPTIONS.find(s => s.value === record.status)?.label;
+    const nextStatusLabel = STATUS_OPTIONS.find(s => s.value === transition.next)?.label;
+
+    modal.confirm({
+      title: 'Status dəyişikliyini təsdiqləyin',
+      content: `'${record.title}' tapşırığının statusunu '${currentStatusLabel}' vəziyyətindən '${nextStatusLabel}' vəziyyətinə keçirmək istədiyinizə əminsiniz?`,
+      okText: 'Təsdiq et',
+      okType: 'primary',
+      cancelText: 'Ləğv et',
+      onOk: async () => {
+        try {
+          const updatePayload = {
+            ...record,
+            status: transition.next,
+          };
+          
+          await dispatch(updateTask({ id: record.id, taskData: updatePayload })).unwrap();
+          message.success(`Status uğurla '${nextStatusLabel}' olaraq dəyişdirildi`);
+          fetchTasksWithFilters();
+        } catch (err) {
+          message.error(err.message || 'Status dəyişərkən xəta baş verdi');
+        }
+      }
+    });
   };
 
   const handleDelete = (record) => {
@@ -203,34 +242,51 @@ const handleTableChange = (paginationInfo) => {
     { key: 'status', label: 'Status', value: record.status_display || '-' },
     { key: 'start_date', label: 'Başlama tarixi', value: dayjs(record.start_date).format('DD MMMM YYYY') || '-' },
     { key: 'due_date', label: 'Bitmə tarixi', value: dayjs(record.due_date).format('DD MMMM YYYY') || '-' },
-    { key: 'approved', label: 'Təsdiqləndi', value: record.approved ? 'Bəli' : 'Xeyr' },
     { key: 'created_at', label: 'Yaradılma tarixi', value: record.created_at ? dayjs(record.created_at).format('DD MMMM YYYY HH:mm') : '-' }
   ];
 
   // Cədvəl sütunları
-  const columns = [
-    { title: '№', key: 'index', width: 60, render: (_, __, index) => (pagination.current - 1) * pagination.pageSize + index + 1 },
-    { title: 'Başlıq', dataIndex: 'title', key: 'title', width: 200 },
-    { title: 'İcraçı', dataIndex: 'assignee_details', key: 'assignee_details', width: 120 },
-    { title: 'Status', dataIndex: 'status_display', key: 'status', width: 120, render: status => <Tag color={STATUS_COLORS[status] || 'default'}>{status}</Tag> },
-    { title: 'Prioritet', dataIndex: 'priority_display', key: 'priority', width: 100, render: priority => <Tag color={PRIORITY_COLORS[priority] || 'default'}>{priority}</Tag> },
-    { title: 'Başlama', dataIndex: 'start_date', key: 'start_date', width: 100, render: date => date ? dayjs(date).format('DD MMM YYYY') : '-' },
-    { title: 'Bitmə', dataIndex: 'due_date', key: 'due_date', width: 100, render: date => date ? dayjs(date).format('DD MMM YYYY') : '-' },
-    { title: 'Təsdiqləndi', dataIndex: 'approved', key: 'approved', width: 100, render: approved => <Tag color={approved ? 'success' : 'volcano'}>{approved ? 'Bəli' : 'Xeyr'}</Tag> },
-    {
-      title: 'Əməliyyatlar', key: 'action', fixed: 'right', width: 120, align: 'center', className: 'dark:bg-[#1B232D]',
-      render: (_, record) => (
-        <Space size={8}>
-          <button onClick={e => { e.stopPropagation(); handleEdit(record); }} className="flex h-8 w-8 items-center justify-center rounded-md text-blue-600 transition-colors hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50">
-            <EditOutlined style={{ fontSize: '20px' }} />
-          </button>
+const columns = [
+  { title: '№', key: 'index', width: 60, render: (_, __, index) => (pagination.current - 1) * pagination.pageSize + index + 1 },
+  { title: 'Başlıq', dataIndex: 'title', key: 'title', width: 220, render: (text) => (text && text.length > 100 ? (<Tooltip title={text}>{`${text.substring(0, 100)}...`}</Tooltip>) : (text)) },
+  { title: 'İcraçı', dataIndex: 'assignee_details', key: 'assignee_details', width: 120 },
+  { title: 'Status', dataIndex: 'status_display', key: 'status', width: 120, render: status => <Tag color={STATUS_COLORS[status] || 'default'}>{status}</Tag> },
+  { title: 'Prioritet', dataIndex: 'priority_display', key: 'priority', width: 100, render: priority => <Tag color={PRIORITY_COLORS[priority] || 'default'}>{priority}</Tag> },
+  { title: 'Başlama', dataIndex: 'start_date', key: 'start_date', width: 100, render: date => date ? dayjs(date).format('DD MMM YYYY') : '-' },
+  { title: 'Bitmə', dataIndex: 'due_date', key: 'due_date', width: 100, render: date => date ? dayjs(date).format('DD MMM YYYY') : '-' },
+  {
+    title: 'Əməliyyatlar', key: 'action', fixed: 'right', width: 200, align: 'center', className: 'dark:bg-[#1B232D]',
+    render: (_, record) => {
+      if (record.status === 'DONE') {
+        return (
+          <Tooltip title="Tapşırıq tamamlanıb">
+            <CheckCircleOutlined style={{ fontSize: '22px', color: '#52c41a' }} />
+          </Tooltip>
+        );
+      }
+      const transition = STATUS_TRANSITIONS[record.status];
+      return (
+        <Space size={4} wrap>
+          {record.approved && transition && (
+            <Tooltip title={transition.label}>
+              <button size="small" type="text" onClick={e => { e.stopPropagation(); handleStatusChange(record); }} className="flex h-8 w-8 items-center justify-center rounded-md text-blue-600 transition-colors hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50">
+                <ArrowRightOutlined style={{ fontSize: '20px' }} />
+              </button>
+            </Tooltip>
+          )}
+          {record.approved && (
+            <button onClick={e => { e.stopPropagation(); handleEdit(record); }} className="flex h-8 w-8 items-center justify-center rounded-md text-blue-600 transition-colors hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/50">
+              <EditOutlined style={{ fontSize: '20px' }} />
+            </button>
+          )}
           <button onClick={e => { e.stopPropagation(); handleDelete(record); }} className="flex h-8 w-8 items-center justify-center rounded-md text-red-600 transition-colors hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/50">
             <DeleteOutlined style={{ fontSize: '20px' }} />
           </button>
         </Space>
-      )
+      );
     }
-  ];
+  }
+];
 
   const hasActiveFilters = searchText || Object.values(filters).some(v => v);
 
