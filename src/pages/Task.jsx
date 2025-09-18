@@ -240,8 +240,8 @@ function Task() {
     { key: 'created_by', label: 'Yaradan', value: record.created_by_details || '-' },
     { key: 'priority', label: 'Prioritet', value: record.priority_display || '-' },
     { key: 'status', label: 'Status', value: record.status_display || '-' },
-    { key: 'start_date', label: 'Başlama tarixi', value: dayjs(record.start_date).format('DD MMMM YYYY') || '-' },
-    { key: 'due_date', label: 'Bitmə tarixi', value: dayjs(record.due_date).format('DD MMMM YYYY') || '-' },
+    { key: 'start_date', label: 'Başlama tarixi', value: record.start_date ? dayjs(record.start_date).format('DD MMMM YYYY') : '-' },
+    { key: 'due_date', label: 'Bitmə tarixi', value: record.due_date ? dayjs(record.due_date).format('DD MMMM YYYY') : '-' },
     { key: 'created_at', label: 'Yaradılma tarixi', value: record.created_at ? dayjs(record.created_at).format('DD MMMM YYYY HH:mm') : '-' }
   ];
 
