@@ -67,13 +67,7 @@ export const useTaskPermissions = (viewMode) => {
         };
       }
     }
-    
-    if (isTopManagement) {
-        showViewSwitcher = false; 
-        if (viewMode === 'my') {
-            canCreate = false;
-        }
-    }
+
 
 
     return {

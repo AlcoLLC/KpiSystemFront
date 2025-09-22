@@ -30,23 +30,21 @@ export const getFormConfig = (users, usersLoading, permissions) => {
   const allFields = [
     { name: 'title', label: 'Başlıq', type: 'text', rules: [{ required: true, message: 'Başlıq daxil edin!' }], span: 24 },
     { name: 'description', label: 'Təsvir', type: 'textarea', span: 24 },
+    { name: 'start_date', label: 'Başlama tarixi', type: 'datepicker', span: 12 },
+    { name: 'due_date', label: 'Bitmə tarixi', type: 'datepicker', span: 12 },
     { 
       name: 'assignee', label: 'İcraçı', type: 'select', rules: [{ required: true, message: 'İcraçı seçin!' }], 
       options: users.map(user => ({
         value: user.id,
-        // Düzəliş: Ad və Soyad göstərilməsi
         label: user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username
       })), 
       loading: usersLoading, span: 12 
     },
-    { name: 'priority', label: 'Prioritet', type: 'select', rules: [{ required: true, message: 'Prioritet seçin!' }], options: PRIORITY_OPTIONS, span: 12 },
-    { name: 'start_date', label: 'Başlama tarixi', type: 'datepicker', span: 12 },
-    { name: 'due_date', label: 'Bitmə tarixi', type: 'datepicker', span: 12 }
+    { name: 'priority', label: 'Prioritet', type: 'select', rules: [{ required: true, message: 'Prioritet seçin!' }], options: PRIORITY_OPTIONS, span: 12 }
   ];
 
-  // Admin və ya yüksək vəzifəlilər üçün status redaktəsi
   if (permissions?.userRole === 'admin' || permissions?.userRole === 'top_management') {
-    allFields.splice(4, 0, { // Prioritetdən sonra əlavə edirik
+    allFields.splice(4, 0, { 
         name: 'status',
         label: 'Status',
         type: 'select',
