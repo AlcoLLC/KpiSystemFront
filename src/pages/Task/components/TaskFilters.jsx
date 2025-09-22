@@ -4,7 +4,7 @@ import { STATUS_OPTIONS, PRIORITY_OPTIONS } from '../utils/taskConstants';
 
 const { RangePicker } = DatePicker;
 
-const TaskFilters = ({ filters, onFilterChange, users, permissions}) => (
+const TaskFilters = React.memo(({ filters, onFilterChange, users, permissions}) => (
   <Card size="small" className="mb-4 bg-gray-50 dark:bg-[#2A3441]" bodyStyle={{ padding: '16px' }}>
     <Row gutter={[16, 16]}>
       <Col xs={24} sm={12} md={6}>
@@ -30,6 +30,6 @@ const TaskFilters = ({ filters, onFilterChange, users, permissions}) => (
       </Col>
     </Row>
   </Card>
-);
+));
 
 export default TaskFilters;

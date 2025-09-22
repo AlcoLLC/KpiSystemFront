@@ -84,7 +84,7 @@
 
 /* --- Pagination --- */
 .dark .ant-pagination-item a {
-  color: #1677ff !important; /* Default rəng */
+  color: rgba(255, 255, 255, 0.726) !important; /* Default rəng */
 }
 
 /* Sağ-sol oxlarının olduğu düymələr */
@@ -97,12 +97,12 @@
 .dark .ant-pagination-item {
   color: #1677ff !important;
   background-color: transparent !important;
-  border: 1px solid #1677ff !important;
+  border: 1px solid rgba(255, 255, 255, 0.726) !important;
 }
 /* Aktiv olan səhifənin içindəki rəqəm (ağ rəngdə) */
 .dark .ant-pagination-item-active {
-  color: #1677ff !important;
-  background-color: rgba(255, 255, 255, 0.726) !important;
+  background-color: #1677ff  !important;
+  border: #1677ff !important;
 }
 
 /* Passiv (disabled) vəziyyətdəki oxlar və rəqəmlər */
@@ -514,4 +514,35 @@
 
 .dark .ant-modal-confirm-content {
   color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.dark .ant-table-tbody > tr.ant-table-placeholder > td {
+  background: #1B232D !important; 
+}
+
+.dark .ant-table-empty .ant-empty-description {
+  color: rgba(255, 255, 255, 0.65); 
+}
+
+.dark .ant-radio-button-wrapper {
+  background-color: transparent;
+  border-color: #4A5568 !important;
+  color: #CBD5E0;
+}
+
+.dark .ant-radio-button-wrapper:not(.ant-radio-button-wrapper-checked):hover {
+  border-color: #1677ff !important;
+  color: #1677ff;
+}
+
+.dark .ant-radio-button-wrapper-checked,
+.dark .ant-radio-button-wrapper-checked:hover {
+  background-color: #1677ff !important;
+  border-color: #1677ff !important;
+  color: #ffffff !important;
+}
+
+.dark .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(:first-child):not(:last-child) {
+  border-left-color: #1677ff !important;
+  border-right-color: #1677ff !important;
 }
