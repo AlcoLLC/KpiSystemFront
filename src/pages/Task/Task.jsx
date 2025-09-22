@@ -51,7 +51,7 @@ function Task() {
   }, [permissions.isEmployee, permissions.userRole]);
 
   const fetchTasksWithFilters = useCallback(async () => {
-    if (!user) return;
+    if (!user || !user.id) return;
     
     const params = {
       page: pagination.current, page_size: pagination.pageSize,
@@ -63,13 +63,14 @@ function Task() {
         params.assignee = user.id;
     } else {
         params.assignee = filters.assignee || undefined;
+        params.exclude_assignee = user.id;
     }
 
     if (filters.date_range?.length === 2) {
       params.start_date_after = filters.date_range[0].format('YYYY-MM-DD');
       params.due_date_before = filters.date_range[1].format('YYYY-MM-DD');
     }
-    Object.keys(params).forEach(key => !params[key] && delete params[key]);
+    Object.keys(params).forEach(key => (params[key] === undefined || params[key] === null) && delete params[key]);
 
     try {
       const response = await tasksApi.getTasks(params);
