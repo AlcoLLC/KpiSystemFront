@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import Login from '../pages/Login';
 import Home from '../pages/Home';
-import Task from '../pages/Task';
+import Task from '../pages/Task/Task';
 import PrivateRoute from '../components/PrivateRoute';
 import PublicRoute from '../components/PublicRoute';
 import Profile from '../pages/Profile';
