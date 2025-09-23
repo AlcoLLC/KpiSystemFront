@@ -7,8 +7,8 @@ import useAuth from '../../hooks/useAuth';
 import tasksApi from '../../api/tasksApi';
 import ReusableTable from '../../components/ReusableTable';
 import { useTaskPermissions } from './hooks/useTaskPermissions';
-import { getTaskColumns } from './utils/TaskColumns.jsx';
-import { STATUS_OPTIONS, STATUS_TRANSITIONS } from './utils/taskConstants';
+import { getTaskTableColumns } from '../../features/tasks/utils/taskUtils.jsx'; 
+import { STATUS_OPTIONS, STATUS_TRANSITIONS } from '../../features/tasks/utils/taskUtils.jsx';
 import TaskFilters from './components/TaskFilters';
 import TaskDetailsModal from './components/TaskDetailsModal';
 import TaskFormModal from './components/TaskFormModal';
@@ -183,7 +183,7 @@ function Task() {
     }
   }, [dispatch, fetchTasksWithFilters, mode, currentRecord, permissions.formConfig]);
 
-  const columns = useMemo(() => getTaskColumns(pagination, { handleEdit, handleDelete, handleStatusChange }, permissions), [pagination, permissions, handleEdit, handleDelete, handleStatusChange]);
+  const columns = useMemo(() => getTaskTableColumns(pagination, { handleEdit, handleDelete, handleStatusChange }, permissions, viewMode), [pagination, permissions, handleEdit, handleDelete, handleStatusChange]);
   
   const hasActiveFilters = debouncedSearchText || Object.values(filters).some(v => v);
 
