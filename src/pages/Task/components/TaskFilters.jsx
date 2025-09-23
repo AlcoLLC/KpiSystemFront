@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Select, DatePicker, Card } from 'antd';
-import { STATUS_OPTIONS, PRIORITY_OPTIONS } from '../utils/taskConstants';
+import { STATUS_OPTIONS, PRIORITY_OPTIONS } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const { RangePicker } = DatePicker;
 

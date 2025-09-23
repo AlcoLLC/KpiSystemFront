@@ -8,6 +8,8 @@ const tasksApi = {
   getTask: (taskId) => apiService.get(`/tasks/tasks/${taskId}/`), 
   verifyTask: (token) => apiService.get(`/tasks/tasks/verify/${token}/`), 
   getAssignableUsers: () => apiService.get("/tasks/assignable-users/"), 
+  getMonthlyStats: () => apiService.get('/tasks/stats/monthly/'),
+  getPriorityStats: () => apiService.get('/tasks/stats/priority/'),
 };
 
 export default tasksApi;

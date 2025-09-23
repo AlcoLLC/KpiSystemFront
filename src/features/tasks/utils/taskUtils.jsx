@@ -1,13 +1,19 @@
+import React from 'react';
+import { Tag } from 'antd';
 import dayjs from 'dayjs';
 
+// === SABİT DƏYƏRLƏR (CONSTANTS) ===
+
 export const STATUS_COLORS = {
-  Gözləmədə: 'orange', Təsdiqlənib: 'green', 'Davam edir': 'processing', Tamamlanıb: 'success', 'Ləğv edilib': 'red'
+  'Gözləmədə': 'orange', 'Təsdiqlənib': 'green', 'Davam edir': 'processing', 'Tamamlanıb': 'success', 'Ləğv edilib': 'red'
 };
 
 export const PRIORITY_COLORS = {
-  'Çox vacib': 'red', Yüksək: 'volcano', Orta: 'gold', Aşağı: 'lime'
+  'Çox vacib': 'red',
+  'Yüksək': 'gold',
+  'Orta': 'cyan',
+  'Aşağı': 'green'
 };
-
 export const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'Gözləmədə' }, { value: 'TODO', label: 'Təsdiqlənib' },
   { value: 'CANCELLED', label: 'Ləğv edilib' },{ value: 'IN_PROGRESS', label: 'Davam edir' },
@@ -24,8 +30,7 @@ export const STATUS_TRANSITIONS = {
   'IN_PROGRESS': { next: 'DONE', label: 'Tamamla', color: 'success' }
 };
 
-
-// Form konfiqurasiyasını funksiya edirik ki, dinamik olsun
+// Form Konfiqurasiyası
 export const getFormConfig = (users, usersLoading, permissions) => {
   const allFields = [
     { name: 'title', label: 'Başlıq', type: 'text', rules: [{ required: true, message: 'Başlıq daxil edin!' }], span: 24 },
@@ -53,12 +58,46 @@ export const getFormConfig = (users, usersLoading, permissions) => {
     });
   }
 
-  // Sahələri icazələrə görə gizlət
   const hiddenFields = permissions.formConfig?.hideFields || [];
   return allFields.filter(field => !hiddenFields.includes(field.name));
 };
 
-// Detallar üçün
+// Cədvəl Sütunları
+export const getTaskTableColumns = (permissions) => {
+  const allColumns = [
+    { title: 'Başlıq', dataIndex: 'title', key: 'title', width: 200 },
+    { title: 'İcraçı', dataIndex: 'assignee_details', key: 'assignee_details', width: 120 },
+    { 
+      title: 'Status', 
+      dataIndex: 'status_display', 
+      key: 'status', 
+      width: 120, 
+      render: status => <Tag color={STATUS_COLORS[status] || 'default'}>{status}</Tag> 
+    },
+    { 
+      title: 'Prioritet', 
+      dataIndex: 'priority_display', 
+      key: 'priority', 
+      width: 100, 
+      render: priority => <Tag color={PRIORITY_COLORS[priority] || 'default'}>{priority}</Tag> 
+    },
+    { 
+      title: 'Bitmə tarixi', 
+      dataIndex: 'due_date', 
+      key: 'due_date', 
+      width: 100, 
+      render: date => date ? dayjs(date).format('DD MMM YYYY') : '-' 
+    }
+  ];
+
+  if (permissions && !permissions.showAssigneeColumn) {
+    return allColumns.filter(col => col.key !== 'assignee_details');
+  }
+  
+  return allColumns;
+};
+
+// Detallar Siyahısı
 export const generateDetailsItems = (record) => !record ? [] : [
     { key: 'title', label: 'Başlıq', value: record.title },
     { key: 'description', label: 'Təsvir', value: record.description || '-' },

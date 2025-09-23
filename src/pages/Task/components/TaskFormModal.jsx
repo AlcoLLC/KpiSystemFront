@@ -3,7 +3,7 @@ import { Form } from 'antd';
 import dayjs from 'dayjs';
 import BaseModal from '../../../components/BaseModal';
 import AppForm from '../../../components/AppForm';
-import { getFormConfig } from '../utils/taskConstants';
+import { getFormConfig } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const TaskFormModal = ({ open, mode, initialData, onCancel, onFinish, loading, users, usersLoading, permissions }) => {
   const [form] = Form.useForm();

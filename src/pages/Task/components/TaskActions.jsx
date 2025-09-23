@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, ArrowRightOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined  } from '@ant-design/icons';
-import { STATUS_TRANSITIONS } from '../utils/taskConstants';
+import { STATUS_TRANSITIONS } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const ActionButton = ({ icon, tooltip, onClick, colorClass }) => (
   <Tooltip title={tooltip}>
