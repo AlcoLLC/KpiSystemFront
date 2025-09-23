@@ -65,39 +65,6 @@ const kpiAPI = {
         evaluation_type: 'SUPERIOR'
       }
     });
-  },
-
-  // Performans raporunu getir
-  getPerformanceReport: (userId, params = {}) => {
-    return apiService.get(`/kpis/performance-report/${userId}/`, { 
-      params 
-    });
-  },
-
-  // Departman performansını getir
-  getDepartmentPerformance: (departmentId, params = {}) => {
-    return apiService.get(`/kpis/department-performance/${departmentId}/`, { 
-      params 
-    });
-  },
-
-  // KPI istatistiklerini getir
-  getKpiStatistics: (params = {}) => {
-    return apiService.get('/kpis/statistics/', { 
-      params 
-    });
-  },
-
-  // Pending evaluations (bekleyen değerlendirmeler)
-  getPendingEvaluations: (userId) => {
-    return apiService.get('/kpis/pending-evaluations/', { 
-      params: { evaluator: userId }
-    });
-  },
-
-  // Bulk evaluation (toplu değerlendirme)
-  createBulkEvaluation: (evaluations) => {
-    return apiService.post('/kpis/bulk-evaluation/', { evaluations });
   }
 };
 
