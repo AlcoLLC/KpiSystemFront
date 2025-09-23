@@ -41,7 +41,6 @@ export const useTaskPermissions = (viewMode) => {
       formConfig = {
         hideFields: ['assignee', 'status'],
         defaultValues: {
-          status: 'PENDING',
           assignee: user.id,
         },
       };
@@ -52,7 +51,6 @@ export const useTaskPermissions = (viewMode) => {
         formConfig = {
           hideFields: ['assignee', 'status'],
           defaultValues: {
-            status: 'PENDING',
             assignee: user.id,
           },
         };
@@ -61,9 +59,7 @@ export const useTaskPermissions = (viewMode) => {
         showAssigneeFilter = true;
         formConfig = {
           hideFields: ['status'], 
-          defaultValues: {
-            status: 'TODO', 
-          },
+          defaultValues: {},
         };
       }
     }
