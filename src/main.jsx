@@ -7,6 +7,9 @@ import AppRouter from "./routes/AppRouter";
 import { AuthProvider } from "./context/AuthContext";
 import "./styles/globals.css";
 import ThemeManager from "./components/ThemeManager";
+import dayjs from 'dayjs';
+import 'dayjs/locale/az';
+dayjs.locale('az');
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
