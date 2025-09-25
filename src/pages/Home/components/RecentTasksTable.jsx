@@ -6,22 +6,28 @@ import ReusableTable from '../../../components/ReusableTable';
 import BaseModal from '../../../components/BaseModal';
 import Details from '../../../components/Details';
 import tasksApi from '../../../api/tasksApi';
-import { useTaskPermissions } from '../../Task/hooks/useTaskPermissions';
+import useAuth from '../../../hooks/useAuth'; // <-- useTaskPermissions yerinə bunu istifadə edirik
 import { getTaskTableColumns, generateDetailsItems } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const RecentTasksTable = () => {
+  const { user } = useAuth(); // <-- İstifadəçi məlumatını birbaşa alırıq
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   
-  // Using 'my' viewMode to get permissions relevant to the current user
-  const permissions = useTaskPermissions('my'); 
+  // Home səhifəsi üçün sadə icazə məntiqi
+  const permissions = useMemo(() => {
+    if (!user) return { showAssigneeColumn: false };
+    return {
+      // "İcraçı" sütunu yalnız istifadəçi "employee" deyilsə görünsün
+      showAssigneeColumn: user.role !== 'employee'
+    };
+  }, [user]);
 
   useEffect(() => {
     const fetchRecentTasks = async () => {
       try {
-        // Fetch tasks based on user's permission scope
         const response = await tasksApi.getTasks({ page_size: 10, ordering: '-created_at' });
         const responseData = response.data;
         setTasks(responseData.results || responseData || []);

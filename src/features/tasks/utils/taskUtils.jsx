@@ -62,7 +62,6 @@ export const getFormConfig = (users, usersLoading, permissions) => {
   return allFields.filter(field => !hiddenFields.includes(field.name));
 };
 
-// Cədvəl Sütunları
 export const getTaskTableColumns = (permissions) => {
   const allColumns = [
     { title: 'Başlıq', dataIndex: 'title', key: 'title', width: 200 },
@@ -97,7 +96,6 @@ export const getTaskTableColumns = (permissions) => {
   return allColumns;
 };
 
-// Detallar Siyahısı
 export const generateDetailsItems = (record) => !record ? [] : [
     { key: 'title', label: 'Başlıq', value: record.title },
     { key: 'description', label: 'Təsvir', value: record.description || '-' },

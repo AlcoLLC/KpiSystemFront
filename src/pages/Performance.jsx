@@ -6,16 +6,7 @@ import { Bar, Radar } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
-// Nümunə Məlumatlar (gələcəkdə API-dan gələcək)
-// =======================================================
 
-// 1. Ümumi Statistika üçün
-const overallStats = {
-  performanceScore: { value: 88, previous: 85 },
-  tasksCompleted: { value: 42, previous: 38 },
-  avgCompletionTime: { value: 3.2, previous: 3.5 }, // gün
-  overdueTasks: { value: 3, previous: 5 },
-};
 
 // 2. Aylıq Performans Qrafiki üçün
 const monthlyPerformanceData = {
@@ -110,52 +101,6 @@ function Performance() {
       
       <div className="space-y-6">
         {/* KPI KARTLARI */}
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} lg={6}>
-            <Card className="shadow-sm bg-white dark:bg-[#1B232D]">
-              <Statistic
-                title="Performans Balı"
-                value={overallStats.performanceScore.value}
-                precision={1}
-                valueStyle={{ color: overallStats.performanceScore.value > overallStats.performanceScore.previous ? '#3f8600' : '#cf1322' }}
-                prefix={overallStats.performanceScore.value > overallStats.performanceScore.previous ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                suffix="/ 100"
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <Card className="shadow-sm bg-white dark:bg-[#1B232D]">
-              <Statistic
-                title="Bu Ay Tamamlanan"
-                value={overallStats.tasksCompleted.value}
-                valueStyle={{ color: '#3f8600' }}
-                prefix={<CheckCircleOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <Card className="shadow-sm bg-white dark:bg-[#1B232D]">
-              <Statistic
-                title="Ort. Tamamlanma Müddəti"
-                value={overallStats.avgCompletionTime.value}
-                precision={1}
-                valueStyle={{ color: overallStats.avgCompletionTime.value < overallStats.avgCompletionTime.previous ? '#3f8600' : '#cf1322' }}
-                prefix={<SyncOutlined />}
-                suffix="gün"
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <Card className="shadow-sm bg-white dark:bg-[#1B232D]">
-              <Statistic
-                title="Gecikən Tapşırıqlar"
-                value={overallStats.overdueTasks.value}
-                valueStyle={{ color: '#cf1322' }}
-                prefix={<ExclamationCircleOutlined />}
-              />
-            </Card>
-          </Col>
-        </Row>
 
         {/* QRAFİKLƏR */}
         <Row gutter={[16, 16]}>
