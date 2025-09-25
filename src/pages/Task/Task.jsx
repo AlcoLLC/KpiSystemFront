@@ -7,7 +7,7 @@ import useAuth from '../../hooks/useAuth';
 import tasksApi from '../../api/tasksApi';
 import ReusableTable from '../../components/ReusableTable';
 import { useTaskPermissions } from './hooks/useTaskPermissions';
-import { getTaskTableColumns } from '../../features/tasks/utils/taskUtils.jsx'; 
+import { getTaskColumns } from './utils/TaskColumns.jsx'; 
 import { STATUS_OPTIONS, STATUS_TRANSITIONS } from '../../features/tasks/utils/taskUtils.jsx';
 import TaskFilters from './components/TaskFilters';
 import TaskDetailsModal from './components/TaskDetailsModal';
@@ -183,8 +183,8 @@ function Task() {
     }
   }, [dispatch, fetchTasksWithFilters, mode, currentRecord, permissions.formConfig]);
 
-  const columns = useMemo(() => getTaskTableColumns(pagination, { handleEdit, handleDelete, handleStatusChange }, permissions, viewMode), [pagination, permissions, handleEdit, handleDelete, handleStatusChange]);
-  
+  // Task.jsx faylında
+const columns = useMemo(() => getTaskColumns(pagination, { handleEdit, handleDelete, handleStatusChange }, permissions, viewMode), [pagination, handleEdit, handleDelete, handleStatusChange, permissions, viewMode]); 
   const hasActiveFilters = debouncedSearchText || Object.values(filters).some(v => v);
 
   if (!permissions.canViewPage) return null;
