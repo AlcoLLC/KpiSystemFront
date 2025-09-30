@@ -11,6 +11,7 @@ export const useTaskPermissions = (viewMode) => {
 
     const isEmployee = user.role === 'employee';
     const isSuperior = !isEmployee;
+    const isAdmin = user.role === 'admin';
 
     const showAssigneeColumn = isSuperior && viewMode === 'team';
     const showAssigneeFilter = isSuperior && viewMode === 'team';
@@ -18,6 +19,26 @@ export const useTaskPermissions = (viewMode) => {
     let canCreate = true;
     let showViewSwitcher = isSuperior;
     let formConfig = {};
+
+    if (isAdmin) {
+      return {
+        canViewPage: true,
+        userRole: 'admin',
+        isEmployee: false,
+        isSuperior: true,
+        canCreate: true,
+        canEdit: () => true, 
+        canDelete: () => true, 
+        canChangeStatus: () => false, 
+        showAssigneeColumn: true, 
+        showAssigneeFilter: true, 
+        showViewSwitcher: false, 
+        formConfig: {
+          hideFields: [], 
+          defaultValues: {}
+        }
+      };
+    }
 
     if (isEmployee) {
       showViewSwitcher = false;
@@ -45,9 +66,9 @@ export const useTaskPermissions = (viewMode) => {
       isEmployee,
       isSuperior,
       canCreate,
-      canEdit: (task) => user.id === task.created_by || user.id === task.assignee || user.role === 'admin',
-      canDelete: (task) => user.id === task.created_by || user.id === task.assignee || user.role === 'admin',
-      canChangeStatus: (task) => user.id === task.assignee || user.role === 'admin',
+      canEdit: (task) => user.id === task.created_by || user.id === task.assignee,
+      canDelete: (task) => user.id === task.created_by || user.id === task.assignee,
+      canChangeStatus: (task) => user.id === task.assignee,
       showAssigneeColumn,
       showAssigneeFilter,
       showViewSwitcher,
