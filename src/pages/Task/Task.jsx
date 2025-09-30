@@ -48,9 +48,13 @@ function Task() {
   });
 
   useEffect(() => {
-    if (permissions.isEmployee) setViewMode('my');
-    if (permissions.userRole === 'top_management') setViewMode('team');
-  }, [permissions.isEmployee, permissions.userRole]);
+    if (permissions.userRole === 'admin') {
+      setViewMode('team');
+    } 
+    else if (permissions.isEmployee) {
+      setViewMode('my');
+    }
+  }, [permissions.userRole, permissions.isEmployee]);
 
   const fetchTasksWithFilters = useCallback(async () => {
     if (!user || !user.id) return;

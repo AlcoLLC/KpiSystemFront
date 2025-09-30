@@ -60,7 +60,7 @@ const RecentTasksTable = () => {
       />
       <div className="mt-4 flex justify-end">
         <Link
-          to="/task"
+          to="/tasks"
           className="inline-flex items-center gap-2 px-4 py-2 border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-600 dark:hover:bg-blue-400 hover:text-white dark:hover:text-black transition-colors duration-500"
         >
           Bütün tapşırıqlar
