@@ -6,8 +6,6 @@ import { Bar, Radar } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, RadialLinearScale, PointElement, LineElement, Filler);
 
-
-
 // 2. Aylıq Performans Qrafiki üçün
 const monthlyPerformanceData = {
   labels: ['May', 'İyun', 'İyul', 'Avqust', 'Sentyabr'],
@@ -100,7 +98,6 @@ function Performance() {
       <h2 className="px-1 text-xl font-medium mb-6 text-black dark:text-white">Performans Paneli</h2>
       
       <div className="space-y-6">
-        {/* KPI KARTLARI */}
 
         {/* QRAFİKLƏR */}
         <Row gutter={[16, 16]}>

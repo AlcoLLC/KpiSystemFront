@@ -32,7 +32,7 @@ export default function AppRouter() {
       >
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/task" element={<Task />} />
+        <Route path="/tasks" element={<Task />} />
         <Route path="/kpi_system" element={<KpiSytem />} />
         <Route path="/report" element={<Report />} />
         <Route path="/calendar" element={<Calendar />} />

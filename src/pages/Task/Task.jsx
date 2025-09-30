@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useLocation } from 'react-router-dom'; 
 import { Modal, message, Button, Input, Radio, Empty  } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateTask, addNewTask, deleteTask } from '../../features/tasks/tasksSlice';
@@ -23,7 +24,7 @@ function Task() {
   const { status: reduxStatus } = useSelector(state => state.tasks);
   const loading = reduxStatus === 'loading';
   const [modal, contextHolder] = useModal();
-
+  const location = useLocation();
   // State Management
   const [viewMode, setViewMode] = useState('team'); 
   const permissions = useTaskPermissions(viewMode);
@@ -40,7 +41,7 @@ function Task() {
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebounce(searchText, 500);
   
-  const [filters, setFilters] = useState({ status: null, priority: null, assignee: null, date_range: null });
+  const [filters, setFilters] = useState({ status: null, priority: null, assignee: null, date_range: null, overdue: null }); 
   const [showFilters, setShowFilters] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1, pageSize: 10, total: 0, showTotal: (total, range) => <span className="text-gray-600 dark:text-gray-300">{range[0]}-{range[1]} / {total} nəticə</span>
@@ -57,7 +58,7 @@ function Task() {
     const params = {
       page: pagination.current, page_size: pagination.pageSize,
       search: debouncedSearchText || undefined,
-      status: filters.status || undefined, priority: filters.priority || undefined,
+      status: filters.status || undefined, priority: filters.priority || undefined, overdue: filters.overdue || undefined,
     };
 
     if (viewMode === 'my' || permissions.isEmployee) {
@@ -100,6 +101,16 @@ function Task() {
   }, []);
 
   useEffect(() => { fetchTasksWithFilters(); }, [fetchTasksWithFilters]);
+
+  useEffect(() => {
+    const predefinedFilter = location.state?.predefinedFilter;
+    if (predefinedFilter) {
+      const newFilters = { status: null, priority: null, assignee: null, date_range: null, overdue: null, ...predefinedFilter };
+      setFilters(newFilters);
+      setPagination(prev => ({ ...prev, current: 1 }));
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Event Handlers stabilized with useCallback
   const handleAddClick = useCallback(() => { setMode('add'); setCurrentRecord(null); setIsAddEditOpen(true); }, []);

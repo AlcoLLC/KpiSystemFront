@@ -57,7 +57,7 @@ export default function MainLayout() {
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="/task" className={navLinkClasses}>
+                <NavLink to="/tasks" className={navLinkClasses}>
                   <FaTasks size={24} /> Tapşırıqlar
                 </NavLink>
               </li>

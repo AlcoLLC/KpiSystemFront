@@ -10,6 +10,7 @@ const tasksApi = {
   getAssignableUsers: () => apiService.get("/tasks/assignable-users/"), 
   getMonthlyStats: () => apiService.get('/tasks/stats/monthly/'),
   getPriorityStats: () => apiService.get('/tasks/stats/priority/'),
+  getHomeStats: () => apiService.get('/tasks/home-stats/'),
 };
 
 export default tasksApi;
