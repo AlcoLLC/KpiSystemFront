@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Spin, message } from 'antd';
 import tasksApi from '../../../api/tasksApi';
-import dayjs from 'dayjs'; // dayjs-i burada da import edirik
+import dayjs from 'dayjs'; 
 
 const barOptions = {
   responsive: true,
@@ -20,9 +20,7 @@ const MonthlyTasksChart = () => {
     const fetchStats = async () => {
       try {
         const response = await tasksApi.getMonthlyStats();
-        const apiData = response.data; // Məs: [{month: "2025-08", count: 5}, ...]
-
-        // API-dən gələn datanı asan axtarış üçün bir "map"-ə çeviririk
+        const apiData = response.data; 
         const statsMap = new Map(apiData.map((item) => [item.month, item.count]));
 
         const labels = [];
@@ -33,7 +31,6 @@ const MonthlyTasksChart = () => {
           const monthDate = now.subtract(i, 'month');
           const monthKey = monthDate.format('YYYY-MM');
           const rawMonthLabel = monthDate.format('MMMM YYYY');
-          // İlk hərfi böyüdüb, qalan hissə ilə birləşdiririk
           const monthLabel = rawMonthLabel.charAt(0).toUpperCase() + rawMonthLabel.slice(1); // "Sentyabr 2025"
 
           labels.push(monthLabel);

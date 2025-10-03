@@ -14,9 +14,11 @@ import TaskFilters from './components/TaskFilters';
 import TaskDetailsModal from './components/TaskDetailsModal';
 import TaskFormModal from './components/TaskFormModal';
 import { useDebounce } from '../../hooks/useDebounce';
+
 const { useModal } = Modal;
 
-
+// Filterlər üçün defolt, boş vəziyyəti təyin edirik
+const initialFilters = { status: null, priority: null, assignee: null, date_range: null, overdue: null };
 
 function Task() {
   const { user } = useAuth();
@@ -25,8 +27,8 @@ function Task() {
   const loading = reduxStatus === 'loading';
   const [modal, contextHolder] = useModal();
   const location = useLocation();
-  // State Management
-  const [viewMode, setViewMode] = useState('team'); 
+  
+  const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my'); 
   const permissions = useTaskPermissions(viewMode);
 
   const [data, setData] = useState([]);
@@ -41,28 +43,32 @@ function Task() {
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebounce(searchText, 500);
   
-  const [filters, setFilters] = useState({ status: null, priority: null, assignee: null, date_range: null, overdue: null }); 
+  const [filters, setFilters] = useState(initialFilters); 
   const [showFilters, setShowFilters] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1, pageSize: 10, total: 0, showTotal: (total, range) => <span className="text-gray-600 dark:text-gray-300">{range[0]}-{range[1]} / {total} nəticə</span>
   });
 
+  const [isReadyToFetch, setIsReadyToFetch] = useState(false);
+
   useEffect(() => {
-    if (permissions.userRole === 'admin') {
-      setViewMode('team');
-    } 
-    else if (permissions.isEmployee) {
-      setViewMode('my');
+    const predefinedFilter = location.state?.predefinedFilter;
+    if (predefinedFilter) {
+      setFilters({ ...initialFilters, ...predefinedFilter });
+      window.history.replaceState({}, document.title);
     }
-  }, [permissions.userRole, permissions.isEmployee]);
+    setIsReadyToFetch(true);
+  }, [location.state]);
 
   const fetchTasksWithFilters = useCallback(async () => {
-    if (!user || !user.id) return;
+    if (!user || !user.id || !isReadyToFetch) return;
     
     const params = {
       page: pagination.current, page_size: pagination.pageSize,
       search: debouncedSearchText || undefined,
-      status: filters.status || undefined, priority: filters.priority || undefined, overdue: filters.overdue || undefined,
+      status: filters.status || undefined, 
+      priority: filters.priority || undefined, 
+      overdue: filters.overdue || undefined,
     };
 
     if (viewMode === 'my' || permissions.isEmployee) {
@@ -87,7 +93,7 @@ function Task() {
       message.error('Tapşırıqları yükləmək mümkün olmadı.');
       setData([]);
     }
-  }, [pagination.current, pagination.pageSize, debouncedSearchText, filters, viewMode, permissions.isEmployee, user]);
+  }, [user, pagination.current, pagination.pageSize, debouncedSearchText, filters, viewMode, permissions.isEmployee, isReadyToFetch]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -104,32 +110,27 @@ function Task() {
     fetchUsers();
   }, []);
 
-  useEffect(() => { fetchTasksWithFilters(); }, [fetchTasksWithFilters]);
+  useEffect(() => { 
+    fetchTasksWithFilters();
+  }, [fetchTasksWithFilters]);
 
-  useEffect(() => {
-    const predefinedFilter = location.state?.predefinedFilter;
-    if (predefinedFilter) {
-      const newFilters = { status: null, priority: null, assignee: null, date_range: null, overdue: null, ...predefinedFilter };
-      setFilters(newFilters);
-      setPagination(prev => ({ ...prev, current: 1 }));
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
-
-  // Event Handlers stabilized with useCallback
   const handleAddClick = useCallback(() => { setMode('add'); setCurrentRecord(null); setIsAddEditOpen(true); }, []);
   const handleEdit = useCallback((record) => { setMode('edit'); setCurrentRecord(record); setIsAddEditOpen(true); }, []);
   const handleRowClick = useCallback((record) => { setCurrentRecord(record); setIsViewOpen(true); }, []);
+  
   const handleFilterChange = useCallback((name, value) => {
       setFilters(prev => ({ ...prev, [name]: value }));
       setPagination(prev => ({ ...prev, current: 1 }));
   }, []);
+
   const handleTableChange = useCallback((paginationInfo) => { setPagination(prev => ({ ...prev, current: paginationInfo.current, pageSize: paginationInfo.pageSize })); }, []);
+  
   const handleClearFilters = useCallback(() => {
     setSearchText('');
-    setFilters({ status: null, priority: null, assignee: null, date_range: null });
+    setFilters(initialFilters);
     setPagination(prev => ({ ...prev, current: 1 }));
   }, []);
+
   const handleViewModeChange = useCallback((e) => { setViewMode(e.target.value); handleClearFilters(); }, [handleClearFilters]);
   
   const showConfirmation = useCallback((config) => modal.confirm(config), [modal]);
@@ -199,15 +200,15 @@ function Task() {
     }
   }, [dispatch, fetchTasksWithFilters, mode, currentRecord, permissions.formConfig]);
 
-  // Task.jsx faylında
-const columns = useMemo(() => getTaskColumns(pagination, { handleEdit, handleDelete, handleStatusChange }, permissions, viewMode), [pagination, handleEdit, handleDelete, handleStatusChange, permissions, viewMode]); 
-  const hasActiveFilters = debouncedSearchText || Object.values(filters).some(v => v);
+  const columns = useMemo(() => getTaskColumns(pagination, { handleEdit, handleDelete, handleStatusChange }, permissions, viewMode), [pagination, handleEdit, handleDelete, handleStatusChange, permissions, viewMode]); 
+  
+  const hasActiveFilters = debouncedSearchText || Object.values(filters).some(v => v !== null && v !== '');
 
   if (!permissions.canViewPage) return null;
 
   const tableLocale = {
-        emptyText: <Empty description="Məlumat tapılmadı" />
-    };
+    emptyText: <Empty description="Məlumat tapılmadı" />
+  };
 
   return (
     <div>

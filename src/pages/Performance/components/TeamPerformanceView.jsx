@@ -48,20 +48,16 @@ const TeamPerformanceView = () => {
   }, []);
 
   const columns = useMemo(() => [
-   { 
+    { 
       title: 'İşçi', 
       dataIndex: 'full_name', 
       key: 'full_name',
-      render: (text, record) => {
-        // DÜZƏLİŞ: Tam URL-i yaradırıq
-        const photoUrl = record.profile_photo ? `${import.meta.env.VITE_API_BASE_URL}${record.profile_photo}` : null;
-        return (
-            <div className="flex items-center">
-              <Avatar src={photoUrl} icon={<UserOutlined />} className="mr-3" />
-              <span className="font-medium">{text}</span>
-             </div>
-        )  
-     }
+      render: (text, record) => (
+        <div className="flex items-center">
+          <Avatar src={record.profile_photo} icon={<UserOutlined />} className="mr-3" />
+          <span className="font-medium">{text}</span>
+        </div>
+      )
     },
     { title: 'Vəzifə', dataIndex: 'role', key: 'role' },
     { title: 'Departament', dataIndex: 'department', key: 'department' },
