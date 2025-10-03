@@ -6,7 +6,7 @@ import Task from '../pages/Task/Task';
 import PrivateRoute from '../components/PrivateRoute';
 import PublicRoute from '../components/PublicRoute';
 import Profile from '../pages/Profile';
-import KpiSytem from '../pages/KpiSytem';
+import KpiSystem from '../pages/KpiSystem/KpiSystem';
 import Report from '../pages/Report';
 import Calendar from '../pages/Calendar';
 import Performance from '../pages/Performance/Performance';
@@ -33,7 +33,7 @@ export default function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/tasks" element={<Task />} />
-        <Route path="/kpi_system" element={<KpiSytem />} />
+        <Route path="/kpi_system" element={<KpiSystem />} />
         <Route path="/report" element={<Report />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/performance" element={<Performance />} />
