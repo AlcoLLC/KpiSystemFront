@@ -11,26 +11,19 @@ function Performance() {
   const { slug } = useParams();
   const { user } = useAuth();
   const location = useLocation();
-  
-  // Rəhbər üçün defolt 'team', işçi üçün 'my' olsun
   const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my');
-  
   const [performanceData, setPerformanceData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(false); 
   const isSuperior = user && user.role !== 'employee';
   const isAdmin = user && user.role === 'admin';
   const showViewSwitcher = isSuperior && !isAdmin;
 
-  // Fetch data for "My Performance" or the specific user from URL
   const fetchPerformance = useCallback(async () => {
-    // Yalnız dashboard görünəndə data çəkilsin
     if (viewMode !== 'my' && !slug) return;
 
     setLoading(true);
     setPerformanceData(null);
     try {
-      // DÜZƏLİŞ: 'my' rejimi üçün slug=null göndərilir, bu da /me/ endpoint-ini çağıracaq
       const response = await tasksApi.getPerformanceSummary(slug || null);
       setPerformanceData(response.data);
     } catch (error) {
