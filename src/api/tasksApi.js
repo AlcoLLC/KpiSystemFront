@@ -12,7 +12,15 @@ const tasksApi = {
   getPriorityStats: () => apiService.get('/tasks/stats/priority/'),
   getHomeStats: () => apiService.get('/tasks/home-stats/'),
   getSubordinates: (params = {}) => apiService.get('/performance/subordinates/', params),
-  getPerformanceSummary: (slug) => apiService.get(`/performance/summary/${slug}/`),
+  getPerformanceSummary: (slug) => {
+    if (slug) {
+      return apiService.get(`/performance/summary/${slug}/`);
+    }
+    return apiService.get('/performance/summary/me/');
+  },
+
+  
+  
 };
 
 export default tasksApi;
