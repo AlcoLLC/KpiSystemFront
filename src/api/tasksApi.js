@@ -11,6 +11,8 @@ const tasksApi = {
   getMonthlyStats: () => apiService.get('/tasks/stats/monthly/'),
   getPriorityStats: () => apiService.get('/tasks/stats/priority/'),
   getHomeStats: () => apiService.get('/tasks/home-stats/'),
+  getSubordinates: (params = {}) => apiService.get('/performance/subordinates/', params),
+  getPerformanceSummary: (slug) => apiService.get(`/performance/summary/${slug}/`),
 };
 
 export default tasksApi;

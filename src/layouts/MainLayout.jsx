@@ -67,7 +67,7 @@ export default function MainLayout() {
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="//" className={navLinkClasses}>
+                <NavLink to="/performance" className={navLinkClasses}>
                   <MdSpeed size={24} /> Performans
                 </NavLink>
               </li>
