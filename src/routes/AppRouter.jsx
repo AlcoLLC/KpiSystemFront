@@ -9,7 +9,7 @@ import Profile from '../pages/Profile';
 import KpiSytem from '../pages/KpiSytem';
 import Report from '../pages/Report';
 import Calendar from '../pages/Calendar';
-import Performance from '../pages/Performance';
+import Performance from '../pages/Performance/Performance';
 
 export default function AppRouter() {
   return (
@@ -37,6 +37,7 @@ export default function AppRouter() {
         <Route path="/report" element={<Report />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/performance" element={<Performance />} />
+        <Route path="/performance/:slug" element={<Performance />} />
       </Route>
     </Routes>
   );

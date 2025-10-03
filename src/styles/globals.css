@@ -131,11 +131,6 @@
   color: rgba(255, 255, 255, 0.35) !important;
 }
 
-/* ========================================= */
-/* Calendar Dark Mode Styles                 */
-/* Bu kodları mövcud CSS faylınıza əlavə edin */
-/* ========================================= */
-
 /* --- Ant Design Calendar Dark Mode --- */
 .dark .ant-picker-calendar {
   background: transparent !important;
@@ -545,4 +540,9 @@
 .dark .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(:first-child):not(:last-child) {
   border-left-color: #1677ff !important;
   border-right-color: #1677ff !important;
+}
+
+
+.dark .ant-statistic-title {
+  color: rgba(255, 255, 255, 0.849) !important;
 }
