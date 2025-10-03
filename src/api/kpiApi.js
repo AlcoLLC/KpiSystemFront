@@ -65,7 +65,22 @@ const kpiAPI = {
         evaluation_type: 'SUPERIOR'
       }
     });
-  }
+  },
+
+   /**
+   * Yetkiye göre filtrelenmiş, tamamlanmış görevleri ve değerlendirmelerini getirir.
+   * @param {object} params - Sayfalama veya filtreleme parametreleri (örneğin { page: 1 })
+   */
+  getKpiDashboardTasks: (params) => {
+    return apiService.get("/kpis/kpi/dashboard-tasks/", { params });
+  },
+
+  /**
+   * Mevcut kullanıcının (amir) değerlendirmesini bekleyen görevleri getirir.
+   */
+  getPendingForMe: () => {
+    return apiService.get("/kpis/kpi/pending-for-me/");
+  },
 };
 
 export default kpiAPI;

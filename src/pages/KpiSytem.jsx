@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo  } from "react";
 import {
   Card,
   Button,
@@ -14,8 +14,8 @@ import {
   Modal,
   Badge,
   Progress,
-  Divider
-} from 'antd';
+  Divider,
+} from "antd";
 import {
   UserOutlined,
   CalendarOutlined,
@@ -28,26 +28,37 @@ import {
   InfoCircleOutlined,
   ApartmentOutlined,
   TrophyOutlined,
-  FireOutlined
-} from '@ant-design/icons';
-import useAuth from '../hooks/useAuth';
-import kpiAPI from '../api/kpiApi';
-import tasksApi from '../api/tasksApi';
+  FireOutlined,
+} from "@ant-design/icons";
+import useAuth from "../hooks/useAuth";
+import kpiAPI from "../api/kpiApi";
+import tasksApi from "../api/tasksApi";
 
 const { TextArea } = Input;
 
 // Base Modal Component
-const BaseModal = ({ open, onOk, onCancel, title, children, confirmLoading, okText, width }) => {
+const BaseModal = ({
+  open,
+  onOk,
+  onCancel,
+  title,
+  children,
+  confirmLoading,
+  okText,
+  width,
+}) => {
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
         className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl max-h-[90vh] overflow-y-auto`}
-        style={{ width: width || 520, maxWidth: '90vw' }}
+        style={{ width: width || 520, maxWidth: "90vw" }}
       >
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            {title}
+          </h3>
         </div>
         <div className="p-6">{children}</div>
         <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
@@ -60,7 +71,7 @@ const BaseModal = ({ open, onOk, onCancel, title, children, confirmLoading, okTe
             loading={confirmLoading}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700"
           >
-            {okText || 'Tamam'}
+            {okText || "Tamam"}
           </Button>
         </div>
       </div>
@@ -69,24 +80,25 @@ const BaseModal = ({ open, onOk, onCancel, title, children, confirmLoading, okTe
 };
 
 // Score Display Component
-const ScoreDisplay = ({ score, maxScore, type, size = 'normal' }) => {
+const ScoreDisplay = ({ score, maxScore, type, size = "normal" }) => {
   const percentage = (score / maxScore) * 100;
 
   const getScoreColor = () => {
-    if (percentage <= 30) return '#ef4444'; // red
-    if (percentage <= 60) return '#f59e0b'; // yellow
-    if (percentage <= 80) return '#3b82f6'; // blue
-    return '#10b981'; // green
+    if (percentage <= 30) return "#ef4444"; // red
+    if (percentage <= 60) return "#f59e0b"; // yellow
+    if (percentage <= 80) return "#3b82f6"; // blue
+    return "#10b981"; // green
   };
 
   const getScoreIcon = () => {
-    if (percentage <= 30) return '🔴';
-    if (percentage <= 60) return '🟡';
-    if (percentage <= 80) return '🔵';
-    return '🟢';
+    if (percentage <= 30) return "🔴";
+    if (percentage <= 60) return "🟡";
+    if (percentage <= 80) return "🔵";
+    return "🟢";
   };
 
-  const sizeClass = size === 'large' ? 'text-2xl px-6 py-3' : 'text-lg px-4 py-2';
+  const sizeClass =
+    size === "large" ? "text-2xl px-6 py-3" : "text-lg px-4 py-2";
 
   return (
     <div className="flex flex-col items-center space-y-2">
@@ -98,9 +110,11 @@ const ScoreDisplay = ({ score, maxScore, type, size = 'normal' }) => {
       </div>
       <div className="flex items-center space-x-1 text-sm">
         <span>{getScoreIcon()}</span>
-        <span className="text-gray-600">{type === 'self' ? 'Öz Qiymət' : 'Final Skor'}</span>
+        <span className="text-gray-600">
+          {type === "self" ? "Öz Qiymət" : "Final Skor"}
+        </span>
       </div>
-      {size === 'large' && (
+      {size === "large" && (
         <Progress
           percent={percentage}
           strokeColor={getScoreColor()}
@@ -117,8 +131,10 @@ const ScoreDisplay = ({ score, maxScore, type, size = 'normal' }) => {
 const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
   if (!task) return null;
 
-  const selfEvaluation = evaluations.find((e) => e.evaluation_type === 'SELF');
-  const superiorEvaluation = evaluations.find((e) => e.evaluation_type === 'SUPERIOR');
+  const selfEvaluation = evaluations.find((e) => e.evaluation_type === "SELF");
+  const superiorEvaluation = evaluations.find(
+    (e) => e.evaluation_type === "SUPERIOR"
+  );
 
   return (
     <BaseModal
@@ -153,13 +169,13 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
               <strong>Prioritet:</strong>
               <Tag
                 color={
-                  task.priority === 'CRITICAL'
-                    ? 'red'
-                    : task.priority === 'HIGH'
-                    ? 'orange'
-                    : task.priority === 'MEDIUM'
-                    ? 'blue'
-                    : 'green'
+                  task.priority === "CRITICAL"
+                    ? "red"
+                    : task.priority === "HIGH"
+                    ? "orange"
+                    : task.priority === "MEDIUM"
+                    ? "blue"
+                    : "green"
                 }
                 className="ml-2"
               >
@@ -168,7 +184,8 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
             </div>
             {task.due_date && (
               <div className="col-span-2">
-                <strong>Son tarix:</strong> {new Date(task.due_date).toLocaleDateString('az-AZ')}
+                <strong>Son tarix:</strong>{" "}
+                {new Date(task.due_date).toLocaleDateString("az-AZ")}
               </div>
             )}
           </div>
@@ -214,17 +231,26 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-orange-700 font-medium">Skor:</span>
-                <ScoreDisplay score={selfEvaluation.self_score} maxScore={10} type="self" />
+                <ScoreDisplay
+                  score={selfEvaluation.self_score}
+                  maxScore={10}
+                  type="self"
+                />
               </div>
               {selfEvaluation.comment && (
                 <div className="bg-orange-100 p-4 rounded-lg">
                   <div className="text-orange-800 font-medium mb-2">Qeyd:</div>
-                  <div className="text-orange-700 italic">"{selfEvaluation.comment}"</div>
+                  <div className="text-orange-700 italic">
+                    "{selfEvaluation.comment}"
+                  </div>
                 </div>
               )}
               <div className="text-sm text-orange-600 flex items-center">
                 <CalendarOutlined className="mr-2" />
-                Tarix: {new Date(selfEvaluation.created_at).toLocaleDateString('az-AZ')}
+                Tarix:{" "}
+                {new Date(selfEvaluation.created_at).toLocaleDateString(
+                  "az-AZ"
+                )}
               </div>
             </div>
           </div>
@@ -247,7 +273,9 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
                 />
               </div>
               <div className="bg-green-100 p-4 rounded-lg">
-                <div className="text-green-800 font-medium mb-2">Dəyərləndirən:</div>
+                <div className="text-green-800 font-medium mb-2">
+                  Dəyərləndirən:
+                </div>
                 <div className="text-green-700 flex items-center">
                   <UserOutlined className="mr-2" />
                   {superiorEvaluation.evaluator?.full_name ||
@@ -257,12 +285,17 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
               {superiorEvaluation.comment && (
                 <div className="bg-green-100 p-4 rounded-lg">
                   <div className="text-green-800 font-medium mb-2">Qeyd:</div>
-                  <div className="text-green-700 italic">"{superiorEvaluation.comment}"</div>
+                  <div className="text-green-700 italic">
+                    "{superiorEvaluation.comment}"
+                  </div>
                 </div>
               )}
               <div className="text-sm text-green-600 flex items-center">
                 <CalendarOutlined className="mr-2" />
-                Tarix: {new Date(superiorEvaluation.created_at).toLocaleDateString('az-AZ')}
+                Tarix:{" "}
+                {new Date(superiorEvaluation.created_at).toLocaleDateString(
+                  "az-AZ"
+                )}
               </div>
             </div>
           </div>
@@ -272,7 +305,9 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
         {!selfEvaluation && !superiorEvaluation && (
           <div className="bg-gray-50 p-8 rounded-lg text-center border border-gray-200">
             <ExclamationCircleOutlined className="text-gray-400 text-4xl mb-4" />
-            <p className="text-gray-600 text-lg">Hələ ki dəyərləndirmə edilməyib</p>
+            <p className="text-gray-600 text-lg">
+              Hələ ki dəyərləndirmə edilməyib
+            </p>
           </div>
         )}
       </div>
@@ -280,85 +315,64 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations }) => {
   );
 };
 
-const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDetails }) => {
+const BlockContent = ({
+  task,
+  onReview,
+  evaluationStatus,
+  currentUser,
+  onViewDetails,
+  isPendingForMe
+}) => {
   const getButtonConfig = () => {
-    if (!evaluationStatus) {
-      return {
-        text: 'Məlumat Yoxdur',
-        color: 'gray',
-        disabled: true,
-        icon: <ExclamationCircleOutlined />
-      };
-    }
+    const { hasSelfEval, hasSuperiorEval } = evaluationStatus;
 
-    const { hasSelfEval, hasSuperiorEval, canEvaluate, evaluationType } = evaluationStatus;
-
+    // Durum 1: Değerlendirme tamamlanmış. Sadece detayları gör.
     if (hasSelfEval && hasSuperiorEval) {
+      return { text: "Dəyərləndirmə Detalları", icon: <EyeOutlined />, isViewOnly: true };
+    }
+
+    // Durum 2: Bu görev benim (amirin) değerlendirmemi bekliyor.
+    if (isPendingForMe) {
       return {
-        text: 'Dəyərləndirmə Detalları',
-        color: 'purple',
+        text: `${task.assignee_details} dəyərləndir (1-100)`,
+        color: "blue",
         disabled: false,
-        icon: <EyeOutlined />,
-        isViewOnly: true
+        icon: <FireOutlined />,
       };
     }
-
-    if (currentUser?.id === task?.assignee) {
-      if (hasSelfEval) {
-        return {
-          text: 'Rəhbər Dəyərləndirməsi Gözlənilir',
-          color: 'gray',
-          disabled: true,
-          icon: <ClockCircleOutlined />
-        };
-      } else {
-        return {
-          text: 'Özünü Dəyərləndir (1-10)',
-          color: 'orange',
-          disabled: false,
-          icon: <StarOutlined />
-        };
-      }
-    }
-
-    // Department based hierarchy check
-    if (canEvaluate && evaluationType === 'SUPERIOR') {
-      if (!hasSelfEval && currentUser.role !== 'admin') {
-        return {
-          text: 'İşçinin Öz Dəyərləndirməsi Gözlənilir',
-          color: 'gray',
-          disabled: true,
-          icon: <ClockCircleOutlined />
-        };
-      } else {
-        return {
-          text: `${task.assignee_details} dəyərləndir (1-100)`,
-          color: 'blue',
-          disabled: false,
-          icon: <FireOutlined />
-        };
-      }
-    }
-
-    if (hasSelfEval || hasSuperiorEval) {
+    
+    // Durum 3: Görev benim ve henüz kendimi değerlendirmedim.
+    if (currentUser?.id === task?.assignee && !hasSelfEval) {
       return {
-        text: 'Dəyərləndirmə Detalları',
-        color: 'gray',
+        text: "Özünü Dəyərləndir (1-10)",
+        color: "orange",
         disabled: false,
-        icon: <EyeOutlined />,
-        isViewOnly: true
+        icon: <StarOutlined />,
       };
     }
+    
+    // Durum 4: Görev benim ve kendimi değerlendirdim, amiri bekliyorum.
+    if (currentUser?.id === task?.assignee && hasSelfEval) {
+       return {
+         text: "Rəhbər Dəyərləndirməsi Gözlənilir",
+         color: "gray",
+         disabled: true,
+         icon: <ClockCircleOutlined />,
+       };
+    }
 
+    // Durum 5: Diğer tüm durumlar (örneğin, astımın görevi ama henüz kendini değerlendirmemiş).
+    // Detayları görme butonu gösterilebilir veya bir bekleme durumu gösterilebilir.
     return {
-      text: 'Dəyərləndirmə Mövcud Deyil',
-      color: 'gray',
+      text: "Dəyərləndirmə Gözlənilir",
+      color: "gray",
       disabled: true,
-      icon: <ExclamationCircleOutlined />
+      icon: <ClockCircleOutlined />,
     };
   };
 
   const buttonConfig = getButtonConfig();
+  
 
   const getStatusTags = () => {
     if (!evaluationStatus) return null;
@@ -367,7 +381,7 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
     const tags = [];
 
     if (hasSelfEval) {
-      const selfEval = evaluations.find((e) => e.evaluation_type === 'SELF');
+      const selfEval = evaluations.find((e) => e.evaluation_type === "SELF");
       tags.push(
         <Tag key="self" color="orange" className="text-xs flex items-center">
           <UserOutlined className="mr-1" />
@@ -377,7 +391,9 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
     }
 
     if (hasSuperiorEval) {
-      const superiorEval = evaluations.find((e) => e.evaluation_type === 'SUPERIOR');
+      const superiorEval = evaluations.find(
+        (e) => e.evaluation_type === "SUPERIOR"
+      );
       tags.push(
         <Tag key="superior" color="green" className="text-xs flex items-center">
           <TrophyOutlined className="mr-1" />
@@ -386,17 +402,18 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
       );
     }
 
-    return tags.length > 0 ? <div className="mt-3 flex flex-wrap gap-1">{tags}</div> : null;
+    return tags.length > 0 ? (
+      <div className="mt-3 flex flex-wrap gap-1">{tags}</div>
+    ) : null;
   };
 
   const handleButtonClick = () => {
     if (buttonConfig.isViewOnly) {
       onViewDetails(task);
-    } else {
+    } else if (!buttonConfig.disabled) {
       onReview(task);
     }
   };
-
   return (
     <Card
       className="h-full bg-white shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200"
@@ -404,11 +421,13 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
         <div className="flex items-center justify-between">
           <div className="flex items-center text-blue-600">
             <UserOutlined className="mr-2" />
-            <span className="font-bold text-sm">{task?.assignee_details || 'N/A'}</span>
+            <span className="font-bold text-sm">
+              {task?.assignee_details || "N/A"}
+            </span>
           </div>
           <Badge
-            count={task?.priority === 'CRITICAL' ? 'CRITICAL' : ''}
-            style={{ backgroundColor: '#ff4d4f' }}
+            count={task?.priority === "CRITICAL" ? "CRITICAL" : ""}
+            style={{ backgroundColor: "#ff4d4f" }}
           />
         </div>
       }
@@ -419,9 +438,13 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
           <MessageOutlined className="text-blue-500 mr-2 mt-1" />
           <div className="flex-1">
             <div className="text-xs text-gray-500 mb-1">Tapşırıq:</div>
-            <div className="font-medium text-gray-800 text-sm">{task?.title}</div>
+            <div className="font-medium text-gray-800 text-sm">
+              {task?.title}
+            </div>
             {task?.description && (
-              <div className="text-xs text-gray-500 mt-1 line-clamp-2">{task.description}</div>
+              <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                {task.description}
+              </div>
             )}
           </div>
         </div>
@@ -430,25 +453,28 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
           <CalendarOutlined className="text-green-500 mr-2" />
           <span className="text-xs">
             {task?.due_date
-              ? new Date(task.due_date).toLocaleDateString('az-AZ')
-              : new Date(task?.created_at).toLocaleDateString('az-AZ')}
+              ? new Date(task.due_date).toLocaleDateString("az-AZ")
+              : new Date(task?.created_at).toLocaleDateString("az-AZ")}
           </span>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Tag color={task?.status === 'DONE' ? 'green' : 'orange'} className="text-xs">
-            {task?.status_display || 'Tamamlandı'}
+          <Tag
+            color={task?.status === "DONE" ? "green" : "orange"}
+            className="text-xs"
+          >
+            {task?.status_display || "Tamamlandı"}
           </Tag>
 
           <Tag
             color={
-              task?.priority === 'CRITICAL'
-                ? 'red'
-                : task?.priority === 'HIGH'
-                ? 'orange'
-                : task?.priority === 'MEDIUM'
-                ? 'blue'
-                : 'green'
+              task?.priority === "CRITICAL"
+                ? "red"
+                : task?.priority === "HIGH"
+                ? "orange"
+                : task?.priority === "MEDIUM"
+                ? "blue"
+                : "green"
             }
             className="text-xs"
           >
@@ -458,43 +484,45 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
 
         {getStatusTags()}
 
-        <Tooltip title={buttonConfig.disabled ? buttonConfig.text : ''}>
+        <Tooltip title={buttonConfig.disabled ? buttonConfig.text : ""}>
           <Button
-            type={buttonConfig.isViewOnly ? 'default' : 'primary'}
+            type={buttonConfig.isViewOnly ? "default" : "primary"}
             block
             size="large"
             icon={buttonConfig.icon}
             onClick={handleButtonClick}
             disabled={buttonConfig.disabled}
             className={`mt-4 hover:opacity-80 text-xs font-semibold transform transition-all duration-200 ${
-              !buttonConfig.disabled && !buttonConfig.isViewOnly ? 'hover:scale-105 shadow-lg' : ''
+              !buttonConfig.disabled && !buttonConfig.isViewOnly
+                ? "hover:scale-105 shadow-lg"
+                : ""
             }`}
             style={{
               backgroundColor:
                 buttonConfig.disabled && !buttonConfig.isViewOnly
-                  ? '#d1d5db'
-                  : buttonConfig.color === 'green'
-                  ? '#10B981'
-                  : buttonConfig.color === 'orange'
-                  ? '#F59E0B'
-                  : buttonConfig.color === 'purple'
-                  ? '#8B5CF6'
-                  : buttonConfig.color === 'gray'
-                  ? '#9CA3AF'
-                  : '#3B82F6',
+                  ? "#d1d5db"
+                  : buttonConfig.color === "green"
+                  ? "#10B981"
+                  : buttonConfig.color === "orange"
+                  ? "#F59E0B"
+                  : buttonConfig.color === "purple"
+                  ? "#8B5CF6"
+                  : buttonConfig.color === "gray"
+                  ? "#9CA3AF"
+                  : "#3B82F6",
               borderColor:
                 buttonConfig.disabled && !buttonConfig.isViewOnly
-                  ? '#d1d5db'
-                  : buttonConfig.color === 'green'
-                  ? '#10B981'
-                  : buttonConfig.color === 'orange'
-                  ? '#F59E0B'
-                  : buttonConfig.color === 'purple'
-                  ? '#8B5CF6'
-                  : buttonConfig.color === 'gray'
-                  ? '#9CA3AF'
-                  : '#3B82F6',
-              color: 'white'
+                  ? "#d1d5db"
+                  : buttonConfig.color === "green"
+                  ? "#10B981"
+                  : buttonConfig.color === "orange"
+                  ? "#F59E0B"
+                  : buttonConfig.color === "purple"
+                  ? "#8B5CF6"
+                  : buttonConfig.color === "gray"
+                  ? "#9CA3AF"
+                  : "#3B82F6",
+              color: "white",
             }}
           >
             {buttonConfig.text}
@@ -505,9 +533,15 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
   );
 };
 
-const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => {
+const ReviewModal = ({
+  isOpen,
+  onClose,
+  task,
+  evaluationType,
+  currentUser,
+}) => {
   const [starRating, setStarRating] = useState(5);
-  const [note, setNote] = useState('');
+  const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
 
   const isOwnEvaluation = currentUser?.id === task?.assignee;
@@ -525,29 +559,29 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
         task_id: task.id,
         evaluatee_id: task.assignee,
         score: starRating,
-        comment: note.trim() || null
+        comment: note.trim() || null,
       };
 
       await kpiAPI.createEvaluation(evaluationData);
 
       if (isOwnEvaluation) {
         message.success(
-          'Öz dəyərləndirmə uğurla qeydə alındı! Rəhbərə məlumat e-poçtu göndərildi.'
+          "Öz dəyərləndirmə uğurla qeydə alındı! Rəhbərə məlumat e-poçtu göndərildi."
         );
       } else {
         message.success(
-          'Üst dəyərləndirmə uğurla qeydə alındı! Bu skor final skor olaraq sayılacaq.'
+          "Üst dəyərləndirmə uğurla qeydə alındı! Bu skor final skor olaraq sayılacaq."
         );
       }
 
       onClose();
     } catch (error) {
-      console.error('Dəyərləndirmə qeydə alına bilmədi:', error);
+      console.error("Dəyərləndirmə qeydə alına bilmədi:", error);
       const errorMessage =
         error.response?.data?.detail ||
         error.response?.data?.non_field_errors?.[0] ||
         Object.values(error.response?.data || {})[0] ||
-        'Dəyərləndirmə qeydə alına bilmədi. Zəhmət olmasa yenidən cəhd edin.';
+        "Dəyərləndirmə qeydə alına bilmədi. Zəhmət olmasa yenidən cəhd edin.";
       message.error(errorMessage);
     } finally {
       setLoading(false);
@@ -556,7 +590,7 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
 
   const resetModal = () => {
     setStarRating(isOwnEvaluation ? 5 : 50);
-    setNote('');
+    setNote("");
   };
 
   const handleClose = () => {
@@ -572,15 +606,15 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
 
   const getScoreDescription = () => {
     if (isOwnEvaluation) {
-      if (starRating <= 3) return '🔴 Performans təkmilləşdirilməlidir';
-      if (starRating <= 6) return '🟡 Orta səviyyədə performans';
-      if (starRating <= 8) return '🔵 Yaxşı performans';
-      return '🟢 Əla performans';
+      if (starRating <= 3) return "🔴 Performans təkmilləşdirilməlidir";
+      if (starRating <= 6) return "🟡 Orta səviyyədə performans";
+      if (starRating <= 8) return "🔵 Yaxşı performans";
+      return "🟢 Əla performans";
     } else {
-      if (starRating <= 30) return '🔴 Performans təkmilləşdirilməlidir';
-      if (starRating <= 60) return '🟡 Orta səviyyədə performans';
-      if (starRating <= 80) return '🔵 Yaxşı performans';
-      return '🟢 Əla performans';
+      if (starRating <= 30) return "🔴 Performans təkmilləşdirilməlidir";
+      if (starRating <= 60) return "🟡 Orta səviyyədə performans";
+      if (starRating <= 80) return "🔵 Yaxşı performans";
+      return "🟢 Əla performans";
     }
   };
 
@@ -592,7 +626,11 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
       title={modalTitle}
       width={600}
       confirmLoading={loading}
-      okText={isOwnEvaluation ? 'Öz Dəyərləndirməni Qeyd Et' : 'Üst Dəyərləndirməni Qeyd Et'}
+      okText={
+        isOwnEvaluation
+          ? "Öz Dəyərləndirməni Qeyd Et"
+          : "Üst Dəyərləndirməni Qeyd Et"
+      }
     >
       <div className="space-y-6">
         {/* Department Hierarchy Info */}
@@ -601,14 +639,14 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
             <ApartmentOutlined className="mr-2 text-lg" />
             <span className="font-medium">
               {isOwnEvaluation
-                ? 'Departmental Öz Dəyərləndirmə'
-                : 'Departmental Hiyerarxik Dəyərləndirmə'}
+                ? "Departmental Öz Dəyərləndirmə"
+                : "Departmental Hiyerarxik Dəyərləndirmə"}
             </span>
           </div>
           <p className="text-sm text-indigo-600 mt-2">
             {isOwnEvaluation
-              ? 'Eyni departamentdəki rəhbərinizə məlumat göndəriləcək.'
-              : 'Departamentinizin hiyerarxiyasına uyğun dəyərləndirmə edirsiniz.'}
+              ? "Eyni departamentdəki rəhbərinizə məlumat göndəriləcək."
+              : "Departamentinizin hiyerarxiyasına uyğun dəyərləndirmə edirsiniz."}
           </p>
         </div>
 
@@ -619,8 +657,8 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
               <span className="font-medium">Öz Dəyərləndirmə (1-10 skala)</span>
             </div>
             <p className="text-sm text-orange-600 mt-1">
-              Dəyərləndirməni tamamladıqdan sonra departament rəhbərinə məlumat e-poçtu
-              göndəriləcək.
+              Dəyərləndirməni tamamladıqdan sonra departament rəhbərinə məlumat
+              e-poçtu göndəriləcək.
             </p>
           </div>
         )}
@@ -629,10 +667,13 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
             <div className="flex items-center text-green-700">
               <StarOutlined className="mr-2" />
-              <span className="font-medium">Üst Dəyərləndirmə (1-100 skala)</span>
+              <span className="font-medium">
+                Üst Dəyərləndirmə (1-100 skala)
+              </span>
             </div>
             <p className="text-sm text-green-600 mt-1">
-              Bu dəyərləndirmə final skor olaraq qeydə alınacaq və sistemdə görünəcək.
+              Bu dəyərləndirmə final skor olaraq qeydə alınacaq və sistemdə
+              görünəcək.
             </p>
           </div>
         )}
@@ -642,7 +683,7 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
           <ScoreDisplay
             score={starRating}
             maxScore={maxScore}
-            type={isOwnEvaluation ? 'self' : 'superior'}
+            type={isOwnEvaluation ? "self" : "superior"}
             size="large"
           />
         </div>
@@ -666,7 +707,7 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
                   count={10}
                   value={starRating}
                   onChange={setStarRating}
-                  style={{ fontSize: '32px' }}
+                  style={{ fontSize: "32px" }}
                   className="flex justify-center"
                 />
                 <div className="flex justify-between text-xs text-gray-400 mt-3 px-2">
@@ -686,7 +727,7 @@ const ReviewModal = ({ isOpen, onClose, task, evaluationType, currentUser }) => 
                     onChange={(e) => setStarRating(parseInt(e.target.value))}
                     className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider focus:outline-none focus:ring-4 focus:ring-blue-300"
                     style={{
-                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${starRating}%, #e5e7eb ${starRating}%, #e5e7eb 100%)`
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${starRating}%, #e5e7eb ${starRating}%, #e5e7eb 100%)`,
                     }}
                   />
                 </div>
@@ -734,24 +775,26 @@ function KpiSystem() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedEvaluationType, setSelectedEvaluationType] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [pendingForMe, setPendingForMe] = useState([]);
   const [evaluations, setEvaluations] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const [tasksResponse, evaluationsResponse] = await Promise.all([
-        tasksApi.getTasks({ status: 'DONE' }),
-        kpiAPI.getEvaluations()
-      ]);
-
+      const tasksResponse = await kpiAPI.getKpiDashboardTasks();
       setTasks(tasksResponse.data.results || tasksResponse.data || []);
-      setEvaluations(evaluationsResponse.data.results || evaluationsResponse.data || []);
+
+      // Sadece amir ve üstü roller için bekleyen görevleri çekiyoruz.
+      if (["admin", "top_management", "department_lead", "manager"].includes(currentUser?.role)) {
+        const pendingResponse = await kpiAPI.getPendingForMe();
+        setPendingForMe(pendingResponse.data || []);
+      }
     } catch (error) {
-      console.error('Veri yüklənmədi:', error);
-      message.error('Verilər yüklənərkən xəta baş verdi');
+      console.error("Veri yüklenemedi:", error);
+      message.error("Veriler yüklenirken bir hata oluştu.");
       setTasks([]);
-      setEvaluations([]);
+      setPendingForMe([]);
     } finally {
       setLoading(false);
     }
@@ -763,48 +806,24 @@ function KpiSystem() {
     }
   }, [currentUser]);
 
-  const getEvaluationStatus = (taskId, assigneeId) => {
-    const taskEvaluations = evaluations.filter(
-      (evaluation) => evaluation.task?.id === taskId && evaluation.evaluatee?.id === assigneeId
-    );
-
-    const hasSelfEval = taskEvaluations.some((evaluation) => evaluation.evaluation_type === 'SELF');
-    const superiorEvaluation = taskEvaluations.find(
-      (evaluation) => evaluation.evaluation_type === 'SUPERIOR'
-    );
-    const hasSuperiorEval = !!superiorEvaluation;
-
-    let canEvaluate = false;
-    let evaluationType = null;
-
-    if (Number(currentUser?.id) === Number(assigneeId) && !hasSelfEval) {
-      canEvaluate = true;
-      evaluationType = 'SELF';
-    } else if (currentUser?.id !== assigneeId && !hasSuperiorEval) {
-      // Departamental hiyerarxiya yoxlaması - backend təsdiqləyəcək
-      const isSuperiorOrAdmin = ['admin', 'top_management', 'department_lead', 'manager'].includes(
-        currentUser?.role
-      );
-      if (isSuperiorOrAdmin) {
-        canEvaluate = true;
-        evaluationType = 'SUPERIOR';
-      }
+  const pendingForMeTaskIds = useMemo(() => 
+    new Set(pendingForMe.map(task => task.id)),
+    [pendingForMe]
+  );
+  
+  const getEvaluationStatus = (task) => {
+    if (!task || !task.evaluations) {
+      return { hasSelfEval: false, hasSuperiorEval: false, evaluations: [] };
     }
-
-    return {
-      hasSelfEval,
-      hasSuperiorEval,
-      canEvaluate,
-      evaluationType,
-      evaluations: taskEvaluations
-    };
+    const evaluations = task.evaluations;
+    const hasSelfEval = evaluations.some(e => e.evaluation_type === 'SELF');
+    const hasSuperiorEval = evaluations.some(e => e.evaluation_type === 'SUPERIOR');
+    
+    return { hasSelfEval, hasSuperiorEval, evaluations };
   };
 
-  const handleReview = (task) => {
-    const evaluationStatus = getEvaluationStatus(task.id, task.assignee);
-
+ const handleReview = (task) => {
     setSelectedTask(task);
-    setSelectedEvaluationType(evaluationStatus.evaluationType);
     setModalOpen(true);
   };
 
@@ -812,12 +831,11 @@ function KpiSystem() {
     setSelectedTask(task);
     setDetailsModalOpen(true);
   };
-
+  
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedTask(null);
-    setSelectedEvaluationType(null);
-    loadData();
+    loadData(); // İşlem sonrası veriyi yenile
   };
 
   const handleDetailsModalClose = () => {
@@ -830,7 +848,9 @@ function KpiSystem() {
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg">
           <UserOutlined className="text-5xl text-blue-400 mb-4" />
-          <p className="text-gray-600 text-lg">KPI sistemini istifadə etmək üçün daxil olun.</p>
+          <p className="text-gray-600 text-lg">
+            KPI sistemini istifadə etmək üçün daxil olun.
+          </p>
         </div>
       </div>
     );
@@ -871,7 +891,8 @@ function KpiSystem() {
             <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-lg shadow-sm border border-green-200">
               <TrophyOutlined className="mr-2 text-lg" />
               <span className="font-medium">
-                Xoş gəldiniz, {currentUser?.first_name || currentUser?.username}!
+                Xoş gəldiniz, {currentUser?.first_name || currentUser?.username}
+                !
               </span>
             </div>
 
@@ -879,7 +900,7 @@ function KpiSystem() {
               <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-lg shadow-sm border border-blue-200">
                 <ApartmentOutlined className="mr-2" />
                 <span className="font-medium text-sm">
-                  {currentUser.department.name || 'Departament'}
+                  {currentUser.department.name || "Departament"}
                 </span>
               </div>
             )}
@@ -887,67 +908,68 @@ function KpiSystem() {
 
           <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 inline-block max-w-2xl">
             <InfoCircleOutlined className="mr-2 text-yellow-600" />
-            <strong className="text-yellow-800">Departamental Qiymətləndirmə Sistemi:</strong>
+            <strong className="text-yellow-800">
+              Departamental Qiymətləndirmə Sistemi:
+            </strong>
             <div className="mt-2 text-sm text-yellow-700">
-              • <strong>Öz dəyərləndirmə:</strong>{' '}
+              • <strong>Öz dəyərləndirmə:</strong>{" "}
               <span className="font-semibold text-orange-600">1-10 skala</span>
-              <br />• <strong>Üst dəyərləndirmə:</strong>{' '}
-              <span className="font-semibold text-green-600">1-100 skala (Final skor)</span>
-              <br />• Eyni departamentdəki hiyerarxik quruluşa uyğun dəyərləndirmə
+              <br />• <strong>Üst dəyərləndirmə:</strong>{" "}
+              <span className="font-semibold text-green-600">
+                1-100 skala (Final skor)
+              </span>
+              <br />• Eyni departamentdəki hiyerarxik quruluşa uyğun
+              dəyərləndirmə
             </div>
           </div>
         </div>
 
-        {tasks.length === 0 ? (
-          <div className="text-center py-16">
-            <Empty
-              description={
-                <div>
-                  <p className="text-lg text-gray-600 mb-2">
-                    Dəyərləndirilməli tamamlanmış tapşırıq tapılmadı
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Tapşırıqlar tamamlandıqda burada görünəcək
-                  </p>
-                </div>
-              }
-              className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-8"
-            />
-          </div>
-        ) : (
+        
+      {tasks.length === 0 ? (
+        <div className="text-center py-16">
+          <Empty description="Değerlendirilecek tamamlanmış görev bulunamadı." />
+        </div>
+      ) : (
           <Row gutter={[16, 16]}>
-            {tasks.map((task) => {
-              if (!task.assignee) return null;
-              const evaluationStatus = getEvaluationStatus(task.id, task.assignee);
-              return (
-                <Col xs={24} sm={12} md={8} lg={6} key={task.id}>
-                  <BlockContent
-                    task={task}
-                    onReview={handleReview}
-                    onViewDetails={handleViewDetails}
-                    evaluationStatus={evaluationStatus}
-                    currentUser={currentUser}
-                  />
-                </Col>
-              );
-            })}
-          </Row>
+          {tasks.map((task) => {
+            if (!task.assignee) return null;
+            
+            const evaluationStatus = getEvaluationStatus(task);
+            
+            // Bu görev benim değerlendirmem için bekliyor mu?
+            const isPendingForMe = pendingForMeTaskIds.has(task.id);
+
+            return (
+              <Col xs={24} sm={12} md={8} lg={6} key={task.id}>
+                <BlockContent
+                  task={task}
+                  onReview={handleReview}
+                  onViewDetails={handleViewDetails}
+                  evaluationStatus={evaluationStatus}
+                  currentUser={currentUser}
+                  isPendingForMe={isPendingForMe} // Bu yeni prop'u BlockContent'e gönderiyoruz
+                />
+              </Col>
+            );
+          })}
+        </Row>
         )}
       </div>
 
-      <ReviewModal
+       <ReviewModal
         isOpen={modalOpen}
         onClose={handleModalClose}
         task={selectedTask}
-        evaluationType={selectedEvaluationType}
         currentUser={currentUser}
+        // evaluationType prop'una artık gerek yok, modal kendi içinde karar verebilir
       />
 
       <EvaluationDetailsModal
         open={detailsModalOpen}
         onClose={handleDetailsModalClose}
         task={selectedTask}
-        evaluations={getSelectedTaskEvaluations()}
+        // evaluations prop'u da artık task'ın içinden geliyor
+        evaluations={selectedTask?.evaluations || []}
       />
     </>
   );
