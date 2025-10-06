@@ -25,14 +25,14 @@ const BlockContent = ({
 
     if (hasSelfEval && hasSuperiorEval) {
       return {
-        text: "View Evaluation Details",
+        text: "Dəyərləndirmə Detalları",
         icon: <EyeOutlined />,
         isViewOnly: true,
       };
     }
     if (isPendingForMe) {
       return {
-        text: `Evaluate ${task.assignee_details} (1-100)`,
+        text: `Dəyərləndir (1-100): ${task.assignee_details}`,
         color: "blue",
         disabled: false,
         icon: <FireOutlined />,
@@ -40,22 +40,32 @@ const BlockContent = ({
     }
     if (currentUser?.id === task?.assignee && !hasSelfEval) {
       return {
-        text: "Self-Evaluate (1-10)",
+        text: "Özünü Dəyərləndir (1-10)",
         color: "orange",
         disabled: false,
         icon: <StarOutlined />,
       };
     }
-    if (currentUser?.id === task?.assignee && hasSelfEval) {
-      return {
-        text: "Awaiting Manager's Review",
-        color: "gray",
-        disabled: true,
-        icon: <ClockCircleOutlined />,
-      };
+    if (currentUser?.id === task?.assignee && hasSelfEval && !hasSuperiorEval) {
+        return {
+          text: `Rəhbər dəyərləndirməsi gözlənilir`, 
+          icon: <EyeOutlined />, 
+          isViewOnly: true, 
+          disabled: false, 
+          color: "purple",  
+        };
+      }
+    if (hasSelfEval) {
+        return {
+            text: "Rəhbər Dəyərləndirməsi Gözlənilir",
+            color: "gray",
+            disabled: true,
+            icon: <ClockCircleOutlined />,
+        }
     }
+
     return {
-      text: "Evaluation Pending",
+      text: "Dəyərləndirmə Gözlənilir",
       color: "gray",
       disabled: true,
       icon: <ClockCircleOutlined />,
@@ -82,7 +92,7 @@ const BlockContent = ({
       );
       tags.push(
         <Tag key="superior" color="green" className="text-xs flex items-center">
-          <TrophyOutlined className="mr-1" /> Final: {superiorEval?.final_score}
+          <TrophyOutlined className="mr-1" /> Yekun: {superiorEval?.final_score}
           /100
         </Tag>
       );
@@ -99,7 +109,8 @@ const BlockContent = ({
   };
 
   return (
-    <Card
+    <div className="kpi-container">
+<Card
       className="h-full bg-white shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-200"
       title={
         <div className="flex items-center justify-between">
@@ -198,6 +209,8 @@ const BlockContent = ({
         </Tooltip>
       </div>
     </Card>
+    </div>
+    
   );
 };
 

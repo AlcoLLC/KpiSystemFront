@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { Input, Rate, message } from "antd";
-import { MessageOutlined, ApartmentOutlined, UserOutlined, StarOutlined } from "@ant-design/icons";
+import { 
+    MessageOutlined, 
+    UserOutlined, 
+    StarOutlined,
+    InfoCircleOutlined 
+} from "@ant-design/icons";
 import kpiAPI from "../../../api/kpiApi";
 import BaseModal from "./BaseModal";
 import ScoreDisplay from "./ScoreDisplay";
@@ -14,7 +19,9 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
 
   const isOwnEvaluation = currentUser?.id === task?.assignee;
   const maxScore = isOwnEvaluation ? 10 : 100;
-  const modalTitle = isOwnEvaluation ? `Self-Evaluate (1-10) - ${task?.title}` : `Evaluate ${task?.assignee_details} (1-100) - ${task?.title}`;
+  const modalTitle = isOwnEvaluation 
+    ? `Şəxsi Dəyərləndirmə (1-10) - ${task?.title}` 
+    : `Dəyərləndirmə: ${task?.assignee_details} (1-100) - ${task?.title}`;
 
   const handleSave = async () => {
     if (!task) return;
@@ -27,11 +34,13 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
         comment: note.trim() || null,
       };
       await kpiAPI.createEvaluation(evaluationData);
-      message.success(isOwnEvaluation ? "Self-evaluation saved successfully! A notification has been sent to your manager." : "Superior evaluation saved successfully! This will be the final score.");
-      onClose();
+      message.success(isOwnEvaluation 
+        ? "Dəyərləndirməniz qeydə alındı! Rəhbərinizə bildiriş göndərildi." 
+        : "Yekun dəyərləndirmə uğurla qeydə alındı!");
+      onClose(true); 
     } catch (error) {
       console.error("Failed to save evaluation:", error);
-      const errorMessage = error.response?.data?.detail || error.response?.data?.non_field_errors?.[0] || Object.values(error.response?.data || {})[0] || "Failed to save evaluation. Please try again.";
+      const errorMessage = error.response?.data?.detail || error.response?.data?.non_field_errors?.[0] || Object.values(error.response?.data || {})[0] || "Dəyərləndirməni yadda saxlamq mümkün olmadı.";
       message.error(errorMessage);
     } finally {
       setLoading(false);
@@ -45,7 +54,7 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
 
   const handleClose = () => {
     resetModal();
-    onClose();
+    onClose(false);
   };
 
   useEffect(() => {
@@ -55,20 +64,37 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
   }, [isOpen, isOwnEvaluation]);
 
     const getScoreDescription = () => {
-    if (isOwnEvaluation) {
-      if (starRating <= 3) return "🔴 Performance needs improvement";
-      if (starRating <= 6) return "🟡 Average performance";
-      if (starRating <= 8) return "🔵 Good performance";
-      return "🟢 Excellent performance";
-    } else {
-      if (starRating <= 30) return "🔴 Performance needs improvement";
-      if (starRating <= 60) return "🟡 Average performance";
-      if (starRating <= 80) return "🔵 Good performance";
-      return "🟢 Excellent performance";
+    const score = starRating;
+    const thresholds = isOwnEvaluation
+      ? { low: 3, mid: 6, high: 8 }
+      : { low: 30, mid: 60, high: 80 };
+
+    if (score <= thresholds.low) {
+      return {
+        text: "🔴 Performans yaxşılaşdırılmalıdır",
+        className: "text-red-600 dark:text-red-400",
+      };
     }
+    if (score <= thresholds.mid) {
+      return {
+        text: "🟡 Orta performans",
+        className: "text-yellow-600 dark:text-yellow-400",
+      };
+    }
+    if (score <= thresholds.high) {
+      return {
+        text: "🔵 Yaxşı performans",
+        className: "text-blue-600 dark:text-blue-400",
+      };
+    }
+    return {
+      text: "🟢 Əla performans",
+      className: "text-green-600 dark:text-green-400",
+    };
   };
 
   return (
+    <div className="kpi-container">
       <BaseModal
         open={isOpen}
         onOk={handleSave}
@@ -79,31 +105,16 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
         okText={
           isOwnEvaluation
             ? "Öz Dəyərləndirməni Qeyd Et"
-            : "Üst Dəyərləndirməni Qeyd Et"
+            : "Yekun Dəyərləndirməni Qeyd Et"
         }
       >
         <div className="space-y-6">
-          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-200">
-            <div className="flex items-center text-indigo-700">
-              <ApartmentOutlined className="mr-2 text-lg" />
-              <span className="font-medium">
-                {isOwnEvaluation
-                  ? "Departmental Öz Dəyərləndirmə"
-                  : "Departmental Hiyerarxik Dəyərləndirmə"}
-              </span>
-            </div>
-            <p className="text-sm text-indigo-600 mt-2">
-              {isOwnEvaluation
-                ? "Eyni departamentdəki rəhbərinizə məlumat göndəriləcək."
-                : "Departamentinizin hiyerarxiyasına uyğun dəyərləndirmə edirsiniz."}
-            </p>
-          </div>
   
           {isOwnEvaluation && (
             <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
               <div className="flex items-center text-orange-700">
                 <UserOutlined className="mr-2" />
-                <span className="font-medium">Öz Dəyərləndirmə (1-10 skala)</span>
+                <span className="font-medium">Öz Dəyərləndirmə (1-10 şkala)</span>
               </div>
               <p className="text-sm text-orange-600 mt-1">
                 Dəyərləndirməni tamamladıqdan sonra departament rəhbərinə məlumat
@@ -117,16 +128,28 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
               <div className="flex items-center text-green-700">
                 <StarOutlined className="mr-2" />
                 <span className="font-medium">
-                  Üst Dəyərləndirmə (1-100 skala)
+                  Yekun Dəyərləndirmə
                 </span>
               </div>
               <p className="text-sm text-green-600 mt-1">
-                Bu dəyərləndirmə final skor olaraq qeydə alınacaq və sistemdə
+                Bu dəyərləndirmə yekun dəyərləndirmə olaraq qeydə alınacaq və sistemdə
                 görünəcək.
               </p>
             </div>
           )}
   
+          {task?.description && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center text-blue-800 font-semibold mb-2">
+                    <InfoCircleOutlined className="mr-2 text-lg" />
+                    <span>Tapşırıq Detalları</span>
+                </div>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {task.description}
+                </p>
+            </div>
+          )}
+
           <div className="text-center">
             <ScoreDisplay
               score={starRating}
@@ -146,7 +169,7 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
             <div className="flex flex-col items-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-dashed border-gray-300">
               <div className="mb-4">
                 <StarOutlined className="text-yellow-500 text-xl mr-2" />
-                <span className="text-gray-700 font-medium">Puan seçin:</span>
+                <span className="text-gray-700 font-medium">Dəyərləndirin:</span>
               </div>
   
               {isOwnEvaluation ? (
@@ -192,27 +215,34 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
             </div>
   
             <div className="mt-4 text-center">
-              <div className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                {getScoreDescription()}
-              </div>
-            </div>
+  {(() => {
+    const { text, className } = getScoreDescription();
+    return (
+      <div className={`text-lg font-semibold transition-colors duration-300 ${className}`}>
+        {text}
+      </div>
+    );
+  })()}
+</div>
           </div>
   
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
               <MessageOutlined className="mr-2 text-blue-500" />
-              Qeyd (Comment):
+              Qeyd:
             </label>
             <TextArea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Qeydlərinizi buraya yazın... (məcburi deyil)"
+              placeholder="Qeydlərinizi buraya yaza bilərsiniz..."
               rows={4}
               className="resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>
       </BaseModal>
+    </div>
+      
     );
 };
 
