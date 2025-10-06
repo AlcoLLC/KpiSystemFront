@@ -1,7 +1,6 @@
 import { Button, Tag, Tooltip, Card, Descriptions, Empty } from "antd";
 import {
   UserOutlined,
-  CalendarOutlined,
   EditOutlined,
   HistoryOutlined,
   StarOutlined,
@@ -36,7 +35,7 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
             <li key={index} className="text-xs text-slate-600">
               <span className="font-medium">{formatDate(entry.timestamp)}</span> - 
               <span className="text-blue-600 font-medium mx-1">{entry.updated_by_name}</span> tərəfindən,
-              qiymət dəyişdirildi: <Tag color="red">{entry.previous_score}</Tag> → <Tag color="green">{entry.new_score}</Tag>.
+              bal dəyişdirildi: <Tag color="red">{entry.previous_score}</Tag> → <Tag color="green">{entry.new_score}</Tag>.
             </li>
           ))}
         </ul>
@@ -52,18 +51,25 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
   };
 
   return (
-    <BaseModal
+    <div className="kpi-container">
+       <BaseModal
       open={open}
       onCancel={onClose}
       title={`Dəyərləndirmə Detalları: ${task.title}`}
       width={700}
       onOk={onClose}
       okText="Bağla"
+      showCancelButton={false}
     >
       <div className="space-y-4"> 
         <Card size="small">
           <Descriptions title="Tapşırıq Məlumatları" bordered column={1} size="small">
             <Descriptions.Item label="Başlıq">{task.title}</Descriptions.Item>
+            {task.description && (
+              <Descriptions.Item label="Tapşırıq detalları">
+                <div className="whitespace-pre-wrap">{task.description}</div>
+              </Descriptions.Item>
+            )}
             <Descriptions.Item label="İşçi">{task.assignee_details}</Descriptions.Item>
             <Descriptions.Item label="Status">
               <Tag color="blue">{task.status_display}</Tag>
@@ -98,7 +104,7 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
           }
         >
           <Descriptions bordered size="small" column={1}>
-            <Descriptions.Item label="Qiymət">
+            <Descriptions.Item label="Bal">
               <ScoreDisplay score={selfEvaluation.self_score} maxScore={10} type="self" />
             </Descriptions.Item>
 
@@ -135,7 +141,7 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
           }
         >
           <Descriptions bordered size="small" column={1}>
-             <Descriptions.Item label="Yekun Qiymət">
+             <Descriptions.Item label="Yekun Bal">
               <ScoreDisplay score={superiorEvaluation.final_score} maxScore={100} type="superior" />
             </Descriptions.Item>
 
@@ -166,6 +172,8 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
         )}
       </div>
     </BaseModal>
+    </div>
+   
   );
 };
 
