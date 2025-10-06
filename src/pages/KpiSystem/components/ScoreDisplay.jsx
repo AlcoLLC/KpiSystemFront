@@ -1,24 +1,21 @@
 import { Tag } from "antd";
 
 const ScoreDisplay = ({ score, maxScore }) => {
-  // Yalnız etibarlı dəyərlər olduqda faizi hesabla
   const percentage = (score && maxScore) ? (score / maxScore) * 100 : 0;
 
-  // Rəng siniflərini (background və text) birlikdə təyin edən funksiya
   const getTagStyles = () => {
     if (percentage <= 30) {
-      return "bg-red-100 text-red-700"; // Soft qırmızı
+      return "bg-red-100 text-red-700";
     }
     if (percentage <= 60) {
-      return "bg-orange-100 text-orange-700"; // Soft narıncı
+      return "bg-orange-100 text-orange-700"; 
     }
     if (percentage <= 80) {
-      return "bg-blue-100 text-blue-700"; // Soft mavi
+      return "bg-blue-100 text-blue-700"; 
     }
-    return "bg-green-100 text-green-700"; // Soft yaşıl
+    return "bg-green-100 text-green-700";
   };
 
-  // Tag üçün ümumi və dinamik sinifləri birləşdir
   const tagClassName = `
     font-bold 
     border-none 
@@ -29,9 +26,11 @@ const ScoreDisplay = ({ score, maxScore }) => {
   `;
 
   return (
-    <Tag className={tagClassName.trim()}>
+    <div className="kpi-container">
+      <Tag className={tagClassName.trim()}>
       {score} / {maxScore}
     </Tag>
+    </div>
   );
 };
 

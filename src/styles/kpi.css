@@ -1,0 +1,301 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Kpi system */
+
+
+.dark .kpi-container .bg-white.dark\:bg-gray-800 {
+  background-color: #1f2937; 
+}
+
+/* ======================================== */
+/* ========= BaseModal & Ant Design ========= */
+/* ======================================== */
+
+.dark .kpi-container .bg-white.dark\:bg-gray-800 {
+  background-color: #1f2937;
+}
+
+.dark .kpi-container .text-gray-900.dark\:text-white {
+  color: #ffffff;
+}
+
+.dark .kpi-container .border-gray-200.dark\:border-gray-700 {
+  border-color: #374151;
+}
+
+.dark .kpi-container .ant-btn-default {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.dark .kpi-container .ant-btn-default:not(:disabled):hover {
+  background-color: #4b5563;
+  border-color: #6b7280;
+  color: #ffffff;
+}
+
+.dark .kpi-container .ant-btn-primary:not(:disabled):hover {
+  opacity: 0.85;
+}
+
+.dark .kpi-container .ant-btn-text {
+  color: #d1d5db;
+}
+.dark .kpi-container .ant-btn-text:not(:disabled):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .kpi-container .ant-btn[disabled],
+.dark .kpi-container .ant-btn[disabled]:hover {
+  background: #2d3748 !important;
+  color: #718096 !important;
+  border-color: #2d3748 !important;
+}
+
+
+/* =========================================== */
+/* ========= BlockContent Task Card ========== */
+/* =========================================== */
+
+.dark .kpi-container .ant-card {
+  background-color: #1B232D;
+  border-color: #374151;
+  color: #d1d5db;
+}
+
+.dark .kpi-container .ant-card-head {
+  border-bottom-color: #374151;
+  color: #e5e7eb;
+}
+
+.dark .kpi-container .ant-card-head .text-blue-600 {
+  color: #60a5fa;
+}
+
+.dark .kpi-container .ant-card-body {
+  color: #d1d5db;
+}
+
+.dark .kpi-container .ant-card-body .text-gray-800 {
+  color: #e5e7eb;
+}
+
+.dark .kpi-container .ant-card-body .text-gray-600 {
+  color: #9ca3af;
+}
+
+.dark .kpi-container .ant-tag {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.dark .kpi-container .ant-tag-red {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.dark .kpi-container .ant-tag-orange {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.dark .kpi-container .ant-tag-blue {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.dark .kpi-container .ant-tag-green {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+
+/* =========================================== */
+/* ========= EditReviewModal Styles ========== */
+/* =========================================== */
+
+.dark .kpi-container .text-gray-700 {
+  color: #d1d5db;
+}
+
+.dark .kpi-container .text-gray-400 {
+  color: #9ca3af;
+}
+
+.dark .kpi-container .bg-gradient-to-br.from-gray-50 {
+  background-image: linear-gradient(to bottom right, #2d3748, #1f2937);
+  border-color: #4a5568;
+}
+
+.dark .kpi-container .ant-rate-star-zero .ant-rate-star-first,
+.dark .kpi-container .ant-rate-star-zero .ant-rate-star-second {
+  color: #4a5568; 
+}
+
+.dark .kpi-container .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #60a5fa;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #1f2937;
+}
+.dark .kpi-container .slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #60a5fa;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #1f2937;
+}
+
+
+.dark .kpi-container .ant-input {
+  background-color: #2d3748;
+  border-color: #4a5568;
+  color: #e5e7eb;
+}
+.dark .kpi-container .ant-input::placeholder {
+  color: #9ca3af;
+}
+.dark .kpi-container .ant-input:focus,
+.dark .kpi-container .ant-input-focused {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* ================================================= */
+/* ========= EvaluationDetailsModal Styles ========= */
+/* ================================================= */
+
+.dark .kpi-container .ant-descriptions-title {
+  color: #ffffff;
+}
+.dark .kpi-container .ant-descriptions-bordered .ant-descriptions-view {
+  border: 1px solid #4a5568;
+}
+.dark .kpi-container .ant-descriptions-bordered .ant-descriptions-item-label,
+.dark .kpi-container .ant-descriptions-bordered .ant-descriptions-item-content {
+  border-color: #4a5568 !important;
+}
+.dark .kpi-container .ant-descriptions-item-label {
+  background-color: #2d3748;
+  color: #e5e7eb !important;
+}
+.dark .kpi-container .ant-descriptions-bordered .ant-descriptions-item-content {
+  background-color: #1f2937;
+  color: #d1d5db;
+}
+.dark .kpi-container .whitespace-pre-wrap {
+    color: #d1d5db;
+}
+
+.dark .kpi-container .bg-slate-50 {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+.dark .kpi-container .text-slate-700 {
+  color: #e5e7eb;
+}
+.dark .kpi-container .text-slate-600 {
+  color: #9ca3af;
+}
+.dark .kpi-container .text-blue-600 {
+  color: #60a5fa;
+}
+
+.dark .kpi-container .ant-empty-description {
+  color: #9ca3af;
+}
+
+.dark .kpi-container .ant-tooltip-inner {
+  background-color: #2d3748;
+  color: #e5e7eb;
+}
+.dark .kpi-container .ant-tooltip-arrow-content {
+  background-color: #2d3748;
+}
+
+/* ========================================= */
+/* ========= ReviewModal Styles ============ */
+/* ========================================= */
+
+/* --- Məlumat Qutuları --- */
+
+.dark .kpi-container .from-orange-50 {
+  background-image: linear-gradient(to right, rgba(202, 138, 4, 0.1), rgba(217, 119, 6, 0.15));
+  border-color: rgba(202, 138, 4, 0.3);
+}
+.dark .kpi-container .text-orange-700 {
+  color: #fcd34d;
+}
+.dark .kpi-container .text-orange-600 {
+  color: #fbbf24;
+}
+
+.dark .kpi-container .from-green-50 {
+  background-image: linear-gradient(to right, rgba(5, 150, 105, 0.1), rgba(6, 128, 96, 0.15));
+  border-color: rgba(5, 150, 105, 0.3);
+}
+.dark .kpi-container .text-green-700 {
+  color: #6ee7b7; 
+}
+.dark .kpi-container .text-green-600 {
+  color: #34d399; 
+}
+
+.dark .kpi-container .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+.dark .kpi-container .text-blue-800 {
+  color: #93c5fd; 
+}
+
+/* ========================================= */
+/* ===== Dashboard Info Box Styles ========= */
+/* ========================================= */
+
+.dark .kpi-container .from-green-100 {
+  background-image: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(6, 95, 70, 0.2));
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #a7f3d0; 
+}
+
+.dark .kpi-container .from-blue-100 {
+  background-image: linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(79, 70, 229, 0.2));
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #bfdbfe; 
+}
+
+.dark .kpi-container .from-yellow-50 {
+  background-image: linear-gradient(to right, rgba(192, 166, 121, 0.1), rgba(211, 190, 151, 0.15));
+  border-color: rgba(192, 166, 121, 0.3);
+}
+
+.dark .kpi-container .text-yellow-800 {
+  color: #e3d8c5;
+}
+.dark .kpi-container .text-yellow-700 {
+  color: #d1c4b0;
+}
+.dark .kpi-container .text-yellow-600 {
+  color: #e3d8c5;
+}
+.dark .kpi-container .text-orange-600 { 
+  color: #d1c4b0;
+}
+.dark .kpi-container .text-green-600 {
+  color: #6ee7b7;
+}
