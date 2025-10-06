@@ -51,7 +51,7 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
                             <Col xs={12} sm={12} md={6}>
                                 <div onClick={() => handleCardClick({})} className="cursor-pointer">
                                     <Card className="shadow-sm bg-white dark:bg-[#1F2937] hover:bg-gray-50 dark:hover:bg-[#2a384c] transition-all">
-                                        <Statistic title="Cəmi Tapşırıq" value={task_performance.total_tasks} prefix={<TrophyOutlined />}/>
+                                        <Statistic title="Cəmi Tapşırıq" value={task_performance.total_tasks} prefix={<TrophyOutlined />} valueStyle={{ color: '#fbbf24' }}/>
                                     </Card>
                                 </div>
                             </Col>
