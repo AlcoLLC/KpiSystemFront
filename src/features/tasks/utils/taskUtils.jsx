@@ -89,7 +89,7 @@ export const getFormConfig = (users, usersLoading, permissions) => {
 };
 
 export const getTaskTableColumns = (permissions) => {
-   const allColumns = [
+  const allColumns = [
     { title: 'Başlıq', dataIndex: 'title', key: 'title', width: 200 },
     { title: 'İcraçı', dataIndex: 'assignee_details', key: 'assignee_details', width: 120 },
     {
