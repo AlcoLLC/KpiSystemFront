@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaArrowRight } from 'react-icons/fa';
 import { message } from 'antd';
 import ReusableTable from '../../../components/ReusableTable';
-import BaseModal from '../../../components/BaseModal';
-import Details from '../../../components/Details';
+import TaskDetailsModal from '../../Task/components/TaskDetailsModal';
 import tasksApi from '../../../api/tasksApi';
 import useAuth from '../../../hooks/useAuth'; // <-- useTaskPermissions yerinə bunu istifadə edirik
 import { getTaskTableColumns, generateDetailsItems } from '../../../features/tasks/utils/taskUtils.jsx';
@@ -28,7 +27,7 @@ const RecentTasksTable = () => {
   useEffect(() => {
     const fetchRecentTasks = async () => {
       try {
-        const response = await tasksApi.getTasks({ page_size: 10, ordering: '-created_at' });
+        const response = await tasksApi.getTasks({ page_size: 5, ordering: '-created_at' });
         const responseData = response.data;
         setTasks(responseData.results || responseData || []);
       } catch (error) {
@@ -68,14 +67,11 @@ const RecentTasksTable = () => {
         </Link>
       </div>
 
-      <BaseModal
-        title="Tapşırıq Məlumatları"
-        open={isViewOpen}
-        onCancel={() => setIsViewOpen(false)}
-        footer={null}
-      >
-        <Details items={generateDetailsItems(currentRecord)} />
-      </BaseModal>
+      <TaskDetailsModal 
+        open={isViewOpen} 
+        onCancel={() => setIsViewOpen(false)} 
+        record={currentRecord} 
+      />
     </div>
   );
 };

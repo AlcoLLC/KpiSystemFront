@@ -19,7 +19,7 @@ const tasksApi = {
     return apiService.get('/performance/summary/me/');
   },
 
-  
+  getFilterableDepartments: () => apiService.get('/performance/filterable-departments/'),
   
 };
 

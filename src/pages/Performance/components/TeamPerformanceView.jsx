@@ -5,15 +5,19 @@ import { UserOutlined } from '@ant-design/icons';
 import ReusableTable from '../../../components/ReusableTable';
 import tasksApi from '../../../api/tasksApi';
 import { useDebounce } from '../../../hooks/useDebounce';
-import accountsApi from '../../../api/accountsApi';
+import useAuth from '../../../hooks/useAuth'; // useAuth importu əlavə edirik
 
 const TeamPerformanceView = () => {
   const navigate = useNavigate();
+  const { user } = useAuth(); // İstifadəçi məlumatını alırıq
   const [subordinates, setSubordinates] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ search: '', department: null });
   const debouncedSearch = useDebounce(filters.search, 500);
+
+  // Filterin görünməsi üçün icazə məntiqi
+  const canViewDepartmentFilter = user && (user.role === 'admin' || user.role === 'top_management');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,16 +40,18 @@ const TeamPerformanceView = () => {
   }, [debouncedSearch, filters.department]);
 
   useEffect(() => {
-    const fetchDepartments = async () => {
-        try {
-            const response = await accountsApi.getDepartments();
-            setDepartments(response.data.results || response.data || []);
-        } catch (error) {
-            console.error("Departamentləri yükləmək alınmadı:", error);
-        }
-    };
-    fetchDepartments();
-  }, []);
+    if (canViewDepartmentFilter) {
+      const fetchDepartments = async () => {
+          try {
+               const response = await tasksApi.getFilterableDepartments();
+               setDepartments(response.data || []);
+          } catch (error) {
+              console.error("Departamentləri yükləmək alınmadı:", error);
+          }
+      };
+      fetchDepartments();
+    }
+  }, [canViewDepartmentFilter]);
 
   const columns = useMemo(() => [
     { 
@@ -78,15 +84,17 @@ const TeamPerformanceView = () => {
           onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
           className="flex-1 min-w-[250px]"
         />
-        <Select
-          placeholder="Departamentə görə filterlə"
-          allowClear
-          value={filters.department}
-          onChange={value => setFilters(prev => ({ ...prev, department: value }))}
-          className="flex-1 min-w-[250px]"
-        >
-          {departments.map(dep => <Select.Option key={dep.id} value={dep.id}>{dep.name}</Select.Option>)}
-        </Select>
+        {canViewDepartmentFilter && (
+          <Select
+            placeholder="Departamentə görə filterlə"
+            allowClear
+            value={filters.department}
+            onChange={value => setFilters(prev => ({ ...prev, department: value }))}
+            className="flex-1 min-w-[250px]"
+          >
+            {departments.map(dep => <Select.Option key={dep.id} value={dep.id}>{dep.name}</Select.Option>)}
+          </Select>
+        )}
       </div>
       <ReusableTable
         columns={columns}
