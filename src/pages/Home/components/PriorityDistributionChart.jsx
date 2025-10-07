@@ -25,7 +25,7 @@ const PriorityDistributionChart = () => {
         setChartData({
           labels: response.data.labels,
           datasets: [{
-            label: '# of Tasks',
+            label: ' Tapşırıqların sayı',
             data: response.data.data,
             backgroundColor: backgroundColors,
             hoverOffset: 4
