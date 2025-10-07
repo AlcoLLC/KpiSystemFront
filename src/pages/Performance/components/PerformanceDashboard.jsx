@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty, Tooltip } from 'antd';
 import { UserOutlined, CheckCircleOutlined, SyncOutlined, WarningOutlined, TrophyOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
+import KpiMonthlyChart from './KpiMonthlyChart';
 import { Bar } from 'react-chartjs-2';
 
 
@@ -77,6 +79,8 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
                                 </div>
                             </Col>
                         </Row>
+
+                        <KpiMonthlyChart userSlug={user.slug} />
 
                     </div>
                 </Col>
