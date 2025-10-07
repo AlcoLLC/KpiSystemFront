@@ -7,68 +7,84 @@ import tasksApi from '../../api/tasksApi';
 import TeamPerformanceView from './components/TeamPerformanceView';
 import PerformanceDashboard from './components/PerformanceDashboard';
 
+// YENİ İMPORTLAR: Line və Point elementlərini Chart.js-dən import edirik
+import { 
+    Chart as ChartJS, 
+    CategoryScale, 
+    LinearScale, 
+    PointElement, // <-- YENİ
+    LineElement,  // <-- YENİ
+    Title, 
+    Tooltip, 
+    Legend 
+} from 'chart.js';
+
+// YENİ QEYDİYYAT: Line və Point elementlərini Chart.js-ə tanıdırıq
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
 function Performance() {
-  const { slug } = useParams();
-  const { user } = useAuth();
-  const location = useLocation();
-  const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my');
-  const [performanceData, setPerformanceData] = useState(null);
-  const [loading, setLoading] = useState(false); 
-  const isSuperior = user && user.role !== 'employee';
-  const isAdmin = user && user.role === 'admin';
-  const showViewSwitcher = isSuperior && !isAdmin;
+    const { slug } = useParams();
+    const { user } = useAuth();
+    const location = useLocation();
+    
+    const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my');
+    const [performanceData, setPerformanceData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
+    const isSuperior = user && user.role !== 'employee';
+    const isAdmin = user && user.role === 'admin';
+    const showViewSwitcher = isSuperior && !isAdmin;
 
-  const fetchPerformance = useCallback(async () => {
-    if (viewMode !== 'my' && !slug) return;
+    const fetchPerformance = useCallback(async () => {
+        if (viewMode !== 'my' && !slug) return;
+        setLoading(true);
+        setPerformanceData(null);
+        try {
+            const response = await tasksApi.getPerformanceSummary(slug || null);
+            setPerformanceData(response.data);
+        } catch (error) {
+            message.error("Performans məlumatlarını yükləmək mümkün olmadı.");
+        } finally {
+            setLoading(false);
+        }
+    }, [slug, viewMode]);
 
-    setLoading(true);
-    setPerformanceData(null);
-    try {
-      const response = await tasksApi.getPerformanceSummary(slug || null);
-      setPerformanceData(response.data);
-    } catch (error) {
-      message.error("Performans məlumatlarını yükləmək mümkün olmadı.");
-    } finally {
-      setLoading(false);
-    }
-  }, [slug, viewMode]);
+    useEffect(() => {
+        fetchPerformance();
+    }, [fetchPerformance]);
 
-  useEffect(() => {
-    fetchPerformance();
-  }, [fetchPerformance]);
+    const renderContent = () => {
+        if (slug || viewMode === 'my') {
+            return <PerformanceDashboard loading={loading} performanceData={performanceData} />;
+        }
+        return <TeamPerformanceView />;
+    };
 
-  const renderContent = () => {
-    if (slug || viewMode === 'my') {
-        return <PerformanceDashboard loading={loading} performanceData={performanceData} />;
-    }
-    return <TeamPerformanceView />;
-  };
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+                <h2 className="px-1 text-2xl font-bold text-gray-800 dark:text-white">Performans İdarəetməsi</h2>
+                {slug && (
+                    <Link to="/performance">
+                        <Button icon={<ArrowLeftOutlined />}>Bütün Əməkdaşlar</Button>
+                    </Link>
+                )}
+            </div>
+            
+            {showViewSwitcher && !slug && (
+                <div>
+                    <Radio.Group value={viewMode} onChange={(e) => setViewMode(e.target.value)}>
+                        <Radio.Button value="my"><UserOutlined /> Mənim Performansım</Radio.Button>
+                        <Radio.Button value="team"><TeamOutlined /> Əməkdaşların Performansı</Radio.Button>
+                    </Radio.Group>
+                </div>
+            )}
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h2 className="px-1 text-2xl font-bold text-gray-800 dark:text-white">Performans İdarəetməsi</h2>
-        {slug && (
-             <Link to="/performance">
-                <Button icon={<ArrowLeftOutlined />}>Bütün Əməkdaşlar</Button>
-            </Link>
-        )}
-      </div>
-      
-      {showViewSwitcher && !slug && (
-        <div>
-          <Radio.Group value={viewMode} onChange={(e) => setViewMode(e.target.value)}>
-            <Radio.Button value="my"><UserOutlined /> Mənim Performansım</Radio.Button>
-            <Radio.Button value="team"><TeamOutlined /> Əməkdaşların Performansı</Radio.Button>
-          </Radio.Group>
+            <div className="p-4 sm:p-6 rounded-lg shadow-md bg-white dark:bg-[#1B232D]">
+                {renderContent()}
+            </div>
         </div>
-      )}
-
-      <div className="p-4 sm:p-6 rounded-lg shadow-md bg-white dark:bg-[#1B232D]">
-        {renderContent()}
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Performance;

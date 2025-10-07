@@ -81,6 +81,10 @@ const kpiAPI = {
   getPendingForMe: () => {
     return apiService.get("/kpis/kpi/pending-for-me/");
   },
+
+  getKpiMonthlySummary: (slug, { year, month }) => {
+    return apiService.get(`/performance/kpi-summary/${slug}/`, { year, month });
+  },
 };
 
 export default kpiAPI;

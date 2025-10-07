@@ -4,14 +4,12 @@ import { EditOutlined, DeleteOutlined, ArrowRightOutlined, CheckCircleOutlined, 
 import { STATUS_TRANSITIONS } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const ActionButton = ({ icon, tooltip, onClick, colorClass }) => (
-  <Tooltip title={tooltip}>
     <button
       onClick={e => { e.stopPropagation(); onClick(); }}
       className={`flex h-8 w-8 items-center justify-center rounded-md ${colorClass} transition-colors`}
     >
       {icon}
     </button>
-  </Tooltip>
 );
 
 const TaskActions = ({ record, onEdit, onDelete, onStatusChange, permissions }) => {
@@ -20,16 +18,12 @@ const TaskActions = ({ record, onEdit, onDelete, onStatusChange, permissions }) 
   if (!isAdmin) {
     if (record.status === 'DONE') {
       return (
-        <Tooltip title="Tamamlanıb">
           <CheckCircleOutlined style={{ fontSize: '22px', color: '#52c41a' }} />
-        </Tooltip>
       );
     }
     if (record.status === 'CANCELLED') {
       return (
-        <Tooltip title="Ləğv edilib">
           <CloseCircleOutlined style={{ fontSize: '22px', color: '#ff4d4f' }} />
-        </Tooltip>
       );
     }
   }
@@ -71,9 +65,7 @@ const TaskActions = ({ record, onEdit, onDelete, onStatusChange, permissions }) 
   }
 
   return (
-    <Tooltip title="Gözləmədə və ya əməliyyat üçün icazə yoxdur">
       <ClockCircleOutlined  style={{ fontSize: '22px', color: '#faad14' }} />
-    </Tooltip>
   );
 };
 
