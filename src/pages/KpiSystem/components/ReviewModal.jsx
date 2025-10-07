@@ -116,10 +116,7 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
                 <UserOutlined className="mr-2" />
                 <span className="font-medium">Öz Dəyərləndirmə (1-10 şkala)</span>
               </div>
-              <p className="text-sm text-orange-600 mt-1">
-                Dəyərləndirməni tamamladıqdan sonra departament rəhbərinə məlumat
-                e-poçtu göndəriləcək.
-              </p>
+              
             </div>
           )}
   

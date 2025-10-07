@@ -165,18 +165,18 @@ function KpiSystem() {
           <div className="mt-2 text-sm text-yellow-700">
             • <strong>Özünü qiymətləndirmə:</strong>{" "}
             <span className="font-semibold text-orange-600">1-10 ballıq şkala</span>
-            <br />• <strong>Rəhbər qiymətləndirməsi:</strong>
+            <br />• <strong>Rəhbər qiymətləndirməsi: </strong>
             <span className="font-semibold text-green-600">
               1-100 ballıq şkala (Yekun bal)
             </span>
             <br />• Qiymətləndirmə eyni departament daxilindəki iyerarxik quruluşa əsaslanır.
           </div>
         </div>
-        </div>
+        </div> 
 
         {tasks.length === 0 ? (
           <div className="text-center py-16">
-            <Empty description="No completed tasks found for evaluation." />
+            <Empty description="Qiymətləndirmə üçün tamamlanmış tapşırıq tapılmadı." />
           </div>
         ) : (
           <Row gutter={[16, 16]}>
