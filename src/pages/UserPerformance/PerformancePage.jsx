@@ -8,6 +8,7 @@ import SummaryModal from './components/SummaryModal';
 import apiService from '../../api/apiService';
 import useAuth from '../../hooks/useAuth';
 import { formatForDatePicker, formatForAPI } from '../../utils/dateFormatter';
+import "../../styles/userkpi.css";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -29,6 +30,7 @@ const PerformancePage = () => {
     const [selectedMonth, setSelectedMonth] = useState(new Date());
     const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [activeTab, setActiveTab] = useState('team');
+    const [canEditModal, setCanEditModal] = useState(false);
 
     const canEvaluate = user && managerialRoles.includes(user.role);
 
@@ -70,19 +72,12 @@ const PerformancePage = () => {
         setMyMonthlyScores(myScoresRes.data);
 
         if (canEvaluate && subordinatesRes) {
-            // --- DEĞİŞİKLİK BAŞLANGICI ---
-            // Gelen datayı sırala. Değerlendirilmemişler (selected_month_evaluation === null) önce gelsin.
             const sortedSubordinates = [...subordinatesRes.data].sort((a, b) => {
-                const aHasEval = !!a.selected_month_evaluation; // Değerlendirme varsa true, yoksa false olur
+                const aHasEval = !!a.selected_month_evaluation;
                 const bHasEval = !!b.selected_month_evaluation;
-
-                // boolean'ları sayıya çevirerek sıralama yapıyoruz (false=0, true=1)
-                // a değerlendirilmemiş (false), b değerlendirilmiş (true) ise sonuç -1 olur, a önce gelir.
                 return aHasEval - bHasEval;
             });
-            
             setSubordinates(sortedSubordinates);
-            // --- DEĞİŞİKLİK SONU ---
         }
 
     } catch (error) {
@@ -102,8 +97,10 @@ const PerformancePage = () => {
     
     const handleOpenEvalModal = (userForModal) => {
         setSelectedUser(userForModal);
+        setCanEditModal(userForModal.can_evaluate);
         setIsEvalModalVisible(true);
     };
+
 
     const handleOpenSummaryModal = (userForModal) => {
         setSelectedUser(userForModal);
@@ -114,6 +111,7 @@ const PerformancePage = () => {
         setIsEvalModalVisible(false);
         setIsSummaryModalVisible(false);
         setSelectedUser(null);
+        setCanEditModal(false); 
         if (refresh) {
             fetchAPIData();
         }
@@ -142,7 +140,7 @@ const PerformancePage = () => {
     };
 
     return (
-        <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+        <div className="user-kpi-system p-4 md:p-6 bg-gray-50 min-h-screen">
             <Title level={2} className="mb-6">Aylıq Performans Dəyərləndirməsi</Title>
             
             <Row gutter={[16, 16]} className="mb-6 bg-white p-4 rounded-lg shadow">
@@ -203,6 +201,7 @@ const PerformancePage = () => {
                         user={selectedUser}
                         initialData={selectedUser.selected_month_evaluation}
                         evaluationMonth={selectedMonth}
+                        canEdit={canEditModal}
                     />
                     <SummaryModal
                         visible={isSummaryModalVisible}

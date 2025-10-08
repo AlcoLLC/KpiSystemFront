@@ -1,6 +1,3 @@
-// src/pages/PerformancePage/components/MyPerformanceView.js
-
-import React from 'react';
 import { Card, Row, Col, Statistic, Typography, Avatar, Empty, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -12,11 +9,9 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
     return <Empty description="Performans məlumatınız tapılmadı." className="pt-10" />;
   }
 
-  // Qrafik üçün məlumatları hazırlayırıq (tarixə görə artan sırada)
   const chartData = monthlyScores
     .map(item => ({
       ...item,
-      // Tarixi 'YYYY-MM' formatına salırıq
       month: new Date(item.evaluation_date).toISOString().substring(0, 7),
     }))
     .reverse();
@@ -24,7 +19,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
   return (
     <div className="p-4 bg-white rounded-lg">
       <Row gutter={[24, 24]}>
-        {/* Sol tərəf: Profil Məlumatları */}
         <Col xs={24} md={8} lg={7}>
           <Card bordered={false}>
             <div className="text-center">
@@ -51,7 +45,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
           </Card>
         </Col>
         
-        {/* Sağ tərəf: Statistikalar və Qrafik */}
         <Col xs={24} md={16} lg={17}>
           <Card bordered={false}>
             <Title level={5} style={{ marginBottom: '24px' }}>Dövrlər üzrə ortalama nəticələr</Title>

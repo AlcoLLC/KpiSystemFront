@@ -1,14 +1,10 @@
-// src/pages/PerformancePage/components/SummaryModal.js
-
 import { useState, useEffect } from 'react';
 import { Modal, Row, Col, Statistic, Spin, Empty, message, Tabs, List, Tag } from 'antd';
 import apiService from '../../../api/apiService';
-// Assuming you have this utility function, as seen in the other component
 import { formatForAPI, formatForDisplay } from '../../../utils/dateFormatter';
 
 const { TabPane } = Tabs;
 
-// Accept the new prop: 'selectedMonth'
 const SummaryModal = ({ visible, onClose, user, selectedMonth }) => {
     const [summary, setSummary] = useState(null);
     const [monthlyScores, setMonthlyScores] = useState([]);
@@ -20,10 +16,8 @@ const SummaryModal = ({ visible, onClose, user, selectedMonth }) => {
         setSummary(null);
         setMonthlyScores([]);
 
-        // Prepare parameters for the API call
         const params = { evaluatee_id: user.id };
         if (selectedMonth) {
-            // Format the date to 'YYYY-MM' for the backend
             params.date = formatForAPI(selectedMonth).substring(0, 7);
         }
 
@@ -47,8 +41,6 @@ const SummaryModal = ({ visible, onClose, user, selectedMonth }) => {
         if (visible && user) {
             fetchAllData();
         }
-    // Add selectedMonth to the dependency array to refetch if it changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible, user, selectedMonth]);
 
     return (
@@ -58,6 +50,7 @@ const SummaryModal = ({ visible, onClose, user, selectedMonth }) => {
             onCancel={onClose}
             footer={null} 
             width={700}
+            className='summary-modal'
         >
             <Spin spinning={loading}>
                 {(!summary && !monthlyScores.length && !loading) ? (
