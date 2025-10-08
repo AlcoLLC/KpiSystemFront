@@ -1,0 +1,350 @@
+/* === Dark Mode Styles for PerformancePage (Improved Version) === */
+
+/* General container and text colors */
+.dark .user-kpi-system {
+  background-color: #131920; /* GitHub tərzi daha tünd arxa fon */
+  color: #c9d1d9;
+}
+
+.dark .user-kpi-system .ant-typography {
+  color: #f0f6fc;
+}
+
+/* --- Filter section (DatePicker, Select) --- */
+.dark .user-kpi-system .bg-white {
+  background-color: #161b22 !important;
+  border: 1px solid #30363d;
+  box-shadow: none; /* Kölgəni ləğv edirik */
+}
+
+.dark .user-kpi-system .ant-picker,
+.dark .user-kpi-system .ant-select-selector {
+  background-color: #131920 !important;
+  border-color: #30363d !important;
+  color: #c9d1d9;
+}
+.dark .user-kpi-system .ant-picker:hover,
+.dark .user-kpi-system .ant-select:hover .ant-select-selector {
+  border-color: #58a6ff !important;
+}
+
+.dark .user-kpi-system .ant-picker-suffix,
+.dark .user-kpi-system .ant-select-arrow {
+  color: #8b949e;
+}
+
+/* Dropdown/Popup styles for DatePicker and Select */
+.dark .ant-picker-panel-container,
+.dark .ant-select-dropdown {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+}
+.dark .ant-picker-panel .ant-picker-header,
+.dark .ant-picker-panel .ant-picker-header button {
+  color: #c9d1d9;
+}
+.dark .ant-picker-cell,
+.dark .ant-select-item {
+  color: #c9d1d9;
+}
+.dark .ant-picker-cell:hover:not(.ant-picker-cell-selected) .ant-picker-cell-inner,
+.dark .ant-select-item-option:hover:not(.ant-select-item-option-selected) {
+  background-color: #2c333b;
+}
+.dark .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
+.dark .ant-select-item-option-selected {
+  background-color: #1f6feb;
+  color: #ffffff;
+}
+.dark .ant-picker-today-btn {
+  color: #58a6ff;
+}
+
+/* --- Tabs styles --- */
+.dark .user-kpi-system .ant-tabs-nav {
+  background-color: transparent;
+  border-bottom: 1px solid #21262d;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 16px;
+}
+.dark .user-kpi-system .ant-tabs-tab {
+  color: #8b949e;
+  padding: 8px 12px;
+}
+.dark .user-kpi-system .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #58a6ff;
+}
+.dark .user-kpi-system .ant-tabs-ink-bar {
+  background: #58a6ff;
+  box-shadow: 0 0 8px #58a6ff;
+}
+
+
+/* --- Modal General Styles --- */
+.dark .user-kpi-system .ant-modal-content {
+  background-color: #161b22;
+  color: #c9d1d9;
+}
+.dark .user-kpi-system .ant-modal-header {
+  background-color: #161b22;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 16px;
+}
+.dark .user-kpi-system .ant-modal-title,
+.dark .user-kpi-system .ant-modal-close-x {
+  color: #f0f6fc !important;
+}
+.dark .user-kpi-system .ant-modal-footer {
+  border-top: 1px solid #30363d;
+  padding-top: 16px;
+}
+
+
+/* --- Empty component styles --- */
+.dark .user-kpi-system .ant-empty-description {
+  color: #8b949e;
+}
+/* === Dark Mode Styles for UserEvaluationModal === */
+
+/* The base modal content styles are in the previous file. These are additions for the form elements inside. */
+
+/* General text and labels inside the modal form */
+.dark .user-kpi-system-modal .ant-modal-content .text-gray-700,
+.dark .user-kpi-system-modal .ant-modal-content .ant-form-item-label > label {
+  color: #d1d5db; /* Light gray for regular text and labels */
+}
+
+.dark .user-kpi-system-modal .ant-modal-content .text-gray-600 {
+  color: #9ca3af; /* Slightly dimmer gray for secondary text */
+}
+
+.dark .user-kpi-system-modal .ant-modal-content .text-gray-800 {
+  color: #e5e7eb;
+}
+
+.dark .user-kpi-system-modal .ant-modal-content .text-gray-400 {
+  color: #6b7280;
+}
+
+/* Informational banner at the top */
+.dark .user-kpi-system-modal .ant-modal-content .from-blue-50 {
+  background-image: linear-gradient(to right, #1e3a8a, #312e81);
+}
+.dark .user-kpi-system-modal .ant-modal-content .border-blue-200 {
+  border-color: #3b82f6;
+}
+.dark .user-kpi-system-modal .ant-modal-content .text-blue-700,
+.dark .user-kpi-system-modal .ant-modal-content .text-blue-600,
+.dark .user-kpi-system-modal .ant-modal-content .text-blue-500 {
+  color: #bfdbfe;
+}
+
+/* Score Display Component */
+.dark .user-kpi-system-modal .ant-modal-content .text-green-600 {
+  color: #86efac;
+}
+.dark .user-kpi-system-modal .ant-modal-content .bg-green-100 {
+  background-color: #166534; /* Dark green background */
+}
+
+/* Rating Section Container */
+.dark .user-kpi-system-modal .ant-modal-content .from-gray-50 {
+  background-image: linear-gradient(to bottom right, #374151, #1f2937);
+}
+.dark .user-kpi-system-modal .ant-modal-content .border-gray-300 {
+  border-color: #4b5563;
+}
+
+/* Ant Design Rate Component (Stars) */
+.dark .user-kpi-system-modal .ant-modal-content .ant-rate-star-zero {
+  color: #4b5563; /* Darker color for unselected stars */
+}
+
+/* Score Description text colors */
+.dark .user-kpi-system-modal .ant-modal-content .text-red-600 {
+  color: #f87171;
+}
+.dark .user-kpi-system-modal .ant-modal-content .text-yellow-600 {
+  color: #facc15;
+}
+/* Blue and Green are handled by the general rules above */
+
+/* Comment Input (TextArea) */
+.dark .user-kpi-system-modal .ant-modal-content .ant-input,
+.dark .user-kpi-system-modal .ant-modal-content .ant-input:focus {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #d1d5db;
+}
+.dark .user-kpi-system .ant-modal-content .ant-input::placeholder {
+  color: #6b7280;
+}
+
+/* Read-only Comment Box */
+.dark .user-kpi-system-modal .ant-modal-content .bg-gray-100 {
+  background-color: #374151;
+}
+.dark .user-kpi-system-modal .ant-modal-content .border-gray-200 {
+  border-color: #4b5563;
+}
+
+/* Timeline / History Section */
+.dark .user-kpi-system-modal .ant-modal-content .ant-timeline-item-tail {
+  border-left-color: #4b5563;
+}
+.dark .user-kpi-system-modal .ant-modal-content .text-red-500 {
+  color: #ef4444;
+}
+
+.dark .user-kpi-system-modal .ant-modal-footer {
+  border-top: 1px solid #374151;
+  padding-top: 16px; /* Düymələrin üstündəki boşluğu artırmaq üçün */
+}
+
+/* Modal Header styles for more space */
+.dark .user-kpi-system-modal .ant-modal-header {
+  background-color: #1f2937;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 16px; /* Başlıq ilə ayırıcı xətt arasına boşluq əlavə edir */
+}
+
+/* === Dark Mode Styles for UserEvaluationCard === */
+
+/* Card Base Styles */
+.dark .user-kpi-system-card {
+  background-color: #1f2937; /* Main dark background for the card */
+  border: 1px solid #374151;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* Special background for evaluated cards */
+.dark .user-kpi-system-card.bg-gray-50 {
+  background-color: #111827; /* A slightly different dark shade for evaluated state */
+}
+
+/* Text and Avatar Styles */
+.dark .user-kpi-system-card .text-gray-800 {
+  color: #f9fafb; /* White text for user's full name */
+}
+.dark .user-kpi-system-card .text-gray-500 {
+  color: #9ca3af; /* Lighter gray for user's role */
+}
+.dark .user-kpi-system-card .border-gray-200 {
+  border-color: #4b5563; /* Darker border for the avatar */
+}
+
+/* Score Badge (Top Right) */
+.dark .user-kpi-system-card .bg-yellow-100 {
+  background-color: #78350f; /* Dark amber background */
+}
+.dark .user-kpi-system-card .text-yellow-700 {
+  color: #fcd34d; /* Bright yellow text */
+}
+
+/* Ant Design Tag Styles */
+.dark .user-kpi-system-card .ant-tag {
+  border-color: transparent;
+}
+.dark .user-kpi-system-card .ant-tag-blue {
+  background-color: #1e40af;
+  color: #dbeafe;
+}
+.dark .user-kpi-system-card .ant-tag-green {
+  background-color: #166534;
+  color: #bbf7d0;
+}
+.dark .user-kpi-system-card .ant-tag-orange {
+  background-color: #9a3412;
+  color: #fed7aa;
+}
+
+/* Ant Design Button Styles */
+.dark .user-kpi-system-card .ant-btn-default {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+.dark .user-kpi-system-card .ant-btn-default:hover {
+  background-color: #4b5563;
+  border-color: #6b7280;
+  color: #ffffff;
+}
+.dark .user-kpi-system-card .ant-btn-primary[disabled],
+.dark .user-kpi-system-card .ant-btn-default[disabled] {
+    background-color: #374151 !important;
+    color: #6b7280 !important;
+    border-color: #4b5563 !important;
+}
+
+/* === Dark Mode Styles for SummaryModal (FINAL FIXED Version) === */
+
+/* DİQQƏT: Stil tətbiq olunması üçün !important əlavə edildi */
+.dark .summary-modal .ant-modal-body {
+  padding: 16px 24px !important; 
+}
+
+.dark .summary-modal .ant-tabs-nav {
+  margin: 0 -24px 16px -24px;
+  padding: 0 24px;
+  background-color: transparent;
+  border-bottom: 1px solid #374151;
+}
+.dark .summary-modal .ant-tabs-tab {
+  color: #9ca3af;
+}
+.dark .summary-modal .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #60a5fa;
+}
+.dark .summary-modal .ant-tabs-ink-bar {
+  background: #60a5fa;
+}
+
+.dark .summary-modal .ant-statistic {
+  background: #111827;
+  padding: 16px;
+  border-radius: 8px;
+}
+.dark .summary-modal .ant-statistic-title {
+  color: #9ca3af;
+}
+.dark .summary-modal .ant-statistic-content {
+  color: #f9fafb;
+}
+.dark .summary-modal .ant-statistic-content-suffix {
+  color: #9ca3af;
+}
+
+/* DİQQƏT: Stil tətbiq olunması üçün !important əlavə edildi */
+.dark .summary-modal .ant-list-item {
+  padding: 12px 8px !important; /* Yanlardakı boşluq üçün */
+  border-bottom: 1px solid #374151 !important;
+  transition: background-color 0.2s ease-in-out;
+}
+.dark .summary-modal .ant-list-item:hover {
+  background-color: #374151;
+  border-radius: 6px;
+}
+.dark .summary-modal .ant-list-item-meta-title {
+  color: #e5e7eb !important;
+  font-weight: 500 !important;
+}
+
+.dark .summary-modal .ant-tag {
+  color: #ffffff;
+  border-color: transparent;
+  font-weight: 500;
+}
+.dark .summary-modal .ant-tag-green {
+  background-color: #16a34a;
+}
+.dark .summary-modal .ant-tag-orange {
+  background-color: #ea580c;
+}
+.dark .summary-modal .ant-tag-red {
+  background-color: #dc2626;
+}
+
+.dark .summary-modal .ant-empty-description {
+  color: #9ca3af;
+}

@@ -14,7 +14,7 @@ const ScoreDisplay = ({ score }) => (
     </div>
 );
 
-const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMonth }) => {
+const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMonth, canEdit }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [displayScore, setDisplayScore] = useState(5);
@@ -44,6 +44,8 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
     }, [visible, initialData, form, isEditing]);
 
     const handleFormSubmit = async (values) => {
+        if (!canEdit) return;
+
         if (!evaluationMonth) {
             message.error("Dəyərləndirmə ayı seçilməyib!");
             return;
@@ -92,18 +94,31 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
         }
     };
 
+    const modalFooter = canEdit
+        ? [
+            <Button key="back" onClick={() => onClose(false)}> Ləğv Et </Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={() => form.submit()}>
+                {isEditing ? 'Dəyərləndirməni Yenilə' : 'Dəyərləndirməni Qeyd Et'}
+            </Button>,
+          ]
+        : [
+            <Button key="close" type="primary" onClick={() => onClose(false)}>
+                Bağla
+            </Button>
+          ];
+
     return (
         <Modal
             open={visible}
             onCancel={() => onClose(false)}
             title={modalTitle}
             width={600}
-            footer={[
-                <Button key="back" onClick={() => onClose(false)}> Ləğv Et </Button>,
-                <Button key="submit" type="primary" loading={loading} onClick={() => form.submit()}>
-                    {isEditing ? 'Dəyərləndirməni Yenilə' : 'Dəyərləndirməni Qeyd Et'}
-                </Button>,
-            ]}
+            footer={modalFooter}
+            className="flush-scrollbar user-kpi-system-modal"
+            bodyStyle={{ 
+                maxHeight: '70vh', 
+                overflowY: 'auto',
+            }}
         >
             <Form 
                 form={form} 
@@ -111,7 +126,7 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                 onFinish={handleFormSubmit}
                 onValuesChange={handleValuesChange}
             >
-                <div className="space-y-6">
+                <div className="space-y-6 py-6 pl-6 pr-4">
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
                         <div className="flex items-center text-blue-700">
                             <UserOutlined className="mr-2" />
@@ -140,6 +155,7 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                                         count={10}
                                         style={{ fontSize: "32px" }}
                                         className="flex justify-center"
+                                        disabled={!canEdit}
                                     />
                                 </Form.Item>
                                 <div className="flex justify-between text-xs text-gray-400 mt-3 px-2">
@@ -156,9 +172,26 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                         </div>
                     </div>
                     
-                    <Form.Item name="comment" label={ <span className="flex items-center text-sm font-medium text-gray-700"> <MessageOutlined className="mr-2 text-blue-500" /> Qeyd: </span> }>
-                        <TextArea placeholder="Qeydlərinizi buraya yaza bilərsiniz..." rows={4} className="resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                    </Form.Item>
+                    {canEdit ? (
+                        <Form.Item name="comment" label={ <span className="flex items-center text-sm font-medium text-gray-700"> <MessageOutlined className="mr-2 text-blue-500" /> Qeyd: </span> }>
+                            <TextArea 
+                                placeholder="Qeydlərinizi buraya yaza bilərsiniz..." 
+                                rows={4} 
+                                className="resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </Form.Item>
+                    ) : (
+                        initialData?.comment && (
+                            <div>
+                                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                                    <MessageOutlined className="mr-2 text-blue-500" /> Rəhbərin Qeydi:
+                                </label>
+                                <div className="p-3 bg-gray-100 rounded-md border border-gray-200">
+                                    <p className="text-gray-800 whitespace-pre-wrap">{initialData.comment}</p>
+                                </div>
+                            </div>
+                        )
+                    )}
 
                     {isEditing && initialData?.history?.length > 0 && (
                         <div className="mt-6">

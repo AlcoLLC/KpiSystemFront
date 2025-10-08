@@ -1,16 +1,30 @@
-import React from 'react';
 import { Button, Tag, Avatar } from 'antd';
-import { EditOutlined, BarChartOutlined, UserOutlined, StarFilled } from '@ant-design/icons';
+import { EditOutlined, BarChartOutlined, UserOutlined, StarFilled, EyeOutlined } from '@ant-design/icons';
 
 const UserEvaluationCard = ({ user, onEvaluateClick, onSummaryClick }) => {
     const evaluationData = user.selected_month_evaluation;
     const isEvaluated = !!evaluationData;
     const fullName = `${user.first_name} ${user.last_name}`;
+    
+    const canDirectlyEvaluate = user.can_evaluate;
+
+    let evaluateButtonText = 'Qiymətləndir';
+    let evaluateButtonIcon = <EditOutlined />;
+    
+    if (isEvaluated) {
+        if (canDirectlyEvaluate) {
+            evaluateButtonText = 'Bax / Redaktə Et';
+            evaluateButtonIcon = <EditOutlined />;
+        } else {
+            evaluateButtonText = 'Bax';
+            evaluateButtonIcon = <EyeOutlined />; 
+        }
+    }
 
     return (
         <div
             className={`
-                bg-white rounded-xl shadow-lg p-5 transition-all duration-300
+                user-kpi-system-card bg-white rounded-xl shadow-lg p-5 transition-all duration-300
                 hover:shadow-xl hover:-translate-y-1
                 flex flex-col
                 ${isEvaluated ? 'bg-gray-50' : ''}
@@ -56,11 +70,12 @@ const UserEvaluationCard = ({ user, onEvaluateClick, onSummaryClick }) => {
                 </Button>
                 <Button
                     type={isEvaluated ? "default" : "primary"}
-                    icon={<EditOutlined />}
+                    icon={evaluateButtonIcon}
                     onClick={onEvaluateClick}
                     className="w-full"
+                    disabled={!isEvaluated && !canDirectlyEvaluate}
                 >
-                    {isEvaluated ? 'Bax / Redaktə Et' : 'Qiymətləndir'}
+                    {evaluateButtonText}
                 </Button>
             </div>
         </div>

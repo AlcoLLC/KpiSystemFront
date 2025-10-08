@@ -1,18 +1,15 @@
 import React from 'react';
 import { Form, Input, Button, Upload } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import useProfile from '../hooks/useProfile'; // Profil məntiqi üçün hook
+import useProfile from '../hooks/useProfile';
 
 const { Dragger } = Upload;
 
 function Profile() {
   const [form] = Form.useForm();
 
-  // Profil məlumatlarını idarə edən hook-u çağırırıq.
-  // Bu hook API zəngləri, state idarəçiliyi və formun ilkin dəyərlərini təyin etmək üçün məsuliyyət daşıyır.
   const { loading, profileData, profilePhoto, onFinish, draggerProps } = useProfile(form);
 
-  // Məlumatlar yüklənərkən göstəriləcək hissə
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50 dark:bg-[#131920]">
@@ -86,9 +83,9 @@ function Profile() {
             <Form.Item label="Vəzifə" name="role_display">
               <Input placeholder="Vəzifə" size="large" readOnly />
             </Form.Item>
-            <Form.Item label="Department" name="department">
-              <Input placeholder="Şöbə" size="large" readOnly />
-            </Form.Item>
+            <Form.Item label="Departamentlər" name="all_departments">
+  <Input placeholder="Aid olduğu departamentlər" size="large" readOnly />
+</Form.Item>
             <Form.Item label="Şifrə" name="password" help="Dəyişmək istəmirsinizsə boş buraxın.">
               <Input.Password placeholder="Yeni şifrə" size="large" />
             </Form.Item>

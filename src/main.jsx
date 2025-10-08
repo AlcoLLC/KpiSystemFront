@@ -5,20 +5,27 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 import AppRouter from "./routes/AppRouter";
 import { AuthProvider } from "./context/AuthContext";
+
+// --- DƏYİŞİKLİK 1: Ant Design CSS və App komponentini import edirik ---
+import { App as AntApp } from 'antd';
+import 'antd/dist/reset.css';
+
 import "./styles/globals.css";
 import dayjs from 'dayjs';
 import 'dayjs/locale/az';
 dayjs.locale('az');
 
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-        <BrowserRouter>
-          <AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          {/* --- DƏYİŞİKLİK 2: Bütün tətbiqi AntApp ilə əhatələyirik --- */}
+          <AntApp>
             <AppRouter />
-          </AuthProvider>
-        </BrowserRouter>
+          </AntApp>
+        </AuthProvider>
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>
 );
