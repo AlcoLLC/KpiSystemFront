@@ -1,4 +1,3 @@
-import React from 'react';
 import { Form, Input, Button, Upload } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import useProfile from '../hooks/useProfile';

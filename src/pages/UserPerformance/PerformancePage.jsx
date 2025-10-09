@@ -1,218 +1,124 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Typography, message, Spin, Empty, DatePicker, Select, Row, Col, Tabs } from 'antd';
-import dayjs from 'dayjs';
-import UserEvaluationCard from './components/UserEvaluationCard';
-import MyPerformanceView from './components/MyPerformanceView'; 
-import UserEvaluationModal from './components/UserEvaluationModal';
-import SummaryModal from './components/SummaryModal';
-import apiService from '../../api/apiService';
-import useAuth from '../../hooks/useAuth';
-import { formatForDatePicker, formatForAPI } from '../../utils/dateFormatter';
+import { useState } from "react";
+import { Typography, Spin, Tabs } from "antd";
+import useAuth from "../../hooks/useAuth";
+import { usePerformanceData } from "../../hooks/usePerformanceData";
+import PerformanceFilters from "./components/PerformanceFilters";
+import TeamView from "./components/TeamView";
+import MyPerformanceView from "./components/MyPerformanceView";
+import UserEvaluationModal from "./components/UserEvaluationModal";
+import SummaryModal from "./components/SummaryModal";
 import "../../styles/userkpi.css";
 
 const { Title } = Typography;
-const { Option } = Select;
 const { TabPane } = Tabs;
 
-const managerialRoles = ['admin', 'top_management', 'department_lead', 'manager'];
-
 const PerformancePage = () => {
-    const { user } = useAuth();
-    const [myCard, setMyCard] = useState(null);
-    const [mySummary, setMySummary] = useState(null);
-    const [myMonthlyScores, setMyMonthlyScores] = useState([]);
-    const [subordinates, setSubordinates] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [isEvalModalVisible, setIsEvalModalVisible] = useState(false);
-    const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
-    const [departments, setDepartments] = useState([]);
-    const [selectedMonth, setSelectedMonth] = useState(new Date());
-    const [selectedDepartment, setSelectedDepartment] = useState(null);
-    const [activeTab, setActiveTab] = useState('team');
-    const [canEditModal, setCanEditModal] = useState(false);
+  const { user } = useAuth();
 
-    const canEvaluate = user && managerialRoles.includes(user.role);
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [activeTab, setActiveTab] = useState("team");
 
-    const fetchDepartments = useCallback(async () => {
-        if(user && user.role === 'admin') {
-            try {
-                const response = await apiService.get('/accounts/departments/');
-                setDepartments(response.data);
-            } catch (error) {
-                message.error('Departamentlər yüklənərkən xəta baş verdi.', error);
-            }
-        }
-    }, [user]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isEvalModalVisible, setIsEvalModalVisible] = useState(false);
+  const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
 
-    const fetchAPIData = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    const dateParam = formatForAPI(selectedMonth).substring(0, 7);
-    const departmentParam = user.role === 'admin' ? selectedDepartment : null;
+  const {
+    myCard,
+    mySummary,
+    myMonthlyScores,
+    subordinates,
+    departments,
+    loading,
+    canEvaluate,
+    refetchData,
+  } = usePerformanceData(selectedMonth, selectedDepartment);
 
-    try {
-        const requests = [
-            apiService.get('/performance/user-evaluations/my-performance-card/', { date: dateParam }),
-            apiService.get('/performance/user-evaluations/performance-summary/', { evaluatee_id: user.id, date: dateParam }),
-            apiService.get('/performance/user-evaluations/monthly-scores/', { evaluatee_id: user.id, date: dateParam }),
-        ];
+  const handleOpenEvalModal = (userForModal) => {
+    setSelectedUser(userForModal);
+    setIsEvalModalVisible(true);
+  };
 
-        if (canEvaluate) {
-            requests.push(apiService.get('/performance/user-evaluations/evaluable-users/', {
-                date: dateParam,
-                department: departmentParam
-            }));
-        }
+  const handleOpenSummaryModal = (userForModal) => {
+    setSelectedUser(userForModal);
+    setIsSummaryModalVisible(true);
+  };
 
-        const [myCardRes, mySummaryRes, myScoresRes, subordinatesRes] = await Promise.all(requests);
-        
-        setMyCard(myCardRes.data);
-        setMySummary(mySummaryRes.data.averages);
-        setMyMonthlyScores(myScoresRes.data);
-
-        if (canEvaluate && subordinatesRes) {
-            const sortedSubordinates = [...subordinatesRes.data].sort((a, b) => {
-                const aHasEval = !!a.selected_month_evaluation;
-                const bHasEval = !!b.selected_month_evaluation;
-                return aHasEval - bHasEval;
-            });
-            setSubordinates(sortedSubordinates);
-        }
-
-    } catch (error) {
-        message.error('Məlumatlar yüklənərkən xəta baş verdi.', error);
-    } finally {
-        setLoading(false);
+  const handleModalClose = (refresh = false) => {
+    setIsEvalModalVisible(false);
+    setIsSummaryModalVisible(false);
+    setSelectedUser(null);
+    if (refresh) {
+      refetchData();
     }
-}, [selectedMonth, selectedDepartment, canEvaluate, user]);
+  };
 
-    useEffect(() => {
-        fetchDepartments();
-    }, [fetchDepartments]);
-    
-    useEffect(() => {
-        fetchAPIData();
-    }, [fetchAPIData]);
-    
-    const handleOpenEvalModal = (userForModal) => {
-        setSelectedUser(userForModal);
-        setCanEditModal(userForModal.can_evaluate);
-        setIsEvalModalVisible(true);
-    };
-
-
-    const handleOpenSummaryModal = (userForModal) => {
-        setSelectedUser(userForModal);
-        setIsSummaryModalVisible(true);
-    };
-
-    const handleModalClose = (refresh = false) => {
-        setIsEvalModalVisible(false);
-        setIsSummaryModalVisible(false);
-        setSelectedUser(null);
-        setCanEditModal(false); 
-        if (refresh) {
-            fetchAPIData();
-        }
-    };
-    
-    const handleMonthChange = (date) => {
-        setSelectedMonth(date ? date.toDate() : new Date());
-    };
-
-    const renderCardGrid = (usersList) => {
-        if (!usersList || usersList.length === 0) {
-            return <Empty className="pt-10" description="Bu filterlərə uyğun dəyərləndiriləcək işçi tapılmadı." />;
-        }
-        return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-4">
-                {usersList.map(u => (
-                    <UserEvaluationCard
-                        key={u.id}
-                        user={u}
-                        onEvaluateClick={() => handleOpenEvalModal(u)}
-                        onSummaryClick={() => handleOpenSummaryModal(u)}
-                    />
-                ))}
-            </div>
-        );
-    };
-
+  const renderContent = () => {
+    if (!canEvaluate) {
+      return (
+        <MyPerformanceView
+          userCardData={myCard}
+          summaryData={mySummary}
+          monthlyScores={myMonthlyScores}
+        />
+      );
+    }
     return (
-        <div className="user-kpi-system p-4 md:p-6 bg-gray-50 min-h-screen">
-            <Title level={2} className="mb-6">Aylıq Performans Dəyərləndirməsi</Title>
-            
-            <Row gutter={[16, 16]} className="mb-6 bg-white p-4 rounded-lg shadow">
-                <Col xs={24} sm={12} md={8}>
-                    <DatePicker 
-                        value={dayjs(selectedMonth)}
-                        onChange={handleMonthChange}
-                        picker="month"
-                        style={{ width: '100%' }}
-                        format={formatForDatePicker}
-                        allowClear={false}
-                    />
-                </Col>
-                {user && user.role === 'admin' && (
-                    <Col xs={24} sm={12} md={8}>
-                        <Select
-                            placeholder="Departament seçin"
-                            onChange={(value) => setSelectedDepartment(value)}
-                            style={{ width: '100%' }}
-                            allowClear
-                        >
-                            {departments.map(dep => (
-                                <Option key={dep.id} value={dep.id}>{dep.name}</Option>
-                            ))}
-                        </Select>
-                    </Col>
-                )}
-            </Row>
-
-            <Spin spinning={loading}>
-                {canEvaluate ? (
-                    <Tabs defaultActiveKey="team" activeKey={activeTab} onChange={setActiveTab}>
-                        <TabPane tab="Komandam" key="team">
-                           {renderCardGrid(subordinates)}
-                        </TabPane>
-                        <TabPane tab="Mənim Performansım" key="me">
-                            <MyPerformanceView
-                                userCardData={myCard}
-                                summaryData={mySummary}
-                                monthlyScores={myMonthlyScores}
-                            />
-                        </TabPane>
-                    </Tabs>
-                ) : (
-                    <MyPerformanceView
-                        userCardData={myCard}
-                        summaryData={mySummary}
-                        monthlyScores={myMonthlyScores}
-                    />
-                )}
-            </Spin>
-
-            {selectedUser && (
-                <>
-                    <UserEvaluationModal
-                        visible={isEvalModalVisible}
-                        onClose={handleModalClose}
-                        user={selectedUser}
-                        initialData={selectedUser.selected_month_evaluation}
-                        evaluationMonth={selectedMonth}
-                        canEdit={canEditModal}
-                    />
-                    <SummaryModal
-                        visible={isSummaryModalVisible}
-                        onClose={handleModalClose}
-                        user={selectedUser}
-                        selectedMonth={selectedMonth}
-                    />
-                </>
-            )}
-        </div>
+      <Tabs activeKey={activeTab} onChange={setActiveTab}>
+        <TabPane tab="Komandam" key="team">
+          <TeamView
+            users={subordinates}
+            onEvaluateClick={handleOpenEvalModal}
+            onSummaryClick={handleOpenSummaryModal}
+          />
+        </TabPane>
+        <TabPane tab="Mənim Performansım" key="me">
+          <MyPerformanceView
+            userCardData={myCard}
+            summaryData={mySummary}
+            monthlyScores={myMonthlyScores}
+          />
+        </TabPane>
+      </Tabs>
     );
+  };
+
+  return (
+    <div className="user-kpi-system p-4 md:p-6 bg-gray-50 min-h-screen">
+      <Title level={2} className="mb-6">
+        Aylıq Performans Dəyərləndirməsi
+      </Title>
+
+      <PerformanceFilters
+        user={user}
+        selectedMonth={selectedMonth}
+        onMonthChange={setSelectedMonth}
+        departments={departments}
+        onDepartmentChange={setSelectedDepartment}
+      />
+
+      <Spin spinning={loading}>{renderContent()}</Spin>
+
+      {selectedUser && (
+        <>
+          <UserEvaluationModal
+            visible={isEvalModalVisible}
+            onClose={handleModalClose}
+            user={selectedUser}
+            initialData={selectedUser.selected_month_evaluation}
+            evaluationMonth={selectedMonth}
+            canEdit={selectedUser.can_evaluate}
+          />
+          <SummaryModal
+            visible={isSummaryModalVisible}
+            onClose={handleModalClose}
+            user={selectedUser}
+            selectedMonth={selectedMonth}
+          />
+        </>
+      )}
+    </div>
+  );
 };
 
 export default PerformancePage;

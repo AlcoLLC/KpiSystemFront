@@ -2,7 +2,6 @@ import { Card, Button, Tag, Tooltip, Badge } from "antd";
 import {
   UserOutlined,
   CalendarOutlined,
-  MessageOutlined,
   StarOutlined,
   ClockCircleOutlined,
   EyeOutlined,
@@ -33,7 +32,6 @@ const BlockContent = ({
     if (isPendingForMe) {
       return {
         text: `Dəyərləndir (1-100): ${task.assignee_details}`,
-        // --- DEĞİŞİKLİK 1: Renk 'blue' yerine 'red' olarak değiştirildi ---
         color: "red",
         disabled: false,
         icon: <FireOutlined />,
@@ -180,7 +178,6 @@ const BlockContent = ({
                 backgroundColor:
                   buttonConfig.disabled && !buttonConfig.isViewOnly
                     ? "#d1d5db"
-                    // --- DEĞİŞİKLİK 2: Kırmızı renk için koşul eklendi ---
                     : buttonConfig.color === "red"
                     ? "#EF4444" 
                     : buttonConfig.color === "green"
@@ -195,7 +192,6 @@ const BlockContent = ({
                 borderColor:
                   buttonConfig.disabled && !buttonConfig.isViewOnly
                     ? "#d1d5db"
-                    // --- DEĞİŞİKLİK 3: Kırmızı renk için koşul eklendi ---
                     : buttonConfig.color === "red"
                     ? "#EF4444"
                     : buttonConfig.color === "green"

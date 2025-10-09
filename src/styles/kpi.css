@@ -174,10 +174,6 @@
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-/* ================================================= */
-/* ========= EvaluationDetailsModal Styles ========= */
-/* ================================================= */
-
 .dark .kpi-container .ant-descriptions-title {
   color: #ffffff;
 }
@@ -227,12 +223,6 @@
   background-color: #2d3748;
 }
 
-/* ========================================= */
-/* ========= ReviewModal Styles ============ */
-/* ========================================= */
-
-/* --- Məlumat Qutuları --- */
-
 .dark .kpi-container .from-orange-50 {
   background-image: linear-gradient(to right, rgba(202, 138, 4, 0.1), rgba(217, 119, 6, 0.15));
   border-color: rgba(202, 138, 4, 0.3);
@@ -262,10 +252,6 @@
 .dark .kpi-container .text-blue-800 {
   color: #93c5fd; 
 }
-
-/* ========================================= */
-/* ===== Dashboard Info Box Styles ========= */
-/* ========================================= */
 
 .dark .kpi-container .from-green-100 {
   background-image: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(6, 95, 70, 0.2));
