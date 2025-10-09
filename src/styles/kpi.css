@@ -285,3 +285,106 @@
 .dark .kpi-container .text-green-600 {
   color: #6ee7b7;
 }
+
+.dark .kpi-container .text-gray-500 {
+  color: #9ca3af; /* Lighter sub-headline */
+}
+
+/* Header Kartları (Xoş gəlmisiniz, Departament və s.) */
+.dark .kpi-container .bg-gradient-to-r.from-green-100 {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.dark .kpi-container .text-green-800 {
+  color: #6ee7b7;
+}
+
+.dark .kpi-container .bg-gradient-to-r.from-blue-100 {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+.dark .kpi-container .text-blue-800 {
+  color: #93c5fd;
+}
+
+.dark .kpi-container .bg-gradient-to-r.from-yellow-50 {
+  background: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.4);
+}
+.dark .kpi-container .text-yellow-800,
+.dark .kpi-container .text-yellow-700 {
+  color: #fde047;
+}
+.dark .kpi-container .text-orange-600 {
+  color: #fb923c;
+}
+
+/* === FİLTER QUTUSU === */
+.dark .kpi-container .bg-white {
+  background-color: #1f2937; /* Darker box background */
+}
+.dark .kpi-container .border-gray-200 {
+  border-color: #374151;   /* Darker border */
+}
+.dark .kpi-container .text-gray-600 {
+  color: #e5e7eb;         /* Light text for filter title */
+}
+.dark .kpi-container .anticon-filter svg {
+  color: #e5e7eb !important; /* Light icon color */
+}
+
+/* === ANT DESIGN SELECT (Filter) ÜÇÜN ÜSTÜN YAZMA (OVERRIDE) === */
+/* Select qutusunun özü */
+.dark .kpi-container .ant-select-selector {
+  background-color: #1f2937 !important;
+  border-color: #4b5563 !important;
+}
+.dark .kpi-container .ant-select-selection-item,
+.dark .kpi-container .ant-select-arrow {
+  color: #d1d5db !important;
+}
+
+/* Açılan menyu (Dropdown) - DİQQƏT: Aşağıdakı vacib qeydə baxın */
+.dark .ant-select-dropdown {
+  background-color: #1f2937;
+  border-color: #4b5563;
+}
+.dark .ant-select-dropdown .ant-select-item {
+  color: #d1d5db;
+}
+.dark .ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background-color: #374151; /* Hover effect */
+}
+.dark .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #2563eb; /* Selected item background */
+  color: #ffffff;
+}
+
+/* === BÖLMƏ BAŞLIQLARI (TaskSection Title) === */
+.dark .kpi-container .ant-divider-inner-text,
+.dark .kpi-container .text-gray-700 {
+  color: #f9fafb !important;
+}
+.dark .kpi-container .ant-divider-horizontal.ant-divider-with-text-left::before,
+.dark .kpi-container .ant-divider-horizontal.ant-divider-with-text-left::after {
+  border-top-color: #4b5563 !important; /* Darker divider line */
+}
+
+/* === TAPŞIRIQ KARTLARI (BlockContent) === */
+/* Qeyd: Bu stilin işləməsi üçün BlockContent komponentinizin ana div-inə "task-card" sinfi əlavə etməyiniz tövsiyə olunur. */
+.dark .kpi-container .task-card {
+  background-color: #1f2937 !important;
+  border: 1px solid #374151 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+.dark .kpi-container .task-card-title {
+    color: #f9fafb; /* Kart başlığı */
+}
+.dark .kpi-container .task-card-meta {
+    color: #9ca3af; /* Tarix, ad və s. kimi ikinci dərəcəli mətnlər */
+}
+.dark .kpi-container .task-card .ant-tag {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #d1d5db !important;
+}

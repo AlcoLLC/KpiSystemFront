@@ -67,7 +67,7 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
           </Card>
           <Card bordered={false} className="mt-6">
             <Title level={5} style={{ marginBottom: '24px' }}>Aylıq Performansın Gedişatı</Title>
-            {chartData.length > 1 ? (
+            {chartData.length > 0 ? ( 
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -78,7 +78,10 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
                         <Line type="monotone" dataKey="score" name="Aylıq Bal" stroke="#1677ff" strokeWidth={2} activeDot={{ r: 8 }} />
                     </LineChart>
                 </ResponsiveContainer>
-            ) : <Empty description="Qrafik üçün ən azı 2 aylıq məlumat lazımdır." />}
+            ) : (
+              // Mesaj yeniləndi
+              <Empty description="Qrafik üçün heç bir məlumat tapılmadı." />
+            )}
           </Card>
         </Col>
       </Row>

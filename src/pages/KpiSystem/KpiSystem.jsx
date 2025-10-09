@@ -1,10 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
-import { Row, Col, message, Spin, Empty } from "antd";
+import { Row, Col, message, Spin, Empty, Divider, Select, Space, Flex, Typography } from "antd"; 
 import {
   UserOutlined,
   ApartmentOutlined,
   TrophyOutlined,
   InfoCircleOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  FileDoneOutlined,
+  ProfileOutlined,
+  EyeOutlined,
+  TeamOutlined,
+  AppstoreOutlined,
+  FilterOutlined,
 } from "@ant-design/icons";
 import useAuth from "../../hooks/useAuth";
 import kpiAPI from "../../api/kpiApi";
@@ -15,23 +23,84 @@ import EvaluationDetailsModal from "./components/EvaluationDetailsModal";
 import EditReviewModal from "./components/EditReviewModal";
 import "../../styles/kpi.css";
 
+// ... (filterOptions, TaskSection, getEvaluationStatus funksiyaları dəyişməz qalır) ...
+const filterOptions = [
+    { value: 'all', label: 'Bütün Tapşırıqlar', icon: <AppstoreOutlined /> },
+    { value: 'pendingForMyEvaluation', label: 'Mənim Qiymətləndirməli Olduqlarım', icon: <FileDoneOutlined /> },
+    { value: 'needsSelfEvaluation', label: 'Özünü Qiymətləndirməli Olduqlarım', icon: <ProfileOutlined /> },
+    { value: 'pendingSuperiorEvaluation', label: 'Rəhbər Qiymətləndirməsini Gözləyənlər', icon: <ClockCircleOutlined /> },
+    { value: 'subordinatesAwaitingEval', label: 'Tabelikdəkilərin Gözləyən Tapşırıqları', icon: <TeamOutlined /> },
+    { value: 'evaluatedByMe', label: 'Mənim Qiymətləndirdiklərim', icon: <CheckCircleOutlined /> },
+    { value: 'otherTasks', label: 'Digər Tamamlanmış Tapşırıqlar', icon: <EyeOutlined /> },
+];
+
+const TaskSection = ({ title, tasks, icon, onReview, onViewDetails, currentUser }) => {
+  if (!tasks || tasks.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mb-8">
+        <Divider orientation="left" style={{ borderColor: '#9ca3af' }}>
+            <h2 className="text-2xl font-semibold text-gray-700 flex items-center">
+                {icon}
+                <span className="ml-2">{title}</span>
+            </h2>
+        </Divider>
+      <Row gutter={[16, 16]}>
+        {tasks.map((task) => {
+          if (!task.assignee) return null;
+          const evaluationStatus = getEvaluationStatus(task);
+          const isPendingForMe = task.isPendingForMe;
+
+          return (
+            <Col xs={24} sm={12} md={8} lg={6} key={task.id}>
+              <BlockContent
+                task={task}
+                onReview={onReview}
+                onViewDetails={onViewDetails}
+                evaluationStatus={evaluationStatus}
+                currentUser={currentUser}
+                isPendingForMe={isPendingForMe}
+              />
+            </Col>
+          );
+        })}
+      </Row>
+    </div>
+  );
+};
+
+const getEvaluationStatus = (task) => {
+    if (!task || !task.evaluations) {
+        return { hasSelfEval: false, hasSuperiorEval: false, evaluations: [] };
+    }
+    const evaluations = task.evaluations;
+    const hasSelfEval = evaluations.some((e) => e.evaluation_type === "SELF");
+    const hasSuperiorEval = evaluations.some(
+        (e) => e.evaluation_type === "SUPERIOR"
+    );
+    return { hasSelfEval, hasSuperiorEval, evaluations };
+};
+
 
 function KpiSystem() {
-  const { user: currentUser } = useAuth();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [evaluationToEdit, setEvaluationToEdit] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [pendingForMe, setPendingForMe] = useState([]);
-  const [loading, setLoading] = useState(true);
+    // ... (bütün state və funksiyalar dəyişməz qalır) ...
+    const { user: currentUser } = useAuth();
+    const [modalOpen, setModalOpen] = useState(false);
+    const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [evaluationToEdit, setEvaluationToEdit] = useState(null);
+    const [tasks, setTasks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedFilter, setSelectedFilter] = useState('all');
 
-  const loadData = async () => {
+    const loadData = async () => {
     setLoading(true);
     try {
       const tasksResponse = await kpiAPI.getKpiDashboardTasks();
-      setTasks(tasksResponse.data.results || tasksResponse.data || []);
+      let fetchedTasks = tasksResponse.data.results || tasksResponse.data || [];
 
       if (
         ["admin", "top_management", "department_lead", "manager"].includes(
@@ -39,13 +108,18 @@ function KpiSystem() {
         )
       ) {
         const pendingResponse = await kpiAPI.getPendingForMe();
-        setPendingForMe(pendingResponse.data || []);
+        const pendingForMeIds = new Set((pendingResponse.data || []).map(t => t.id));
+        
+        fetchedTasks = fetchedTasks.map(task => ({
+          ...task,
+          isPendingForMe: pendingForMeIds.has(task.id)
+        }));
       }
+      setTasks(fetchedTasks);
     } catch (error) {
       console.error("Data could not be loaded:", error);
       message.error("An error occurred while loading data.");
       setTasks([]);
-      setPendingForMe([]);
     } finally {
       setLoading(false);
     }
@@ -56,27 +130,75 @@ function KpiSystem() {
       loadData();
     }
   }, [currentUser]);
+  
+  const taskData = useMemo(() => {
+    if (!currentUser) return {};
 
-  const pendingForMeTaskIds = useMemo(
-    () => new Set(pendingForMe.map((task) => task.id)),
-    [pendingForMe]
-  );
+    const allCategorizedTasks = {
+        needsSelfEvaluation: [],
+        pendingSuperiorEvaluation: [],
+        pendingForMyEvaluation: [],
+        subordinatesAwaitingEval: [],
+        evaluatedByMe: [],
+        otherTasks: [],
+    };
 
-  const getEvaluationStatus = (task) => {
-    if (!task || !task.evaluations) {
-      return { hasSelfEval: false, hasSuperiorEval: false, evaluations: [] };
-    }
-    const evaluations = task.evaluations;
-    const hasSelfEval = evaluations.some((e) => e.evaluation_type === "SELF");
-    const hasSuperiorEval = evaluations.some(
-      (e) => e.evaluation_type === "SUPERIOR"
-    );
-    return { hasSelfEval, hasSuperiorEval, evaluations };
-  };
+    tasks.forEach(task => {
+        if (!task || typeof task.assignee === 'undefined' || task.assignee === null) return;
 
+        const { hasSelfEval, hasSuperiorEval, evaluations } = getEvaluationStatus(task);
+
+        if (task.isPendingForMe) {
+            allCategorizedTasks.pendingForMyEvaluation.push(task);
+            return;
+        }
+        if (task.assignee === currentUser.id && !hasSelfEval) {
+            allCategorizedTasks.needsSelfEvaluation.push(task);
+            return;
+        }
+        if (task.assignee === currentUser.id && hasSelfEval && !hasSuperiorEval) {
+            allCategorizedTasks.pendingSuperiorEvaluation.push(task);
+            return;
+        }
+        const superiorEvalByMe = evaluations.find(
+            e => e.evaluation_type === 'SUPERIOR' && e.evaluator.id === currentUser.id
+        );
+        if (superiorEvalByMe) {
+            allCategorizedTasks.evaluatedByMe.push(task);
+            return;
+        }
+        if (task.assignee !== currentUser.id && !hasSelfEval) {
+            allCategorizedTasks.subordinatesAwaitingEval.push(task);
+            return;
+        }
+        if (hasSelfEval && hasSuperiorEval) {
+          allCategorizedTasks.otherTasks.push(task);
+        }
+    });
+    
+    const combinedTasksToEvaluate = [
+        ...allCategorizedTasks.pendingForMyEvaluation,
+        ...allCategorizedTasks.needsSelfEvaluation,
+    ];
+
+    const combinedOtherTasks = [
+        ...allCategorizedTasks.pendingSuperiorEvaluation,
+        ...allCategorizedTasks.subordinatesAwaitingEval,
+        ...allCategorizedTasks.evaluatedByMe,
+        ...allCategorizedTasks.otherTasks,
+    ];
+
+    return { ...allCategorizedTasks, combinedTasksToEvaluate, combinedOtherTasks };
+
+  }, [tasks, currentUser]);
+  
   const handleReview = (task) => {
     setSelectedTask(task);
     setModalOpen(true);
+  };
+  
+  const handleFilterChange = (value) => {
+    setSelectedFilter(value);
   };
 
   const handleViewDetails = (task) => {
@@ -109,105 +231,127 @@ function KpiSystem() {
     }
   };
 
-  if (!currentUser) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg">
-          <UserOutlined className="text-5xl text-blue-400 mb-4" />
-          <p className="text-gray-600 text-lg">
-            KPI sistemindən istifadə etmək üçün daxil olun.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <Spin size="large" className="mb-4" />
-          <p className="text-gray-600">Qiymətləndirmələr yüklənir...</p>
-        </div>
+          <Spin size="large" tip="Qiymətləndirmələr yüklənir..." />
       </div>
     );
   }
 
+  const isAllTasksEmpty = tasks.length === 0;
+  
+  const selectedTaskSet = taskData[selectedFilter] || [];
+  const selectedOption = filterOptions.find(opt => opt.value === selectedFilter);
+
   return (
     <div className="kpi-container">
       <div className="mx-auto p-4">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-[#3b82f6] mb-4">
-            KPI Management System
-          </h1>
-          <div className="flex justify-center items-center space-x-4 mb-6">
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-lg shadow-sm border border-green-200">
-              <TrophyOutlined className="mr-2 text-lg" />
-              <span className="font-medium">
-                Xoş gəlmisiniz, {currentUser?.first_name || currentUser?.username}!
-              </span>
+        {/* --- DƏYİŞİKLİK BURADA BAŞLAYIR: YENİ BAŞLIQ DİZAYNI --- */}
+        <div className="text-center mb-10">
+            <div className="mb-6">
+                <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent pb-2">
+                    İdarəetmə Sistemi
+                </h1>
+                <p className="text-lg text-gray-500">
+                    Departament üzrə performansın qiymətləndirilməsi portalı
+                </p>
             </div>
-            {currentUser?.department && (
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-lg shadow-sm border border-blue-200">
-                <ApartmentOutlined className="mr-2" />
-                <span className="font-medium text-sm">
-                  {currentUser.department.name || "Department"}
-                </span>
-              </div>
-            )}
-          </div>
-         <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 inline-block max-w-2xl">
-          <InfoCircleOutlined className="mr-2 text-yellow-600" />
-          <strong className="text-yellow-800">
-            Departament üzrə Qiymətləndirmə Sistemi:
-          </strong>
-          <div className="mt-2 text-sm text-yellow-700">
-            • <strong>Özünü qiymətləndirmə:</strong>{" "}
-            <span className="font-semibold text-orange-600">1-10 ballıq şkala</span>
-            <br />• <strong>Rəhbər qiymətləndirməsi: </strong>
-            <span className="font-semibold text-green-600">
-              1-100 ballıq şkala (Yekun bal)
-            </span>
-            <br />• Qiymətləndirmə eyni departament daxilindəki iyerarxik quruluşa əsaslanır.
-          </div>
+          
+            <div className="flex justify-center items-center space-x-4 mb-6">
+                <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-lg shadow-sm border border-green-200">
+                    <TrophyOutlined className="mr-2 text-lg" />
+                    <span className="font-medium">
+                        Xoş gəlmisiniz, {currentUser?.first_name || currentUser?.username}!
+                    </span>
+                </div>
+                {currentUser?.department && (
+                    <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-lg shadow-sm border border-blue-200">
+                        <ApartmentOutlined className="mr-2" />
+                        <span className="font-medium text-sm">
+                            {currentUser.department.name || "Department"}
+                        </span>
+                    </div>
+                )}
+            </div>
+            
+            
         </div>
-        </div> 
-
-        {tasks.length === 0 ? (
-          <div className="text-center py-16">
-            <Empty description="Qiymətləndirmə üçün tamamlanmış tapşırıq tapılmadı." />
-          </div>
+        
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-8">
+    <Flex align="center" justify="space-between">
+        <Space align="baseline">
+            <FilterOutlined style={{ color: '#4b5563', fontSize: '18px' }} />
+            <Typography.Text strong className="text-gray-600">
+                Tapşırıq Görünüşünü Filtrlə
+            </Typography.Text>
+        </Space>
+        <Select
+            size="large"
+            style={{ width: 350 }}
+            value={selectedFilter}
+            onChange={handleFilterChange}
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+        >
+            {filterOptions.map(opt => (
+                <Select.Option key={opt.value} value={opt.value}>
+                   <Space>
+                       {opt.icon}
+                       {opt.label}
+                   </Space>
+                </Select.Option>
+            ))}
+        </Select>
+    </Flex>
+</div>
+        
+        {isAllTasksEmpty ? (
+            <div className="text-center py-16">
+                <Empty description="Qiymətləndirmə üçün tamamlanmış tapşırıq tapılmadı." />
+            </div>
         ) : (
-          <Row gutter={[16, 16]}>
-            {tasks.map((task) => {
-              if (!task.assignee) return null;
-              const evaluationStatus = getEvaluationStatus(task);
-              const isPendingForMe = pendingForMeTaskIds.has(task.id);
-
-              return (
-                <Col xs={24} sm={12} md={8} lg={6} key={task.id}>
-                  <BlockContent
-                    task={task}
+            <>
+              {selectedFilter === 'all' ? (
+                <>
+                  <TaskSection
+                    title="Qiymətləndirilməli Tapşırıqlar"
+                    tasks={taskData.combinedTasksToEvaluate || []}
+                    icon={<FileDoneOutlined />}
                     onReview={handleReview}
                     onViewDetails={handleViewDetails}
-                    evaluationStatus={evaluationStatus}
                     currentUser={currentUser}
-                    isPendingForMe={isPendingForMe}
                   />
-                </Col>
-              );
-            })}
-          </Row>
+                  <TaskSection
+                    title="Digər Tapşırıqlar"
+                    tasks={taskData.combinedOtherTasks || []}
+                    icon={<EyeOutlined />}
+                    onReview={handleReview}
+                    onViewDetails={handleViewDetails}
+                    currentUser={currentUser}
+                  />
+                </>
+              ) : (
+                <TaskSection
+                  title={selectedOption?.label}
+                  tasks={selectedTaskSet}
+                  icon={selectedOption?.icon}
+                  onReview={handleReview}
+                  onViewDetails={handleViewDetails}
+                  currentUser={currentUser}
+                />
+              )}
+            </>
         )}
       </div>
 
+      {/* Modals olduğu kimi qalır */}
       <ReviewModal
         isOpen={modalOpen}
         onClose={handleModalClose}
         task={selectedTask}
         currentUser={currentUser}
       />
-
       <EvaluationDetailsModal
         open={detailsModalOpen}
         onClose={handleDetailsModalClose}
@@ -215,7 +359,6 @@ function KpiSystem() {
         evaluations={selectedTask?.evaluations || []}
         onEdit={handleEdit}
       />
-
       <EditReviewModal
         isOpen={editModalOpen}
         onClose={handleEditModalClose}
