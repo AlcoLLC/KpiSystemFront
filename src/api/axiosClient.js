@@ -7,7 +7,6 @@ const axiosClient = axios.create({
   },
 });
 
-// Token refresh-i həyata keçirən funksiya
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -39,10 +38,7 @@ axiosClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // 401 və ya 403 status kodları üçün token refresh etməyə cəhd et
     if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
-      
-      // Əgər artıq refresh prosesi gedirsə, növbəyə əlavə et
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -75,7 +71,7 @@ axiosClient.interceptors.response.use(
         );
 
         const newAccessToken = refreshResponse.data.access;
-        const newRefreshToken = refreshResponse.data.refresh || tokens.refresh; // Yeni refresh token gəlməzsə köhnəni saxla
+        const newRefreshToken = refreshResponse.data.refresh || tokens.refresh;
         
         const newTokens = { 
           access: newAccessToken, 

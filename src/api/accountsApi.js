@@ -1,4 +1,4 @@
-import axiosClient from './axiosClient'; // apiService əvəzinə axiosClient import et
+import axiosClient from './axiosClient'; 
 
 const accountsApi = {
   login: (credentials) => axiosClient.post('/accounts/login/', credentials),
@@ -18,10 +18,8 @@ const accountsApi = {
 
   getUsers: () => axiosClient.get('/accounts/users/'),
 
-  // Token yoxlama funksiyası - opsional
   verifyToken: (token) => axiosClient.post('/accounts/verify-token/', { token }),
 
-  // Password dəyişmək üçün
   changePassword: (passwordData) => axiosClient.post('/accounts/change-password/', passwordData),
 
   getDepartments: () => axiosClient.get('/accounts/departments/')
