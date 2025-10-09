@@ -31,8 +31,7 @@ const MonthlyTasksChart = () => {
           const monthDate = now.subtract(i, 'month');
           const monthKey = monthDate.format('YYYY-MM');
           const rawMonthLabel = monthDate.format('MMMM YYYY');
-          const monthLabel = rawMonthLabel.charAt(0).toUpperCase() + rawMonthLabel.slice(1); // "Sentyabr 2025"
-
+          const monthLabel = rawMonthLabel.charAt(0).toUpperCase() + rawMonthLabel.slice(1); 
           labels.push(monthLabel);
           data.push(statsMap.get(monthKey) || 0);
         }

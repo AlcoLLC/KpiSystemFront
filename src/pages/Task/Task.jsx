@@ -18,7 +18,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 const { useModal } = Modal;
 
 // Filterlər üçün defolt, boş vəziyyəti təyin edirik
-const initialFilters = { status: null, priority: null, assignee: null, date_range: null, overdue: null };
+const initialFilters = { status: null, priority: null, assignee: null, date_range: null, overdue: null, department: null };
 
 function Task() {
   const { user } = useAuth();
@@ -33,6 +33,7 @@ function Task() {
 
   const [data, setData] = useState([]);
   const [users, setUsers] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
@@ -69,6 +70,7 @@ function Task() {
       status: filters.status || undefined, 
       priority: filters.priority || undefined, 
       overdue: filters.overdue || undefined,
+      department: filters.department || undefined
     };
 
     if (viewMode === 'my' || permissions.isEmployee) {
@@ -109,6 +111,22 @@ function Task() {
     };
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+  const fetchDepartmentsForFilter = async () => {
+    if (user && ['admin', 'top_management'].includes(user.role)) {
+      try {
+        const response = await tasksApi.getFilterableDepartments();
+        setDepartments(response.data || []);
+      } catch (error) {
+        message.error('Departament siyahısını yükləmək mümkün olmadı.');
+        setDepartments([]); 
+      }
+    }
+  };
+
+    fetchDepartmentsForFilter();
+}, [user]);
 
   useEffect(() => { 
     fetchTasksWithFilters();
@@ -238,7 +256,7 @@ function Task() {
               />
             </div>
           </div>
-          {showFilters && <TaskFilters filters={filters} onFilterChange={handleFilterChange} users={users} permissions={permissions} />}
+          {showFilters && <TaskFilters filters={filters} onFilterChange={handleFilterChange} users={users} permissions={permissions} departments={departments}  currentUserRole={user?.role} />}
         </div>
         <ReusableTable locale={tableLocale} columns={columns} dataSource={data} onRowClick={handleRowClick} pagination={pagination} onChange={handleTableChange} rowKey="id" loading={loading} scroll={{ x: 1000 }} rowClassName="cursor-pointer" />
       </div>
