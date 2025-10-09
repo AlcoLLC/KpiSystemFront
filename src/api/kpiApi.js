@@ -65,9 +65,27 @@ const kpiAPI = {
     return apiService.get("/kpis/kpi/pending-for-me/");
   },
 
-  getKpiMonthlySummary: (slug, { year, month }) => {
-    return apiService.get(`/performance/kpi-summary/${slug}/`, { year, month });
+  getNeedSelfEvaluation: () => {
+    return apiService.get("/kpis/kpi/need-self-evaluation/");
   },
+
+  getWaitingSuperiorEvaluation: () => {
+    return apiService.get("/kpis/kpi/waiting-superior-evaluation/");
+  },
+
+  getIEvaluated: () => {
+    return apiService.get("/kpis/kpi/i-evaluated/");
+  },
+
+  getSubordinatesNeedEvaluation: () => { 
+    return apiService.get("/kpis/kpi/subordinates-need-evaluation/");
+  },
+  
+  // YENİ FUNKSİYA
+  getCompletedEvaluations: () => {
+    return apiService.get("/kpis/kpi/completed-evaluations/");
+  },
+  
 };
 
 export default kpiAPI;

@@ -1,0 +1,76 @@
+
+import { useState, useEffect, useMemo } from "react";
+import { message } from "antd";
+import kpiAPI from "../api/kpiApi";
+
+export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
+  const [starRating, setStarRating] = useState(5);
+  const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const isOwnEvaluation = currentUser?.id === task?.assignee;
+  const maxScore = isOwnEvaluation ? 10 : 100;
+
+  const resetModal = () => {
+    setStarRating(isOwnEvaluation ? 5 : 50);
+    setNote("");
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      resetModal();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, isOwnEvaluation]);
+
+  const handleSave = async () => {
+    if (!task) return;
+    setLoading(true);
+
+    try {
+      const evaluationData = {
+        task_id: task.id,
+        evaluatee_id: task.assignee,
+        score: starRating,
+        comment: note.trim() || null,
+      };
+      await kpiAPI.createEvaluation(evaluationData);
+      message.success(
+        isOwnEvaluation
+          ? "Dəyərləndirməniz qeydə alındı! Rəhbərinizə bildiriş göndərildi."
+          : "Yekun dəyərləndirmə uğurla qeydə alındı!"
+      );
+      onClose(true);
+    } catch (error) {
+      console.error("Failed to save evaluation:", error);
+      const errorMessage = error.response?.data?.detail || error.response?.data?.non_field_errors?.[0] || Object.values(error.response?.data || {})[0] || "Dəyərləndirməni yadda saxlamq mümkün olmadı.";
+      message.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const scoreDescription = useMemo(() => {
+    const thresholds = isOwnEvaluation
+      ? { low: 3, mid: 6, high: 8 }
+      : { low: 30, mid: 60, high: 80 };
+
+    if (starRating <= thresholds.low) return { text: "🔴 Performans yaxşılaşdırılmalıdır", className: "text-red-600" };
+    if (starRating <= thresholds.mid) return { text: "🟡 Orta performans", className: "text-yellow-600" };
+    if (starRating <= thresholds.high) return { text: "🔵 Yaxşı performans", className: "text-blue-600" };
+    return { text: "🟢 Əla performans", className: "text-green-600" };
+  }, [starRating, isOwnEvaluation]);
+
+  return {
+    starRating,
+    setStarRating,
+    note,
+    setNote,
+    loading,
+    handleSave,
+    isOwnEvaluation,
+    maxScore,
+    scoreDescription,
+    resetModal,
+  };
+};

@@ -54,6 +54,8 @@ const PerformancePage = () => {
   };
 
   const renderContent = () => {
+    const hiddenForRoles = ["top_management", "admin"];
+
     if (!canEvaluate) {
       return (
         <MyPerformanceView
@@ -72,13 +74,15 @@ const PerformancePage = () => {
             onSummaryClick={handleOpenSummaryModal}
           />
         </TabPane>
-        <TabPane tab="Mənim Performansım" key="me">
-          <MyPerformanceView
-            userCardData={myCard}
-            summaryData={mySummary}
-            monthlyScores={myMonthlyScores}
-          />
-        </TabPane>
+        {user && !hiddenForRoles.includes(user.role) && (
+          <TabPane tab="Mənim Performansım" key="me">
+            <MyPerformanceView
+              userCardData={myCard}
+              summaryData={mySummary}
+              monthlyScores={myMonthlyScores}
+            />
+          </TabPane>
+        )}
       </Tabs>
     );
   };
