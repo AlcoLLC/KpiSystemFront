@@ -6,7 +6,6 @@ import { store } from "./app/store";
 import AppRouter from "./routes/AppRouter";
 import { AuthProvider } from "./context/AuthContext";
 
-// --- DƏYİŞİKLİK 1: Ant Design CSS və App komponentini import edirik ---
 import { App as AntApp } from 'antd';
 import 'antd/dist/reset.css';
 
@@ -20,7 +19,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <BrowserRouter>
         <AuthProvider>
-          {/* --- DƏYİŞİKLİK 2: Bütün tətbiqi AntApp ilə əhatələyirik --- */}
           <AntApp>
             <AppRouter />
           </AntApp>

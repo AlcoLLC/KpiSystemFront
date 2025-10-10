@@ -24,9 +24,11 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
             <div className="text-center">
               <Avatar size={96} src={userCardData.profile_photo} icon={<UserOutlined />} />
               <Title level={4} className="mt-4 mb-1">{`${userCardData.first_name} ${userCardData.last_name}`}</Title>
-              <Text type="secondary">{userCardData.role_display}</Text>
-              <br />
-              <Text>{userCardData.department_name || 'Departament təyin edilməyib'}</Text>
+              <Text type="secondary" className="performance-view-position" style={{ display: 'block' }}>
+                {userCardData.position_name || 'Vəzifə təyin edilməyib'}
+              </Text>
+              <Text type="secondary" style={{ display: 'block' }}>{userCardData.role_display}</Text>
+              <Text className="mt-2" style={{ display: 'block' }}>{userCardData.department_name || 'Departament təyin edilməyib'}</Text>
             </div>
             <div className="mt-6 text-center">
                 <Text strong>Bu Aykı Nəticə</Text>

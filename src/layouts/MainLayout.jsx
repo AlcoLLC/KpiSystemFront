@@ -82,7 +82,7 @@ export default function MainLayout() {
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
-                <NavLink to="//" className={navLinkClasses}>
+                <NavLink to="/calendar/" className={navLinkClasses}>
                   <AiOutlineCalendar size={24} /> Təqvim
                 </NavLink>
               </li>
