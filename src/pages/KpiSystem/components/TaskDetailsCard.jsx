@@ -17,7 +17,12 @@ const TaskDetailsCard = ({ task }) => (
           <div className="whitespace-pre-wrap">{task.description}</div>
         </Descriptions.Item>
       )}
-      <Descriptions.Item label="İşçi">{task.assignee_details}</Descriptions.Item>
+     <Descriptions.Item label="İşçi">{task.assignee_details}</Descriptions.Item>
+      {task.assignee_obj && task.assignee_obj.position_details?.name && (
+  <Descriptions.Item label="Vəzifə">
+    {task.assignee_obj.position_details.name}
+  </Descriptions.Item>
+)}
       <Descriptions.Item label="Status">
         <Tag color="blue">{task.status_display}</Tag>
       </Descriptions.Item>

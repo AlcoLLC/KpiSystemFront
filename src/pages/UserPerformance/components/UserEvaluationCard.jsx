@@ -30,11 +30,11 @@ const UserEvaluationCard = ({ user, onEvaluateClick, onSummaryClick }) => {
   return (
     <div
       className={`
-                user-kpi-system-card bg-white rounded-xl shadow-lg p-5 transition-all duration-300
-                hover:shadow-xl hover:-translate-y-1
-                flex flex-col
-                ${isEvaluated ? "bg-gray-50" : ""}
-            `}
+        user-kpi-system-card bg-white rounded-xl shadow-lg p-5 transition-all duration-300
+        hover:shadow-xl hover:-translate-y-1
+        flex flex-col
+        ${isEvaluated ? "bg-gray-50" : ""}
+      `}
     >
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-4">
@@ -46,7 +46,12 @@ const UserEvaluationCard = ({ user, onEvaluateClick, onSummaryClick }) => {
           />
           <div>
             <h3 className="text-lg font-bold text-gray-800">{fullName}</h3>
-            <p className="text-sm text-gray-500">{user.role_display}</p>
+            {/* START: Added Position Name */}
+            <p className="text-sm font-medium text-gray-600">
+              {user.position_name || "Vəzifə Təyin Edilməyib"}
+            </p>
+            {/* END: Added Position Name */}
+            <p className="text-xs text-gray-500 mt-1">{user.role_display}</p>
           </div>
         </div>
         {isEvaluated && (

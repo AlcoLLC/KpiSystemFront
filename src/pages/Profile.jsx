@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { Form, Input, Button, Upload } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import useProfile from '../hooks/useProfile';
@@ -8,6 +9,18 @@ function Profile() {
   const [form] = Form.useForm();
 
   const { loading, profileData, profilePhoto, onFinish, draggerProps } = useProfile(form);
+
+  useEffect(() => {
+    if (profileData) {
+      form.setFieldsValue({
+        ...profileData,
+        // START: DƏYİŞİKLİK - 'position' yerinə 'position_display' istifadə edirik
+        position_display: profileData.position_details?.name || 'Təyin edilməyib',
+        // END: DƏYİŞİKLİK
+        all_departments: profileData.all_departments?.join(', ')
+      });
+    }
+  }, [profileData, form]);
 
   if (loading) {
     return (
@@ -30,6 +43,7 @@ function Profile() {
         </h1>
 
         <div className="mb-10">
+          {/* ... Profil şəkli hissəsi olduğu kimi qalır ... */}
           <h2 className="text-lg font-semibold mb-4 text-gray-700 dark:text-white">Profil Şəkli</h2>
           <Dragger {...draggerProps}>
             <div className="p-4 flex flex-col justify-center items-center text-center">
@@ -79,12 +93,19 @@ function Profile() {
             <Form.Item label="Əlaqə Nömrəsi" name="phone_number">
               <Input placeholder="Telefon nömrəsi" size="large" />
             </Form.Item>
-            <Form.Item label="Vəzifə" name="role_display">
+
+            {/* START: DƏYİŞİKLİK - 'name' atributu dəyişdirildi */}
+            <Form.Item label="Vəzifə" name="position_display">
               <Input placeholder="Vəzifə" size="large" readOnly />
             </Form.Item>
+            {/* END: DƏYİŞİKLİK */}
+
+            <Form.Item label="Departmentdə rolu" name="role_display">
+              <Input placeholder="Departmentdə rolu" size="large" readOnly />
+            </Form.Item>
             <Form.Item label="Departamentlər" name="all_departments">
-  <Input placeholder="Aid olduğu departamentlər" size="large" readOnly />
-</Form.Item>
+              <Input placeholder="Aid olduğu departamentlər" size="large" readOnly />
+            </Form.Item>
             <Form.Item label="Şifrə" name="password" help="Dəyişmək istəmirsinizsə boş buraxın.">
               <Input.Password placeholder="Yeni şifrə" size="large" />
             </Form.Item>
@@ -92,6 +113,7 @@ function Profile() {
         </div>
 
         <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          {/* ... Düymələr olduğu kimi qalır ... */}
           <Button size="large" onClick={() => form.resetFields()}>
             Ləğv et
           </Button>

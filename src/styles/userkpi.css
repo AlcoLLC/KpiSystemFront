@@ -343,3 +343,11 @@
   background-color: rgba(251, 191, 36, 0.15) !important;
   border-color: rgba(251, 191, 36, 0.3) !important;
 }
+
+.dark .user-kpi-system-card .text-gray-600 {
+  color: #d1d5db; 
+}
+
+.dark .performance-view-position {
+  color: #d1d5db;
+}
