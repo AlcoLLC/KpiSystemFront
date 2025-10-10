@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { message } from "antd";
-import useAuth from "./useAuth";
-import performanceAPI from "../api/performanceAPI";
+import useAuth from "../../../hooks/useAuth";
+import performanceAPI from "../../../api/performanceAPI";
 
 const managerialRoles = [
   "admin",

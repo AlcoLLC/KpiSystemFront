@@ -1,5 +1,3 @@
-// src/components/kpi/modals/ReviewModal.js
-
 import { Input } from "antd";
 import { 
     MessageOutlined, 
@@ -7,7 +5,7 @@ import {
     StarOutlined,
     InfoCircleOutlined 
 } from "@ant-design/icons";
-import { useReviewForm } from "../../../hooks/useReviewForm";
+import { useReviewForm } from "../hooks/useReviewForm";
 import BaseModal from "./BaseModal";
 import ScoreDisplay from "./ScoreDisplay";
 import ScoreInput from "./ScoreInputKpi";
@@ -84,7 +82,6 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
               <StarOutlined className="text-yellow-500 text-xl mr-2" />
               <span className="text-gray-700 font-medium">Qiymətləndirin (1-{maxScore}):</span>
             </div>
-            {/* KOD TƏKRARININ QARŞISINI ALMAQ ÜÇÜN HAZIR KOMPONENT İSTİFADƏSİ */}
             <ScoreInput isSelfEval={isOwnEvaluation} value={starRating} onChange={setStarRating} />
           </div>
           <div className="mt-4 text-center">

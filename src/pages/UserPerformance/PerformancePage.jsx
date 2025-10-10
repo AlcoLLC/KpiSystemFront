@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Typography, Spin, Tabs } from "antd";
 import useAuth from "../../hooks/useAuth";
-import { usePerformanceData } from "../../hooks/usePerformanceData";
+import { usePerformanceData } from "./hooks/usePerformanceData";
 import PerformanceFilters from "./components/PerformanceFilters";
 import TeamView from "./components/TeamView";
 import MyPerformanceView from "./components/MyPerformanceView";

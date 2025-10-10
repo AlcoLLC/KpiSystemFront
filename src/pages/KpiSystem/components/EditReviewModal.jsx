@@ -1,6 +1,6 @@
 import { Input } from "antd";
 import { MessageOutlined, StarOutlined } from "@ant-design/icons";
-import { useEditReview } from "../../../hooks/useEditReview";
+import { useEditReview } from "../hooks/useEditReview";
 import BaseModal from "./BaseModal";
 import ScoreDisplay from "./ScoreDisplay";
 import ScoreInput from "./ScoreInputKpi";

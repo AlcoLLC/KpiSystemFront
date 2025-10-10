@@ -1,5 +1,5 @@
 import { Modal, Row, Col, Statistic, Spin, Empty, Tabs, List, Tag } from 'antd';
-import { useSummaryData } from '../../../hooks/useSummaryData';
+import { useSummaryData } from '../hooks/useSummaryData';
 import { formatForDisplay } from '../../../utils/dateFormatter';
 
 const { TabPane } = Tabs;
