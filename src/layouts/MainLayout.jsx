@@ -67,6 +67,11 @@ export default function MainLayout() {
                 </NavLink>
               </li>
               <li className="mt-5 w-full">
+                <NavLink to="/userperformance/" className={navLinkClasses}>
+                  <HiOutlineDocumentReport size={24} /> İstifadəçi qiymətləndirməsi
+                </NavLink>
+              </li>
+              <li className="mt-5 w-full">
                 <NavLink to="/performance" className={navLinkClasses}>
                   <MdSpeed size={24} /> Performans
                 </NavLink>
@@ -86,11 +91,7 @@ export default function MainLayout() {
                   <HiOutlineDocumentReport size={24} /> Tarixçə
                 </NavLink>
               </li>
-              <li className="mt-5 w-full">
-                <NavLink to="/userperformance/" className={navLinkClasses}>
-                  <HiOutlineDocumentReport size={24} /> İstifadəçi qiymətləndirməsi
-                </NavLink>
-              </li>
+              
             </ul>
              <button onClick={logout} className={navLinkClasses({ isActive: false })}>
               <div className="flex items-center gap-2"> <MdLogout size={24} /> Çıxış </div>

@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { useMemo } from "react";
 import { formatDate } from "../../../utils/dateUtils";
-import { determineButtonConfig, getButtonStyle } from "../../../utils/BlockContent.helpers";
+import { determineButtonConfig, getButtonStyle } from "../utils/BlockContent.helpers";
 
 const EvaluationTags = ({ evaluationStatus }) => {
   if (!evaluationStatus) return null;
@@ -62,7 +62,7 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
         <div className="flex items-center justify-between">
           <span className="font-bold text-sm text-blue-600 flex items-center">
             <UserOutlined className="mr-2" />
-            {task?.assignee_details || "N/A"}
+            {task?.assignee_details || "-"}
           </span>
           {task?.priority === "CRITICAL" && (
             <Badge count="CRITICAL" style={{ backgroundColor: "#ff4d4f" }} />

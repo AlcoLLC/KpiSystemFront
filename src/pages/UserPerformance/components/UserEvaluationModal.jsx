@@ -1,7 +1,7 @@
 import { Modal, Form, Rate, Input, Button, Timeline } from 'antd';
 import { UserOutlined, StarOutlined, MessageOutlined } from '@ant-design/icons';
 import { formatForDisplay, formatForHistory } from '../../../utils/dateFormatter';
-import { useEvaluationForm } from '../../../hooks/useEvaluationForm'; 
+import { useEvaluationForm } from '../hooks/useEvaluationForm'; 
 import ScoreDisplay from './ScoreDisplay';
 const { TextArea } = Input;
 

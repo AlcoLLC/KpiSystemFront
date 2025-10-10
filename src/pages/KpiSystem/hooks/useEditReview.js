@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { message } from "antd";
-import kpiAPI from "../api/kpiApi";
+import kpiAPI from "../../../api/kpiApi";
 
 export const useEditReview = ({ isOpen, onClose, evaluation }) => {
   const [starRating, setStarRating] = useState(1);

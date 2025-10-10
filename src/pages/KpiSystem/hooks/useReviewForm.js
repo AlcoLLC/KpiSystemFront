@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { message } from "antd";
-import kpiAPI from "../api/kpiApi";
+import kpiAPI from "../../../api/kpiApi";
 
 export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
   const [starRating, setStarRating] = useState(5);
@@ -20,7 +20,6 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
     if (isOpen) {
       resetModal();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isOwnEvaluation]);
 
   const handleSave = async () => {

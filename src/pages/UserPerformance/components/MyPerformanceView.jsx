@@ -79,7 +79,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
                     </LineChart>
                 </ResponsiveContainer>
             ) : (
-              // Mesaj yeniləndi
               <Empty description="Qrafik üçün heç bir məlumat tapılmadı." />
             )}
           </Card>
