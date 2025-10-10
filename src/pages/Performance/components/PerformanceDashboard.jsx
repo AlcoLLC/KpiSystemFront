@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty } from 'antd';
+import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty, Tooltip } from 'antd';
 import { UserOutlined, CheckCircleOutlined, SyncOutlined, WarningOutlined, TrophyOutlined, StarOutlined } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
 import KpiMonthlyChart from './KpiMonthlyChart';
 
 const PerformanceDashboard = ({ loading, performanceData }) => {
@@ -26,17 +25,17 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
             <Row gutter={[24, 24]}>
                 <Col xs={24} lg={8}>
                     <Card className="shadow-lg h-full bg-white dark:bg-[#1F2937] border border-gray-200 dark:border-gray-700">
-                        <div className="flex flex-col items-center text-center space-y-4 p-6 ">
-                            
-                             <Avatar size={96} src={photoUrl} icon={<UserOutlined />} className="border-4 border-white dark:border-gray-600 shadow-md"/>
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <Avatar size={96} src={photoUrl} icon={<UserOutlined />} className="border-4 border-white dark:border-gray-600 shadow-md"/>
                             <div>
                                 <h3 className="text-xl font-bold text-gray-800 dark:text-white">{user.full_name}</h3>
                                 <p className="text-gray-500 dark:text-gray-400">{user.department}</p>
                                 <Tag color="blue" className="mt-2">{user.role}</Tag>
                             </div>
- 
-                            <div className="w-full  pt-5 border-t border-gray-200 dark:border-gray-700  ">
-                                <p className="text-sm font-semibold mb-3 text-gray-600 dark:text-gray-300 pb-5">Son 90 Günün Ortalama KPI Balı</p>
+                            
+                            {/* DƏYİŞİKLİK BURADADIR */}
+                            <div className="w-full pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center">
+                                <p className="text-sm font-semibold mb-3 text-gray-600 dark:text-gray-300">Son 90 Günün Ortalama KPI Balı</p>
                                 <Progress 
                                     type="circle" 
                                     percent={averageKpiScore}  
@@ -52,7 +51,7 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
                 <Col xs={24} lg={16}>
                     <div className="space-y-6">
                         <Row gutter={[16, 16]}>
-                            <Col xs={12} sm={12} md={6}>
+                           <Col xs={12} sm={12} md={6}>
                                 <div onClick={() => handleCardClick({})} className="cursor-pointer">
                                     <Card className="shadow-sm bg-white dark:bg-[#1F2937] hover:bg-gray-50 dark:hover:bg-[#2a384c] transition-all">
                                         <Statistic title="Cəmi Tapşırıq" value={task_performance.total_tasks} prefix={<TrophyOutlined />} valueStyle={{ color: '#fbbf24' }}/>

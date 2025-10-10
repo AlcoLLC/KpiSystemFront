@@ -4,7 +4,7 @@ import { Button, Spin, message, Card, Empty, Radio } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/az';
-import kpiAPI from '../../../api/kpiApi'; // Bu, performanceAPI.js olaraq dəyişibsə, onu import edin
+import kpiAPI from '../../../api/performanceAPI';  
 
 dayjs.locale('az');
 

@@ -11,6 +11,7 @@ import Report from '../pages/Report';
 import Calendar from '../pages/Calendar';
 import Performance from '../pages/Performance/Performance';
 import PerformancePage from '../pages/UserPerformance/PerformancePage';
+import UserManagement from '../pages/UserManagement/UserManagement';
 
 export default function AppRouter() {
   return (
@@ -40,6 +41,7 @@ export default function AppRouter() {
         <Route path="/performance" element={<Performance />} />
         <Route path="/userperformance" element={<PerformancePage />} />
         <Route path="/performance/:slug" element={<Performance />} />
+        <Route path="/user-management" element={<UserManagement />} />
       </Route>
     </Routes>
   );
