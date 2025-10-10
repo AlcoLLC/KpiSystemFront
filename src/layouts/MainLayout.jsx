@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, Link, NavLink } from 'react-router-dom';
 import { BsSun, BsMoon, BsBell } from 'react-icons/bs';
-import { FiUser } from 'react-icons/fi';
+import { FiUser, FiUsers } from 'react-icons/fi';
 import { AiFillHome, AiOutlineCalendar } from 'react-icons/ai';
 import { FaTasks } from 'react-icons/fa';
 import { HiOutlineDocumentReport } from 'react-icons/hi';
@@ -41,6 +41,8 @@ export default function MainLayout() {
     `nav-link flex items-center gap-3 w-full p-3 rounded-md transition-colors duration-300 ease-in-out cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${
       isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
+
+  const isAdmin = user?.role === 'admin';
 
   return (
     <div className="flex">
@@ -91,6 +93,13 @@ export default function MainLayout() {
                   <HiOutlineDocumentReport size={24} /> Tarixçə
                 </NavLink>
               </li>
+              {isAdmin && (
+                <li className="mt-5 w-full">
+                  <NavLink to="/user-management" className={navLinkClasses}>
+                    <FiUsers size={24} /> İstifadəçilər
+                  </NavLink>
+                </li>
+              )}
               
             </ul>
              <button onClick={logout} className={navLinkClasses({ isActive: false })}>
