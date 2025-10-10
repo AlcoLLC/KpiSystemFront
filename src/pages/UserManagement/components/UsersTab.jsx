@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Button, Table, Space, Modal, message, Form, Input, Select, Avatar } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useManagementData } from '../hooks/useManagementData';
@@ -18,14 +18,21 @@ const UsersTab = () => {
     const [positions, setPositions] = useState([]);
     useEffect(() => {
         const fetchPositions = async () => {
-            const posRes = await accountsApi.getPositions();
-            setPositions(posRes.data.results || posRes.data || []);
+            try {
+                const posRes = await accountsApi.getPositions();
+                setPositions(posRes.data.results || posRes.data || []);
+            } catch { message.error("Vəzifələri yükləmək mümkün olmadı."); }
         };
         fetchPositions();
     }, []);
 
     useEffect(() => {
-        fetchData({ search: debouncedSearch, role: filters.role, position: filters.position });
+        const params = {
+            search: debouncedSearch || undefined,
+            role: filters.role || undefined,
+            position: filters.position || undefined,
+        };
+        fetchData(params);
     }, [fetchData, debouncedSearch, filters.role, filters.position]);
 
     const handleOk = () => form.submit();
@@ -33,20 +40,21 @@ const UsersTab = () => {
 
     const onFinish = async (values) => {
         const formData = new FormData();
-        Object.keys(values).forEach(key => {
+        for (const key in values) {
+            const value = values[key];
             if (key === 'profile_photo') {
-                if (values.profile_photo?.[0]?.originFileObj) {
-                    formData.append(key, values.profile_photo[0].originFileObj);
+                if (value && value[0] && value[0].originFileObj) {
+                    formData.append(key, value[0].originFileObj);
                 }
-            } else if (values[key] !== undefined && values[key] !== null) {
-                if (Array.isArray(values[key])) { // For multiple select
-                    values[key].forEach(val => formData.append(key, val));
+            } else if (value !== undefined && value !== null) {
+                if (Array.isArray(value)) {
+                    value.forEach(v => formData.append(key, v));
                 } else {
-                    formData.append(key, values[key]);
+                    formData.append(key, value);
                 }
             }
-        });
-        
+        }
+
         try {
             if (editingItem) {
                 await updateItem(editingItem.id, formData);
@@ -56,49 +64,67 @@ const UsersTab = () => {
                 message.success('İstifadəçi uğurla yaradıldı!');
             }
             handleCancel();
-        } catch (error) { message.error('Əməliyyat uğursuz oldu.'); }
+        } catch (error) {
+            const errorData = error.response?.data;
+            const errorMsg = errorData ? (Object.values(errorData).flat().join(' ') || 'Əməliyyat uğursuz oldu.') : 'Əməliyyat uğursuz oldu.';
+            message.error(errorMsg);
+        }
     };
     
+    // DÜZƏLİŞ: Silmə funksiyasını useCallback ilə stabilləşdiririk
+    const handleDelete = useCallback(async (id) => {
+        try {
+            await deleteItem(id);
+            message.success('İstifadəçi silindi.');
+        } catch {
+            message.error('İstifadəçini silmək mümkün olmadı.');
+        }
+    }, [deleteItem]);
+
     const columns = useMemo(() => [
-        { title: 'Ad Soyad', dataIndex: 'first_name', render: (_, r) => <Space><Avatar src={r.profile_photo} icon={<UserOutlined />} /><span>{`${r.first_name || ''} ${r.last_name || ''}`}</span></Space> },
-        { title: 'Email', dataIndex: 'email' },
-        { title: 'Vəzifə', dataIndex: 'position_details', render: (pos) => pos?.name },
-        { title: 'Rol', dataIndex: 'role_display' },
-        { title: 'Departament(lər)', dataIndex: 'all_departments', render: (depts) => depts?.join(', ') },
+        { title: 'Ad Soyad', dataIndex: 'first_name', render: (_, r) => <Space><Avatar src={r.profile_photo?.[0]?.url} icon={<UserOutlined />} /><span>{`${r.first_name || ''} ${r.last_name || ''}`}</span></Space>, fixed: 'left', width: 200 },
+        { title: 'Email', dataIndex: 'email', width: 200 },
+        { title: 'Vəzifə', dataIndex: 'position_details', render: (pos) => pos?.name || '-', width: 150 },
+        { title: 'Rol', dataIndex: 'role_display', width: 150 },
+        { title: 'Departament(lər)', dataIndex: 'all_departments', render: (depts) => depts?.join(', ') || '-', width: 200 },
         {
-            title: 'Əməliyyatlar', key: 'action', width: 120,
+            title: 'Əməliyyatlar', key: 'action', width: 100, fixed: 'right',
             render: (_, record) => (
                 <Space>
                     <Button icon={<EditOutlined />} onClick={() => {
-                         const initialData = { ...record, position: record.position_details?.id, department: record.department };
-                         setEditingItem(initialData); form.setFieldsValue(initialData); setIsModalOpen(true);
+                         const initialData = { 
+                            ...record, 
+                            position: record.position_details?.id,
+                            department: record.department?.id,
+                            top_managed_departments: record.top_managed_departments?.map(d => d.id),
+                         };
+                         setEditingItem(initialData);
+                         form.setFieldsValue(initialData);
+                         setIsModalOpen(true);
                     }} />
                     <Button icon={<DeleteOutlined />} danger onClick={() => {
                         Modal.confirm({
                             title: 'Əminsinizmi?', content: `İstifadəçini silmək istəyirsiniz?`, okText: 'Bəli', cancelText: 'Xeyr',
-                            onOk: async () => {
-                                try { await deleteItem(record.id); message.success('İstifadəçi silindi.'); }
-                                catch { message.error('İstifadəçini silmək mümkün olmadı.'); }
-                            }
+                            onOk: () => handleDelete(record.id),
                         });
                     }} />
                 </Space>
             ),
         },
-    ], [form]);
+    ], [form, handleDelete]); // DÜZƏLİŞ: `handleDelete`-i dependency-yə əlavə edirik
 
     const ROLE_CHOICES = [ { value: "top_management", label: "Yuxarı İdarəetmə" }, { value: "department_lead", label: "Departament Rəhbəri" }, { value: "manager", label: "Menecer" }, { value: "employee", label: "İşçi" }];
 
     return (
         <div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', marginBottom: 16 }}>
-                 <Input.Search placeholder="Ad, soyad, email ilə axtar..." onChange={e => setFilters(f => ({ ...f, search: e.target.value}))} allowClear style={{ flex: 1, minWidth: '200px' }} />
-                 <Select placeholder="Rola görə filterlə" onChange={value => setFilters(f => ({ ...f, role: value }))} allowClear options={ROLE_CHOICES} style={{ flex: 1, minWidth: '200px' }} />
-                 <Select placeholder="Vəzifəyə görə filterlə" onChange={value => setFilters(f => ({ ...f, position: value }))} allowClear options={positions.map(p => ({label: p.name, value: p.id}))} style={{ flex: 1, minWidth: '200px' }} />
-                 <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsModalOpen(true)}>Yeni İstifadəçi</Button>
+            <div className="flex flex-wrap gap-4 mb-4">
+                 <Input.Search placeholder="Ad, soyad, email ilə axtar..." onSearch={value => setFilters(f => ({ ...f, search: value }))} allowClear className="flex-1 min-w-[200px]" />
+                 <Select placeholder="Rola görə filterlə" onChange={value => setFilters(f => ({ ...f, role: value }))} allowClear options={ROLE_CHOICES} className="flex-1 min-w-[200px]" />
+                 <Select placeholder="Vəzifəyə görə filterlə" onChange={value => setFilters(f => ({ ...f, position: value }))} allowClear options={positions.map(p => ({label: p.name, value: p.id}))} className="flex-1 min-w-[200px]" />
+                 <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingItem(null); form.resetFields(); setIsModalOpen(true); }}>Yeni İstifadəçi</Button>
             </div>
-            <Table columns={columns} dataSource={users} rowKey="id" loading={loading} scroll={{ x: true }} />
-            <Modal title={editingItem ? 'İstifadəçini Redaktə Et' : 'Yeni İstifadəçi Yarat'} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800} footer={(_, { OkBtn, CancelBtn }) => <><CancelBtn /><OkBtn /></>}>
+            <Table columns={columns} dataSource={users} rowKey="id" loading={loading} scroll={{ x: 1200 }} />
+            <Modal title={editingItem ? 'İstifadəçini Redaktə Et' : 'Yeni İstifadəçi Yarat'} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800} footer={(_, { OkBtn, CancelBtn }) => <><CancelBtn /><Button type="primary" onClick={handleOk}>Yadda Saxla</Button></>}>
                 <UserForm form={form} onFinish={onFinish} isEdit={!!editingItem} />
             </Modal>
         </div>
