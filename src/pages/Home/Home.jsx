@@ -35,7 +35,6 @@ function Home() {
         
         {/* Son Tapşırıqlar Cədvəli */}
         <div>
-          <h4 className="text-md font-semibold mb-4 dark:text-gray-300">Son Tapşırıqlar</h4>
           <RecentTasksTable />
         </div>
 

@@ -1,21 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty, Tooltip } from 'antd';
-import { UserOutlined, CheckCircleOutlined, SyncOutlined, WarningOutlined, TrophyOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty } from 'antd';
+import { UserOutlined, CheckCircleOutlined, SyncOutlined, WarningOutlined, TrophyOutlined, StarOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import KpiMonthlyChart from './KpiMonthlyChart';
-import { Bar } from 'react-chartjs-2';
-
 
 const PerformanceDashboard = ({ loading, performanceData }) => {
-    const navigate = useNavigate(); // Naviqasiya üçün hook
+    const navigate = useNavigate();
 
     if (loading) return <Skeleton active avatar paragraph={{ rows: 10 }} />;
     if (!performanceData) return <Empty description="Performans məlumatı tapılmadı." />;
 
     const { user, task_performance } = performanceData;
-    const onTimeRateColor = task_performance.on_time_rate >= 80 ? '#52c41a' : task_performance.on_time_rate >= 50 ? '#faad14' : '#f5222d';
     const photoUrl = user.profile_photo;
+    const averageKpiScore = task_performance.average_kpi_score;
+    const kpiScoreColor = averageKpiScore >= 85 ? '#52c41a' : averageKpiScore >= 70 ? '#faad14' : '#f5222d';
 
     const handleCardClick = (filter) => {
         const filterWithAssignee = { ...filter, assignee: user.id };
@@ -27,21 +26,24 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
             <Row gutter={[24, 24]}>
                 <Col xs={24} lg={8}>
                     <Card className="shadow-lg h-full bg-white dark:bg-[#1F2937] border border-gray-200 dark:border-gray-700">
-                        <div className="flex flex-col items-center text-center space-y-4">
-                            <Avatar size={96} src={photoUrl} icon={<UserOutlined />} className="border-4 border-white dark:border-gray-600 shadow-md"/>
+                        <div className="flex flex-col items-center text-center space-y-4 p-6 ">
+                            
+                             <Avatar size={96} src={photoUrl} icon={<UserOutlined />} className="border-4 border-white dark:border-gray-600 shadow-md"/>
                             <div>
                                 <h3 className="text-xl font-bold text-gray-800 dark:text-white">{user.full_name}</h3>
                                 <p className="text-gray-500 dark:text-gray-400">{user.department}</p>
                                 <Tag color="blue" className="mt-2">{user.role}</Tag>
                             </div>
-                            <div className="w-full pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p className="text-sm font-semibold mb-3 text-gray-600 dark:text-gray-300">İcra Performansı</p>
-                                    <Progress 
-                                        type="circle" 
-                                        percent={task_performance.on_time_rate} 
-                                        strokeColor={onTimeRateColor}
-                                        format={(percent) => `${percent}%`}
-                                    />
+ 
+                            <div className="w-full  pt-5 border-t border-gray-200 dark:border-gray-700  ">
+                                <p className="text-sm font-semibold mb-3 text-gray-600 dark:text-gray-300 pb-5">Son 90 Günün Ortalama KPI Balı</p>
+                                <Progress 
+                                    type="circle" 
+                                    percent={averageKpiScore}  
+                                    strokeColor={kpiScoreColor}  
+                                    format={(percent) => `${percent}`}  
+                                    suffix="/ 100"
+                                />
                             </div>
                         </div>
                     </Card>
@@ -65,7 +67,7 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
                                 </div>
                             </Col>
                             <Col xs={12} sm={12} md={6}>
-                                <div onClick={() => handleCardClick({ status: ['TODO', 'IN_PROGRESS'] })} className="cursor-pointer">
+                                <div onClick={() => handleCardClick({ status: 'IN_PROGRESS' })} className="cursor-pointer">
                                     <Card className="shadow-sm bg-white dark:bg-[#1F2937] hover:bg-gray-50 dark:hover:bg-[#2a384c] transition-all">
                                         <Statistic title="Aktiv" value={task_performance.active_count} prefix={<SyncOutlined spin />} valueStyle={{ color: '#1677ff' }}/>
                                     </Card>
