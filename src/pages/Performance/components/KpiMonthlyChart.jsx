@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
-import { Button, Spin, message, Card, Empty } from 'antd';
+import { Button, Spin, message, Card, Empty, Radio } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import 'dayjs/locale/az';
-import kpiAPI from '../../../api/kpiApi';
+import kpiAPI from '../../../api/kpiApi'; // Bu, performanceAPI.js olaraq dəyişibsə, onu import edin
 
 dayjs.locale('az');
 
-// Chart üçün detallı konfiqurasiya
+// Chart üçün qabaqcıl konfiqurasiya
 const getChartOptions = (isDark, evaluations) => ({
     responsive: true,
     maintainAspectRatio: false,
@@ -18,47 +18,50 @@ const getChartOptions = (isDark, evaluations) => ({
             backgroundColor: isDark ? '#333' : '#fff',
             titleColor: isDark ? '#fff' : '#333',
             bodyColor: isDark ? '#ddd' : '#555',
-            padding: 10,
-            cornerRadius: 5,
+            padding: 12,
+            cornerRadius: 6,
             callbacks: {
-                // Hər nöqtənin üzərində göstəriləcək mətn
+                title: function(context) {
+                    const index = context[0].dataIndex;
+                    const evaluation = evaluations[index];
+                    return evaluation ? dayjs(evaluation.completed_at).format('DD MMMM YYYY') : '';
+                },
                 label: function(context) {
                     const index = context.dataIndex;
                     const evaluation = evaluations[index];
                     if (evaluation) {
-                        // Tooltip-də həm adı, həm balı göstəririk
                         return `${evaluation.task_title}: ${evaluation.score} bal`;
                     }
                     return `Bal: ${context.parsed.y}`;
-                },
-                title: () => null // Başlığı ləğv edirik
-            }
-        }
-    },
-    scales: {
-        y: {
-            beginAtZero: true,
-            max: 100,
-            title: { display: true, text: 'Yekun Bal', color: isDark ? '#a0aec0' : '#4a5568' },
-            grid: { color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' },
-            ticks: { color: isDark ? '#a0aec0' : '#4a5568' }
-        },
-        x: {
-            grid: { display: false },
-            ticks: {
-                color: isDark ? '#a0aec0' : '#4a5568',
-                // Uzun tapşırıq adlarının səliqəli görünməsi üçün
-                callback: function(value) {
-                    const label = this.getLabelForValue(value);
-                    return label.length > 15 ? label.substring(0, 15) + '...' : label;
                 }
             }
         }
     },
+    scales: {
+        y: { beginAtZero: true, max: 100, ticks: { color: isDark ? '#a0aec0' : '#4a5568' } },
+        x: { ticks: { color: isDark ? '#a0aec0' : '#4a5568' } }
+    },
+    elements: {
+        line: { tension: 0.4 }, // Xətləri daha axıcı edir
+        point: { radius: 5, hoverRadius: 8, backgroundColor: '#fff' }
+    }
 });
 
+// Qrafikin arxa fonu üçün gradient yaratmaq
+const createGradient = (ctx, chartArea, isDark) => {
+    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+    if (isDark) {
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.4)');
+    } else {
+        gradient.addColorStop(0, 'rgba(191, 219, 254, 0.2)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.5)');
+    }
+    return gradient;
+};
+
 const KpiMonthlyChart = ({ userSlug, isDark }) => {
-    const [date, setDate] = useState(dayjs());
+    const [period, setPeriod] = useState('3m'); // '3m' (son 3 ay) və ya dayjs obyekti
     const [chartData, setChartData] = useState(null);
     const [evaluations, setEvaluations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -69,26 +72,36 @@ const KpiMonthlyChart = ({ userSlug, isDark }) => {
         const fetchChartData = async () => {
             setLoading(true);
             try {
-                const params = { year: date.year(), month: date.month() + 1 };
+                let params = {};
+                if (period === '3m') {
+                    params = {
+                        start_date: dayjs().subtract(3, 'month').format('YYYY-MM-DD'),
+                        end_date: dayjs().format('YYYY-MM-DD')
+                    };
+                } else { // period bir dayjs obyekti olduqda
+                    params = { year: period.year(), month: period.month() + 1 };
+                }
+                
+                // Buradakı API funksiyası `kpiAPI`-də və ya `performanceAPI`-də ola bilər
                 const response = await kpiAPI.getKpiMonthlySummary(userSlug, params);
                 
-                const evals = response.data.evaluations;
+                const evals = response.data.evaluations || [];
                 setEvaluations(evals);
 
-                if (evals && evals.length > 0) {
+                if (evals.length > 0) {
                     setChartData({
-                        // Dəyişiklik: X oxu üçün etiket olaraq tapşırıqların adlarını istifadə edirik
-                        labels: evals.map(e => e.task_title),
+                        labels: evals.map(e => dayjs(e.completed_at).format('DD MMM')), // X oxu üçün tarixlər
                         datasets: [{
                             label: 'Yekun Bal',
                             data: evals.map(e => e.score),
                             borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                            fill: true, // Xəttin altını rəngləyirik
-                            tension: 0.3,
-                            pointRadius: 6,
-                            pointHoverRadius: 10,
-                            pointBackgroundColor: '#3b82f6',
+                            borderWidth: 3,
+                            fill: true,
+                            backgroundColor: (context) => {
+                                const { ctx, chartArea } = context.chart;
+                                if (!chartArea) return null;
+                                return createGradient(ctx, chartArea, isDark);
+                            },
                         }]
                     });
                 } else {
@@ -103,26 +116,34 @@ const KpiMonthlyChart = ({ userSlug, isDark }) => {
         };
 
         fetchChartData();
-    }, [userSlug, date]);
+    }, [userSlug, period, isDark]);
 
-    const handlePrevMonth = () => setDate(date.subtract(1, 'month'));
-    const handleNextMonth = () => setDate(date.add(1, 'month'));
-
-    const capitalizedMonth = (d) => {
-        const monthName = d.format('MMMM YYYY');
+    const handlePeriodChange = (e) => setPeriod(e.target.value);
+    const handlePrevMonth = () => setPeriod(current => (current === '3m' ? dayjs().subtract(1, 'month') : current.subtract(1, 'month')));
+    const handleNextMonth = () => setPeriod(current => (current === '3m' ? dayjs() : current.add(1, 'month')));
+    
+    const getTitle = () => {
+        if (period === '3m') return 'Son 3 Ayın Nəticələri';
+        const monthName = period.format('MMMM YYYY');
         return monthName.charAt(0).toUpperCase() + monthName.slice(1);
-    }
+    };
     
     return (
         <Card title="Aylıq KPI Performans Qrafiki" className="shadow-md bg-white dark:bg-[#1F2937]">
-            <div className="flex justify-between items-center mb-4">
-                <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
-                <p className="font-semibold text-lg dark:text-white">{capitalizedMonth(date)}</p>
-                <Button icon={<RightOutlined />} onClick={handleNextMonth} />
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+                <div className="flex items-center">
+                    <Button icon={<LeftOutlined />} onClick={handlePrevMonth} />
+                    <p className="font-semibold text-lg dark:text-white mx-4 text-center">{getTitle()}</p>
+                    <Button icon={<RightOutlined />} onClick={handleNextMonth} />
+                </div>
+                <Radio.Group value={period} onChange={handlePeriodChange}>
+                    <Radio.Button value="3m">Son 3 Ay</Radio.Button>
+                    <Radio.Button value={dayjs()}>Bu Ay</Radio.Button>
+                </Radio.Group>
             </div>
-            <div className="relative h-64">
+            <div className="relative h-80"> {/* Hündürlüyü artırdıq */}
                 {loading ? <div className="absolute inset-0 flex justify-center items-center"><Spin /></div> : (
-                    chartData ? <Line options={getChartOptions(isDark, evaluations)} data={chartData} /> : <Empty description="Bu ay üçün heç bir KPI balı tapılmadı." />
+                    chartData ? <Line options={getChartOptions(isDark, evaluations)} data={chartData} /> : <Empty description="Göstərilən period üçün heç bir KPI balı tapılmadı." />
                 )}
             </div>
         </Card>
