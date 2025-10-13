@@ -88,18 +88,19 @@ export default function MainLayout() {
                   <AiOutlineCalendar size={24} /> Təqvim
                 </NavLink>
               </li>
-              <li className="mt-5 w-full">
-                <NavLink to="//" className={navLinkClasses}>
-                  <HiOutlineDocumentReport size={24} /> Tarixçə
-                </NavLink>
-              </li>
-              {isAdmin && (
+                            {isAdmin && (
                 <li className="mt-5 w-full">
                   <NavLink to="/user-management" className={navLinkClasses}>
                     <FiUsers size={24} /> İstifadəçilər
                   </NavLink>
                 </li>
               )}
+              <li className="mt-5 w-full">
+                <NavLink to="//" className={navLinkClasses}>
+                  <HiOutlineDocumentReport size={24} /> Tarixçə
+                </NavLink>
+              </li>
+
               
             </ul>
              <button onClick={logout} className={navLinkClasses({ isActive: false })}>
