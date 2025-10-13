@@ -11,11 +11,10 @@ const UsersTab = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [form] = Form.useForm();
-    
     const [filters, setFilters] = useState({ search: '', role: null, position: null });
     const debouncedSearch = useDebounce(filters.search, 500);
-
     const [positions, setPositions] = useState([]);
+
     useEffect(() => {
         const fetchPositions = async () => {
             try {
@@ -37,14 +36,16 @@ const UsersTab = () => {
 
     const handleOk = () => form.submit();
     const handleCancel = () => { setIsModalOpen(false); setEditingItem(null); form.resetFields(); };
-
+ 
     const onFinish = async (values) => {
         const formData = new FormData();
         for (const key in values) {
             const value = values[key];
             if (key === 'profile_photo') {
-                if (value && value[0] && value[0].originFileObj) {
+                if (value && value.length > 0 && value[0].originFileObj) {
                     formData.append(key, value[0].originFileObj);
+                } else if (!value || value.length === 0) {
+                    formData.append(key, '');
                 }
             } else if (value !== undefined && value !== null) {
                 if (Array.isArray(value)) {
@@ -54,7 +55,7 @@ const UsersTab = () => {
                 }
             }
         }
-
+        
         try {
             if (editingItem) {
                 await updateItem(editingItem.id, formData);
@@ -66,12 +67,15 @@ const UsersTab = () => {
             handleCancel();
         } catch (error) {
             const errorData = error.response?.data;
-            const errorMsg = errorData ? (Object.values(errorData).flat().join(' ') || 'Əməliyyat uğursuz oldu.') : 'Əməliyyat uğursuz oldu.';
+            let errorMsg = 'Əməliyyat uğursuz oldu.';
+            if (errorData) {
+                // Backend-dən gələn xəta mesajlarını birləşdiririk
+                errorMsg = Object.values(errorData).flat().join(' \n');
+            }
             message.error(errorMsg);
         }
     };
-    
-    // DÜZƏLİŞ: Silmə funksiyasını useCallback ilə stabilləşdiririk
+
     const handleDelete = useCallback(async (id) => {
         try {
             await deleteItem(id);
@@ -80,9 +84,9 @@ const UsersTab = () => {
             message.error('İstifadəçini silmək mümkün olmadı.');
         }
     }, [deleteItem]);
-
+    
     const columns = useMemo(() => [
-        { title: 'Ad Soyad', dataIndex: 'first_name', render: (_, r) => <Space><Avatar src={r.profile_photo?.[0]?.url} icon={<UserOutlined />} /><span>{`${r.first_name || ''} ${r.last_name || ''}`}</span></Space>, fixed: 'left', width: 200 },
+        { title: 'Ad Soyad', dataIndex: 'first_name', render: (_, r) => <Space><Avatar src={r.profile_photo} icon={<UserOutlined />} /><span>{`${r.first_name || ''} ${r.last_name || ''}`}</span></Space>, fixed: 'left', width: 200 },
         { title: 'Email', dataIndex: 'email', width: 200 },
         { title: 'Vəzifə', dataIndex: 'position_details', render: (pos) => pos?.name || '-', width: 150 },
         { title: 'Rol', dataIndex: 'role_display', width: 150 },
@@ -92,14 +96,15 @@ const UsersTab = () => {
             render: (_, record) => (
                 <Space>
                     <Button icon={<EditOutlined />} onClick={() => {
-                         const initialData = { 
+                        const initialData = { 
                             ...record, 
                             position: record.position_details?.id,
-                            department: record.department?.id,
-                            top_managed_departments: record.top_managed_departments?.map(d => d.id),
+                            department: record.department,
+                            // Şəkli formaya ötürmək üçün düzgün format
+                            profile_photo: record.profile_photo ? [{ uid: '-1', name: 'sekil.png', status: 'done', url: record.profile_photo }] : [],
                          };
-                         setEditingItem(initialData);
-                         form.setFieldsValue(initialData);
+                         setEditingItem(initialData); 
+                         form.setFieldsValue(initialData); 
                          setIsModalOpen(true);
                     }} />
                     <Button icon={<DeleteOutlined />} danger onClick={() => {
@@ -111,7 +116,7 @@ const UsersTab = () => {
                 </Space>
             ),
         },
-    ], [form, handleDelete]); // DÜZƏLİŞ: `handleDelete`-i dependency-yə əlavə edirik
+    ], [handleDelete, form]);
 
     const ROLE_CHOICES = [ { value: "top_management", label: "Yuxarı İdarəetmə" }, { value: "department_lead", label: "Departament Rəhbəri" }, { value: "manager", label: "Menecer" }, { value: "employee", label: "İşçi" }];
 
@@ -125,7 +130,7 @@ const UsersTab = () => {
             </div>
             <Table columns={columns} dataSource={users} rowKey="id" loading={loading} scroll={{ x: 1200 }} />
             <Modal title={editingItem ? 'İstifadəçini Redaktə Et' : 'Yeni İstifadəçi Yarat'} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800} footer={(_, { OkBtn, CancelBtn }) => <><CancelBtn /><Button type="primary" onClick={handleOk}>Yadda Saxla</Button></>}>
-                <UserForm form={form} onFinish={onFinish} isEdit={!!editingItem} />
+                <UserForm form={form} onFinish={onFinish} isEdit={!!editingItem} initialValues={editingItem} />
             </Modal>
         </div>
     );

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';  
 import { message } from 'antd';
 import accountsApi from '../../../api/accountsApi';
 
@@ -12,7 +12,7 @@ export const useManagementData = (resourceType) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const api = apiMap[resourceType];
+    const api = useMemo(() => apiMap[resourceType], [resourceType]);
 
     const fetchData = useCallback(async (params = {}) => {
         setLoading(true);
@@ -21,25 +21,27 @@ export const useManagementData = (resourceType) => {
             setItems(response.data.results || response.data || []);
         } catch (error) {
             message.error(`${resourceType} məlumatlarını yükləmək mümkün olmadı.`);
+            setItems([]);
         } finally {
             setLoading(false);
         }
-    }, [api]);
+    }, [api, resourceType]);
 
-    const createItem = async (data) => {
+    // DÜZƏLİŞ: Bütün CRUD funksiyalarını useCallback içinə alırıq
+    const createItem = useCallback(async (data) => {
         await api.create(data);
-        fetchData(); // Siyahını yenilə
-    };
+        await fetchData();
+    }, [api, fetchData]);
 
-    const updateItem = async (id, data) => {
+    const updateItem = useCallback(async (id, data) => {
         await api.update(id, data);
-        fetchData(); // Siyahını yenilə
-    };
+        await fetchData();
+    }, [api, fetchData]);
 
-    const deleteItem = async (id) => {
+    const deleteItem = useCallback(async (id) => {
         await api.delete(id);
-        fetchData(); // Siyahını yenilə
-    };
+        await fetchData();
+    }, [api, fetchData]);
 
     return { items, loading, fetchData, createItem, updateItem, deleteItem };
 };

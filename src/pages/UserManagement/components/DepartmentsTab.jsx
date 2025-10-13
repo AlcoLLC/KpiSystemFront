@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Button, Table, Space, Modal, message, Form, Input } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useManagementData } from '../hooks/useManagementData';
@@ -13,7 +13,7 @@ const DepartmentsTab = () => {
     const [search, setSearch] = useState('');
     const debouncedSearch = useDebounce(search, 500);
 
-    useEffect(() => { fetchData({ search: debouncedSearch }); }, [fetchData, debouncedSearch]);
+    useEffect(() => { fetchData({ search: debouncedSearch || undefined }); }, [fetchData, debouncedSearch]);
 
     const handleOk = () => form.submit();
     const handleCancel = () => { setIsModalOpen(false); setEditingItem(null); form.resetFields(); };
@@ -31,6 +31,15 @@ const DepartmentsTab = () => {
         } catch (error) { message.error('Əməliyyat uğursuz oldu.'); }
     };
     
+    const handleDelete = useCallback(async (id) => {
+        try {
+            await deleteItem(id);
+            message.success('Departament silindi.');
+        } catch {
+            message.error('Departamenti silmək mümkün olmadı.');
+        }
+    }, [deleteItem]);
+
     const columns = useMemo(() => [
         { title: 'Departament Adı', dataIndex: 'name', key: 'name' },
         {
@@ -41,21 +50,18 @@ const DepartmentsTab = () => {
                     <Button icon={<DeleteOutlined />} danger onClick={() => {
                         Modal.confirm({
                             title: 'Əminsinizmi?', content: `${record.name} adlı departamenti silmək istəyirsiniz?`, okText: 'Bəli', cancelText: 'Xeyr',
-                            onOk: async () => {
-                                try { await deleteItem(record.id); message.success('Departament silindi.'); }
-                                catch { message.error('Departamenti silmək mümkün olmadı.'); }
-                            }
+                            onOk: () => handleDelete(record.id)
                         });
                     }} />
                 </Space>
             ),
         },
-    ], [form, deleteItem]);
+    ], [form, handleDelete]);
 
     return (
         <div>
             <div className="flex flex-wrap gap-4 mb-4">
-                <Input.Search placeholder="Ada görə axtar..." onChange={e => setSearch(e.target.value)} allowClear className="flex-1 min-w-[200px]" />
+                <Input.Search placeholder="Ada görə axtar..." onSearch={setSearch} allowClear className="flex-1 min-w-[200px]" />
                 <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingItem(null); form.resetFields(); setIsModalOpen(true); }}>Yeni Departament</Button>
             </div>
             <Table columns={columns} dataSource={departments} rowKey="id" loading={loading} />
