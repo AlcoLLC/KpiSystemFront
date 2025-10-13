@@ -46,11 +46,9 @@ const UserEvaluationCard = ({ user, onEvaluateClick, onSummaryClick }) => {
           />
           <div>
             <h3 className="text-lg font-bold text-gray-800">{fullName}</h3>
-            {/* START: Added Position Name */}
             <p className="text-sm font-medium text-gray-600">
               {user.position_name || "Vəzifə Təyin Edilməyib"}
             </p>
-            {/* END: Added Position Name */}
             <p className="text-xs text-gray-500 mt-1">{user.role_display}</p>
           </div>
         </div>

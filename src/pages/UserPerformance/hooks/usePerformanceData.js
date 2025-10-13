@@ -10,7 +10,12 @@ const managerialRoles = [
   "manager",
 ];
 
-export const usePerformanceData = (selectedMonth, selectedDepartment) => {
+// DƏYİŞDİRİLDİ: Hook artıq üçüncü parametr olaraq "evaluationStatus"-u qəbul edir
+export const usePerformanceData = (
+  selectedMonth,
+  selectedDepartment,
+  evaluationStatus 
+) => {
   const { user } = useAuth();
   const [data, setData] = useState({
     myCard: null,
@@ -28,55 +33,60 @@ export const usePerformanceData = (selectedMonth, selectedDepartment) => {
     setLoading(true);
 
     try {
+      // Bu sorğular həmişə icra olunur
       const requests = [
         performanceAPI.getMyPerformanceCard(selectedMonth),
         performanceAPI.getPerformanceSummary(user.id, selectedMonth),
         performanceAPI.getMonthlyScores(user.id, selectedMonth),
       ];
 
+      // Rəhbər və ya admin üçün tabeliyində olanları gətirən sorğu
       if (canEvaluate) {
         requests.push(
-          performanceAPI.getEvaluableUsers(selectedMonth, selectedDepartment)
+          // DƏYİŞDİRİLDİ: API sorğusuna yeni "evaluationStatus" parametri ötürülür
+          performanceAPI.getEvaluableUsers(
+            selectedMonth,
+            selectedDepartment,
+            evaluationStatus 
+          )
         );
       }
 
+      // Yalnız admin üçün departamentləri gətirən sorğu
       if (user.role === "admin") {
         requests.push(performanceAPI.getDepartments());
       }
 
       const results = await Promise.all(requests);
 
+      // Nəticələri ardıcıllığa uyğun olaraq ayırırıq
       const [
         myCardRes,
         mySummaryRes,
         myScoresRes,
-        subordinatesRes,
-        departmentsRes,
+        subordinatesRes, // Bu, yalnız "canEvaluate" true olduqda mövcud olacaq
+        departmentsRes,  // Bu, yalnız admin olduqda mövcud olacaq
       ] = results;
 
-      const sortedSubordinates =
-        canEvaluate && subordinatesRes
-          ? [...subordinatesRes.data].sort((a, b) => {
-              const aHasEval = !!a.selected_month_evaluation;
-              const bHasEval = !!b.selected_month_evaluation;
-              return aHasEval - bHasEval;
-            })
-          : [];
+      // DƏYİŞDİRİLDİ: Client-side çeşidləmə ləğv edildi.
+      // Artıq filtrləmə və çeşidləmə backend tərəfindən idarə olunur.
+      const updatedSubordinates = canEvaluate && subordinatesRes ? subordinatesRes.data : [];
 
       setData({
         myCard: myCardRes.data,
         mySummary: mySummaryRes.data.averages,
         myMonthlyScores: myScoresRes.data,
-        subordinates: sortedSubordinates,
+        subordinates: updatedSubordinates,
         departments: departmentsRes ? departmentsRes.data : data.departments,
       });
     } catch (error) {
       message.error("Məlumatlar yüklənərkən xəta baş verdi.");
-      console.error(error);
+      console.error("Error fetching performance data:", error);
     } finally {
       setLoading(false);
     }
-  }, [user, selectedMonth, selectedDepartment, canEvaluate]);
+  // DƏYİŞDİRİLDİ: "evaluationStatus" asılılıq (dependency) siyahısına əlavə edildi
+  }, [user, selectedMonth, selectedDepartment, canEvaluate, evaluationStatus]);
 
   useEffect(() => {
     fetchData();

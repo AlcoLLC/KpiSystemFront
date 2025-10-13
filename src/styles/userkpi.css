@@ -351,21 +351,6 @@
   color: #d1d5db;
 }
 
-.dark .performance-view-position {
+.dark .performance-view-position, .dark .user-kpi-system .ant-picker-input-placeholder input {
   color: #d1d5db;
-}
-
-.dark
-  .calendar-page
-  .ant-picker-calendar-date-today
-  .ant-picker-calendar-date-value,
-.calendar-page .month-events .text-xs .ml-1,
-.dark .ant-select-open .ant-select-selection-item {
-  color: #d1d5db !important;
-}
-
-.calendar-events {
-  display: flex;
-  gap: 3px;
-  flex-direction: column;
 }

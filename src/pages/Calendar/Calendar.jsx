@@ -38,18 +38,19 @@ function Calendar() {
     };
 
     const handleSelect = (date) => {
-        if (calendarMode === 'year') {
-            handlePanelChange(date, 'month');
+    if (calendarMode === 'year') {
+        handlePanelChange(date, 'month');
+        setSelectedDate(date); 
+    } else {
+        if (!date.isSame(viewDate, 'month')) {
+            setViewDate(date);
+            setClickedDate(null);
         } else {
-            if (!date.isSame(viewDate, 'month')) {
-                setViewDate(date);
-                setClickedDate(null);
-            } else {
-                setClickedDate(date);
-            }
-            setSelectedDate(date);
+            setClickedDate(date);
         }
-    };
+        setSelectedDate(date);
+    }
+};
 
     const dateCellRender = (date) => {
         const activeTasks = selectors.getTasksForDate(date);
