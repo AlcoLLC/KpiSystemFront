@@ -4,9 +4,8 @@
 
 /* Kpi system */
 
-
 .dark .kpi-container .bg-white.dark\:bg-gray-800 {
-  background-color: #1f2937; 
+  background-color: #1f2937;
 }
 
 /* ======================================== */
@@ -55,13 +54,12 @@
   border-color: #2d3748 !important;
 }
 
-
 /* =========================================== */
 /* ========= BlockContent Task Card ========== */
 /* =========================================== */
 
 .dark .kpi-container .ant-card {
-  background-color: #1B232D;
+  background-color: #1b232d;
   border-color: #374151;
   color: #d1d5db;
 }
@@ -117,7 +115,6 @@
   border-color: rgba(16, 185, 129, 0.4);
 }
 
-
 /* =========================================== */
 /* ========= EditReviewModal Styles ========== */
 /* =========================================== */
@@ -137,7 +134,7 @@
 
 .dark .kpi-container .ant-rate-star-zero .ant-rate-star-first,
 .dark .kpi-container .ant-rate-star-zero .ant-rate-star-second {
-  color: #4a5568; 
+  color: #4a5568;
 }
 
 .dark .kpi-container .slider::-webkit-slider-thumb {
@@ -158,7 +155,6 @@
   border-radius: 50%;
   border: 2px solid #1f2937;
 }
-
 
 .dark .kpi-container .ant-input {
   background-color: #2d3748;
@@ -193,7 +189,7 @@
   color: #d1d5db;
 }
 .dark .kpi-container .whitespace-pre-wrap {
-    color: #d1d5db;
+  color: #d1d5db;
 }
 
 .dark .kpi-container .bg-slate-50 {
@@ -224,7 +220,11 @@
 }
 
 .dark .kpi-container .from-orange-50 {
-  background-image: linear-gradient(to right, rgba(202, 138, 4, 0.1), rgba(217, 119, 6, 0.15));
+  background-image: linear-gradient(
+    to right,
+    rgba(202, 138, 4, 0.1),
+    rgba(217, 119, 6, 0.15)
+  );
   border-color: rgba(202, 138, 4, 0.3);
 }
 .dark .kpi-container .text-orange-700 {
@@ -235,14 +235,18 @@
 }
 
 .dark .kpi-container .from-green-50 {
-  background-image: linear-gradient(to right, rgba(5, 150, 105, 0.1), rgba(6, 128, 96, 0.15));
+  background-image: linear-gradient(
+    to right,
+    rgba(5, 150, 105, 0.1),
+    rgba(6, 128, 96, 0.15)
+  );
   border-color: rgba(5, 150, 105, 0.3);
 }
 .dark .kpi-container .text-green-700 {
-  color: #6ee7b7; 
+  color: #6ee7b7;
 }
 .dark .kpi-container .text-green-600 {
-  color: #34d399; 
+  color: #34d399;
 }
 
 .dark .kpi-container .bg-blue-50 {
@@ -250,23 +254,35 @@
   border-color: rgba(59, 130, 246, 0.3);
 }
 .dark .kpi-container .text-blue-800 {
-  color: #93c5fd; 
+  color: #93c5fd;
 }
 
 .dark .kpi-container .from-green-100 {
-  background-image: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(6, 95, 70, 0.2));
+  background-image: linear-gradient(
+    to right,
+    rgba(16, 185, 129, 0.1),
+    rgba(6, 95, 70, 0.2)
+  );
   border-color: rgba(16, 185, 129, 0.3);
-  color: #a7f3d0; 
+  color: #a7f3d0;
 }
 
 .dark .kpi-container .from-blue-100 {
-  background-image: linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(79, 70, 229, 0.2));
+  background-image: linear-gradient(
+    to right,
+    rgba(59, 130, 246, 0.1),
+    rgba(79, 70, 229, 0.2)
+  );
   border-color: rgba(59, 130, 246, 0.3);
-  color: #bfdbfe; 
+  color: #bfdbfe;
 }
 
 .dark .kpi-container .from-yellow-50 {
-  background-image: linear-gradient(to right, rgba(192, 166, 121, 0.1), rgba(211, 190, 151, 0.15));
+  background-image: linear-gradient(
+    to right,
+    rgba(192, 166, 121, 0.1),
+    rgba(211, 190, 151, 0.15)
+  );
   border-color: rgba(192, 166, 121, 0.3);
 }
 
@@ -279,7 +295,7 @@
 .dark .kpi-container .text-yellow-600 {
   color: #e3d8c5;
 }
-.dark .kpi-container .text-orange-600 { 
+.dark .kpi-container .text-orange-600 {
   color: #d1c4b0;
 }
 .dark .kpi-container .text-green-600 {
@@ -319,22 +335,19 @@
   color: #fb923c;
 }
 
-/* === FİLTER QUTUSU === */
 .dark .kpi-container .bg-white {
-  background-color: #1f2937; /* Darker box background */
+  background-color: #1f2937;
 }
 .dark .kpi-container .border-gray-200 {
-  border-color: #374151;   /* Darker border */
+  border-color: #374151;
 }
 .dark .kpi-container .text-gray-600 {
-  color: #e5e7eb;         /* Light text for filter title */
+  color: #e5e7eb;
 }
 .dark .kpi-container .anticon-filter svg {
-  color: #e5e7eb !important; /* Light icon color */
+  color: #e5e7eb !important;
 }
 
-/* === ANT DESIGN SELECT (Filter) ÜÇÜN ÜSTÜN YAZMA (OVERRIDE) === */
-/* Select qutusunun özü */
 .dark .kpi-container .ant-select-selector {
   background-color: #1f2937 !important;
   border-color: #4b5563 !important;
@@ -344,7 +357,6 @@
   color: #d1d5db !important;
 }
 
-/* Açılan menyu (Dropdown) - DİQQƏT: Aşağıdakı vacib qeydə baxın */
 .dark .ant-select-dropdown {
   background-color: #1f2937;
   border-color: #4b5563;
@@ -352,39 +364,40 @@
 .dark .ant-select-dropdown .ant-select-item {
   color: #d1d5db;
 }
-.dark .ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
-  background-color: #374151; /* Hover effect */
+.dark
+  .ant-select-dropdown
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+  background-color: #374151;
 }
-.dark .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-  background-color: #2563eb; /* Selected item background */
+.dark
+  .ant-select-dropdown
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+  background-color: #2563eb;
   color: #ffffff;
 }
 
-/* === BÖLMƏ BAŞLIQLARI (TaskSection Title) === */
 .dark .kpi-container .ant-divider-inner-text,
 .dark .kpi-container .text-gray-700 {
   color: #f9fafb !important;
 }
 .dark .kpi-container .ant-divider-horizontal.ant-divider-with-text-left::before,
 .dark .kpi-container .ant-divider-horizontal.ant-divider-with-text-left::after {
-  border-top-color: #4b5563 !important; /* Darker divider line */
+  border-top-color: #4b5563 !important;
 }
 
-/* === TAPŞIRIQ KARTLARI (BlockContent) === */
-/* Qeyd: Bu stilin işləməsi üçün BlockContent komponentinizin ana div-inə "task-card" sinfi əlavə etməyiniz tövsiyə olunur. */
 .dark .kpi-container .task-card {
   background-color: #1f2937 !important;
   border: 1px solid #374151 !important;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 .dark .kpi-container .task-card-title {
-    color: #f9fafb; /* Kart başlığı */
+  color: #f9fafb;
 }
 .dark .kpi-container .task-card-meta {
-    color: #9ca3af; /* Tarix, ad və s. kimi ikinci dərəcəli mətnlər */
+  color: #9ca3af;
 }
 .dark .kpi-container .task-card .ant-tag {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-    color: #d1d5db !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #d1d5db !important;
 }

@@ -1,5 +1,5 @@
 .dark .user-kpi-system {
-  background-color: #131920; 
+  background-color: #131920;
   color: #c9d1d9;
 }
 
@@ -42,7 +42,9 @@
 .dark .ant-select-item {
   color: #c9d1d9;
 }
-.dark .ant-picker-cell:hover:not(.ant-picker-cell-selected) .ant-picker-cell-inner,
+.dark
+  .ant-picker-cell:hover:not(.ant-picker-cell-selected)
+  .ant-picker-cell-inner,
 .dark .ant-select-item-option:hover:not(.ant-select-item-option-selected) {
   background-color: #2c333b;
 }
@@ -98,11 +100,11 @@
 
 .dark .user-kpi-system-modal .ant-modal-content .text-gray-700,
 .dark .user-kpi-system-modal .ant-modal-content .ant-form-item-label > label {
-  color: #d1d5db; 
+  color: #d1d5db;
 }
 
 .dark .user-kpi-system-modal .ant-modal-content .text-gray-600 {
-  color: #9ca3af; 
+  color: #9ca3af;
 }
 
 .dark .user-kpi-system-modal .ant-modal-content .text-gray-800 {
@@ -140,7 +142,7 @@
 }
 
 .dark .user-kpi-system-modal .ant-modal-content .ant-rate-star-zero {
-  color: #4b5563; 
+  color: #4b5563;
 }
 
 .dark .user-kpi-system-modal .ant-modal-content .text-red-600 {
@@ -188,7 +190,8 @@
 .dark .user-kpi-system-card {
   background-color: #1f2937;
   border: 1px solid #374151;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
+    0 2px 4px -2px rgba(0, 0, 0, 0.4);
 }
 
 .dark .user-kpi-system-card.bg-gray-50 {
@@ -196,20 +199,20 @@
 }
 
 .dark .user-kpi-system-card .text-gray-800 {
-  color: #f9fafb; 
+  color: #f9fafb;
 }
 .dark .user-kpi-system-card .text-gray-500 {
-  color: #9ca3af; 
+  color: #9ca3af;
 }
 .dark .user-kpi-system-card .border-gray-200 {
-  border-color: #4b5563; 
+  border-color: #4b5563;
 }
 
 .dark .user-kpi-system-card .bg-yellow-100 {
   background-color: #78350f;
 }
 .dark .user-kpi-system-card .text-yellow-700 {
-  color: #fcd34d; 
+  color: #fcd34d;
 }
 
 .dark .user-kpi-system-card .ant-tag {
@@ -240,13 +243,13 @@
 }
 .dark .user-kpi-system-card .ant-btn-primary[disabled],
 .dark .user-kpi-system-card .ant-btn-default[disabled] {
-    background-color: #374151 !important;
-    color: #6b7280 !important;
-    border-color: #4b5563 !important;
+  background-color: #374151 !important;
+  color: #6b7280 !important;
+  border-color: #4b5563 !important;
 }
 
 .dark .summary-modal .ant-modal-body {
-  padding: 16px 24px !important; 
+  padding: 16px 24px !important;
 }
 
 .dark .summary-modal .ant-tabs-nav {
@@ -309,7 +312,7 @@
   background-color: #dc2626;
 }
 
-.dark  .ant-empty-description {
+.dark .ant-empty-description {
   color: #9ca3af !important;
 }
 
@@ -321,14 +324,14 @@
 
 .dark .user-kpi-system .ant-btn-default:hover,
 .dark .user-kpi-system .ant-btn-default:focus {
-  color: #ffffff !important; 
+  color: #ffffff !important;
   background-color: #4b5563 !important;
-  border-color: #6b7280 !important; 
+  border-color: #6b7280 !important;
 }
 
 .dark .user-kpi-system .ant-btn-primary {
   color: #ffffff !important;
-  background-color: #3b82f6 !important; 
+  background-color: #3b82f6 !important;
   border-color: #3b82f6 !important;
 }
 
@@ -339,25 +342,30 @@
 }
 
 .dark .user-kpi-system .ant-tag-warning {
-   color: #fbbf24 !important; 
+  color: #fbbf24 !important;
   background-color: rgba(251, 191, 36, 0.15) !important;
   border-color: rgba(251, 191, 36, 0.3) !important;
 }
 
 .dark .user-kpi-system-card .text-gray-600 {
-  color: #d1d5db; 
+  color: #d1d5db;
 }
 
 .dark .performance-view-position {
   color: #d1d5db;
 }
 
-.dark .calendar-page .ant-picker-calendar-date-today .ant-picker-calendar-date-value, .calendar-page .month-events .text-xs .ml-1, .dark .ant-select-open .ant-select-selection-item {
-  color: #d1d5db !important; 
+.dark
+  .calendar-page
+  .ant-picker-calendar-date-today
+  .ant-picker-calendar-date-value,
+.calendar-page .month-events .text-xs .ml-1,
+.dark .ant-select-open .ant-select-selection-item {
+  color: #d1d5db !important;
 }
 
 .calendar-events {
   display: flex;
-    gap: 3px;
-    flex-direction: column;
+  gap: 3px;
+  flex-direction: column;
 }
