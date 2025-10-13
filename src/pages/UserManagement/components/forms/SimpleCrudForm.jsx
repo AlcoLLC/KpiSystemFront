@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input } from 'antd';
 
-const SimpleCrudForm = ({ form, onFinish, initialValues,itemName }) => {
+const SimpleCrudForm = ({ form, onFinish, initialValues, itemName }) => {
     return (
         <Form form={form} layout="vertical" onFinish={onFinish} initialValues={initialValues}>
             <Form.Item

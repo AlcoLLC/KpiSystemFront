@@ -5,9 +5,11 @@ import accountsApi from '../../../../api/accountsApi';
 const DepartmentForm = ({ form, onFinish, initialValues }) => {
     const [leads, setLeads] = useState([]);
     const [managers, setManagers] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
+            setLoading(true);
             try {
                 const [leadsRes, managersRes] = await Promise.all([
                     accountsApi.getUsers({ role: 'department_lead' }),
@@ -17,6 +19,8 @@ const DepartmentForm = ({ form, onFinish, initialValues }) => {
                 setManagers(managersRes.data.results || managersRes.data);
             } catch (error) {
                 message.error("Rəhbər və menecer siyahısını yükləmək olmadı.");
+            } finally {
+                setLoading(false);
             }
         };
         fetchUsers();
@@ -28,12 +32,12 @@ const DepartmentForm = ({ form, onFinish, initialValues }) => {
                 <Input />
             </Form.Item>
             <Form.Item name="department_lead" label="Departament Rəhbəri (Lead)">
-                <Select showSearch optionFilterProp="children" allowClear>
+                <Select showSearch optionFilterProp="children" allowClear loading={loading}>
                     {leads.map(u => <Select.Option key={u.id} value={u.id}>{`${u.first_name} ${u.last_name}`}</Select.Option>)}
                 </Select>
             </Form.Item>
             <Form.Item name="manager" label="Menecer">
-                <Select showSearch optionFilterProp="children" allowClear>
+                <Select showSearch optionFilterProp="children" allowClear loading={loading}>
                     {managers.map(u => <Select.Option key={u.id} value={u.id}>{`${u.first_name} ${u.last_name}`}</Select.Option>)}
                 </Select>
             </Form.Item>

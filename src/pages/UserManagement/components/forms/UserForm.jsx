@@ -10,7 +10,6 @@ const UserForm = ({ form, onFinish, isEdit = false }) => {
     const [deptsLoading, setDeptsLoading] = useState(false);
 
     const ROLE_CHOICES = [
-        { value: "admin", label: "Admin" },
         { value: "top_management", label: "Yuxarı İdarəetmə" },
         { value: "department_lead", label: "Departament Rəhbəri" },
         { value: "manager", label: "Menecer" },
@@ -22,29 +21,23 @@ const UserForm = ({ form, onFinish, isEdit = false }) => {
             try {
                 const posRes = await accountsApi.getPositions();
                 setPositions(posRes.data.results || posRes.data || []);
-            } catch (error) {
-                message.error("Vəzifələri yükləmək mümkün olmadı.");
-            }
+            } catch { message.error("Vəzifələri yükləmək mümkün olmadı."); }
         };
         fetchPositions();
     }, []);
 
     useEffect(() => {
         const fetchDepartments = async () => {
-            // Rol seçilməyibsə, departamentləri təmizlə
             if (!selectedRole) {
                 setDepartments([]);
                 return;
             }
-            
             setDeptsLoading(true);
             try {
                 let deptRes;
                 if (['department_lead', 'manager'].includes(selectedRole)) {
-                    // Yalnız boş olan departamentləri gətir
                     deptRes = await accountsApi.getAvailableDepartments(selectedRole);
                 } else if (['employee', 'top_management'].includes(selectedRole)) {
-                    // Bütün departamentləri gətir
                     deptRes = await accountsApi.getDepartments();
                 } else {
                     setDepartments([]);
@@ -58,7 +51,6 @@ const UserForm = ({ form, onFinish, isEdit = false }) => {
                 setDeptsLoading(false);
             }
         };
-        
         fetchDepartments();
     }, [selectedRole]);
 
@@ -70,7 +62,7 @@ const UserForm = ({ form, onFinish, isEdit = false }) => {
                 <Col span={12}><Form.Item name="email" label="Email" rules={[{ required: true, type: 'email' }]}><Input /></Form.Item></Col>
                 <Col span={12}><Form.Item name="phone_number" label="Telefon"><Input /></Form.Item></Col>
                 <Col span={12}><Form.Item name="password" label="Şifrə" rules={[{ required: !isEdit, message: 'Yeni istifadəçi üçün şifrə mütləqdir!' }]}><Input.Password placeholder={isEdit ? "Dəyişmirsə boş buraxın" : ""} /></Form.Item></Col>
-                <Col span={12}><Form.Item name="role" label="Rol" rules={[{ required: true }]}><Select options={ROLE_CHOICES} /></Form.Item></Col>
+                <Col span={12}><Form.Item name="role" label="Rol" rules={[{ required: true }]}><Select options={ROLE_CHOICES} onChange={() => form.setFieldsValue({ department: null, top_managed_departments: [] })} /></Form.Item></Col>
                 
                 {['employee', 'manager', 'department_lead'].includes(selectedRole) && (
                     <Col span={12}>
