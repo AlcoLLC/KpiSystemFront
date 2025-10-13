@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Form, Row, Col } from 'antd'; // Row və Col-u import edirik
+import { Form, Row, Col } from 'antd';  
 import BaseForm from './BaseForm';
 import FormField from './FormField';
 
@@ -9,13 +9,9 @@ function AppForm({ form, fields, onFinish }) {
 
   return (
     <BaseForm form={form} onFinish={onFinish}>
-      {/* Bütün sahələri Row içinə alırıq */}
-      <Row gutter={[16, 0]}> {/* gutter - sütunlar arası məsafə */}
+       <Row gutter={[16, 0]}>  
         {fields.map(field => (
-          // Hər bir sahəni Col içinə alırıq
-          // xs={24} -> kiçik ekranlarda (mobil) hamısı tam en olsun
-          // md={field.span || 24} -> orta və böyük ekranlarda bizim təyin etdiyimiz eni götürsün
-          <Col key={field.name} xs={24} md={field.span || 24}>
+           <Col key={field.name} xs={24} md={field.span || 24}>
             <Form.Item
               name={field.name}
               label={<span style={{ color: isDark ? 'white' : 'black' }}>{field.label}</span>}

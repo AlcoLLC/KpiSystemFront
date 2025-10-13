@@ -5,6 +5,9 @@ import { useManagementData } from '../hooks/useManagementData';
 import DepartmentForm from './forms/DepartmentForm';
 import { useDebounce } from '../../../hooks/useDebounce';
 
+// Modal-dan `useModal` hook-unu çıxarırıq
+const { useModal } = Modal;
+
 const DepartmentsTab = () => {
     const { items: departments, loading, fetchData, createItem, updateItem, deleteItem } = useManagementData('departments');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,6 +15,9 @@ const DepartmentsTab = () => {
     const [form] = Form.useForm();
     const [search, setSearch] = useState('');
     const debouncedSearch = useDebounce(search, 500);
+
+    // Hook-u komponentin içində çağırırıq
+    const [modal, contextHolder] = useModal();
 
     useEffect(() => { fetchData({ search: debouncedSearch || undefined }); }, [fetchData, debouncedSearch]);
 
@@ -31,15 +37,6 @@ const DepartmentsTab = () => {
         } catch (error) { message.error('Əməliyyat uğursuz oldu.'); }
     };
     
-    const handleDelete = useCallback(async (id) => {
-        try {
-            await deleteItem(id);
-            message.success('Departament silindi.');
-        } catch {
-            message.error('Departamenti silmək mümkün olmadı.');
-        }
-    }, [deleteItem]);
-
     const columns = useMemo(() => [
         { title: 'Departament Adı', dataIndex: 'name', key: 'name' },
         {
@@ -48,15 +45,27 @@ const DepartmentsTab = () => {
                 <Space>
                     <Button icon={<EditOutlined />} onClick={() => { setEditingItem(record); form.setFieldsValue(record); setIsModalOpen(true); }} />
                     <Button icon={<DeleteOutlined />} danger onClick={() => {
-                        Modal.confirm({
-                            title: 'Əminsinizmi?', content: `${record.name} adlı departamenti silmək istəyirsiniz?`, okText: 'Bəli', cancelText: 'Xeyr',
-                            onOk: () => handleDelete(record.id)
+                        // Statik `Modal.confirm` əvəzinə hook-dan gələn `modal.confirm` istifadə edirik
+                        modal.confirm({
+                            title: 'Əminsinizmi?',
+                            content: `${record.name} adlı departamenti silmək istəyirsiniz?`,
+                            okText: 'Bəli',
+                            cancelText: 'Xeyr',
+                            okType: 'danger',
+                            onOk: async () => {
+                                try {
+                                    await deleteItem(record.id);
+                                    message.success('Departament silindi.');
+                                } catch {
+                                    message.error('Departamenti silmək mümkün olmadı.');
+                                }
+                            }
                         });
                     }} />
                 </Space>
             ),
         },
-    ], [form, handleDelete]);
+    ], [form, deleteItem, modal]); // `modal` obyektini asılılıq siyahısına əlavə edirik
 
     return (
         <div>
@@ -64,10 +73,14 @@ const DepartmentsTab = () => {
                 <Input.Search placeholder="Ada görə axtar..." onSearch={setSearch} allowClear className="flex-1 min-w-[200px]" />
                 <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingItem(null); form.resetFields(); setIsModalOpen(true); }}>Yeni Departament</Button>
             </div>
+            
             <Table columns={columns} dataSource={departments} rowKey="id" loading={loading} />
+            
             <Modal title={editingItem ? 'Departamenti Redaktə Et' : 'Yeni Departament Yarat'} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={(_, { OkBtn, CancelBtn }) => <><CancelBtn /><Button type="primary" onClick={handleOk}>Yadda Saxla</Button></>}>
                 <DepartmentForm form={form} onFinish={onFinish} initialValues={editingItem} />
             </Modal>
+
+             {contextHolder}
         </div>
     );
 };

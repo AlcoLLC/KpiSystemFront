@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button, Table, Space, Modal, message, Form, Input, Select, Avatar } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useManagementData } from '../hooks/useManagementData';
@@ -6,15 +6,22 @@ import UserForm from './forms/UserForm';
 import { useDebounce } from '../../../hooks/useDebounce';
 import accountsApi from '../../../api/accountsApi';
 
+// Modal-dan `useModal` hook-unu çıxarırıq
+const { useModal } = Modal;
+
 const UsersTab = () => {
     const { items: users, loading, fetchData, createItem, updateItem, deleteItem } = useManagementData('users');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [form] = Form.useForm();
+    
+    // Hook-u komponentin içində çağırırıq
+    const [modal, contextHolder] = useModal();
+    
     const [filters, setFilters] = useState({ search: '', role: null, position: null });
     const debouncedSearch = useDebounce(filters.search, 500);
-    const [positions, setPositions] = useState([]);
 
+    const [positions, setPositions] = useState([]);
     useEffect(() => {
         const fetchPositions = async () => {
             try {
@@ -36,13 +43,13 @@ const UsersTab = () => {
 
     const handleOk = () => form.submit();
     const handleCancel = () => { setIsModalOpen(false); setEditingItem(null); form.resetFields(); };
- 
+
     const onFinish = async (values) => {
         const formData = new FormData();
         for (const key in values) {
             const value = values[key];
             if (key === 'profile_photo') {
-                if (value && value.length > 0 && value[0].originFileObj) {
+                if (value && value[0] && value[0].originFileObj) {
                     formData.append(key, value[0].originFileObj);
                 } else if (!value || value.length === 0) {
                     formData.append(key, '');
@@ -69,24 +76,14 @@ const UsersTab = () => {
             const errorData = error.response?.data;
             let errorMsg = 'Əməliyyat uğursuz oldu.';
             if (errorData) {
-                // Backend-dən gələn xəta mesajlarını birləşdiririk
                 errorMsg = Object.values(errorData).flat().join(' \n');
             }
             message.error(errorMsg);
         }
     };
 
-    const handleDelete = useCallback(async (id) => {
-        try {
-            await deleteItem(id);
-            message.success('İstifadəçi silindi.');
-        } catch {
-            message.error('İstifadəçini silmək mümkün olmadı.');
-        }
-    }, [deleteItem]);
-    
     const columns = useMemo(() => [
-        { title: 'Ad Soyad', dataIndex: 'first_name', render: (_, r) => <Space><Avatar src={r.profile_photo} icon={<UserOutlined />} /><span>{`${r.first_name || ''} ${r.last_name || ''}`}</span></Space>, fixed: 'left', width: 200 },
+        { title: 'Ad Soyad', dataIndex: 'first_name', render: (_, r) => <Space><Avatar src={r.profile_photo?.[0]?.url || r.profile_photo} icon={<UserOutlined />} /><span>{`${r.first_name || ''} ${r.last_name || ''}`}</span></Space>, fixed: 'left', width: 200 },
         { title: 'Email', dataIndex: 'email', width: 200 },
         { title: 'Vəzifə', dataIndex: 'position_details', render: (pos) => pos?.name || '-', width: 150 },
         { title: 'Rol', dataIndex: 'role_display', width: 150 },
@@ -100,38 +97,45 @@ const UsersTab = () => {
                             ...record, 
                             position: record.position_details?.id,
                             department: record.department,
-                            // Şəkli formaya ötürmək üçün düzgün format
                             profile_photo: record.profile_photo ? [{ uid: '-1', name: 'sekil.png', status: 'done', url: record.profile_photo }] : [],
-                         };
-                         setEditingItem(initialData); 
-                         form.setFieldsValue(initialData); 
-                         setIsModalOpen(true);
+                        };
+                        setEditingItem(initialData); 
+                        form.setFieldsValue(initialData); 
+                        setIsModalOpen(true);
                     }} />
                     <Button icon={<DeleteOutlined />} danger onClick={() => {
-                        Modal.confirm({
-                            title: 'Əminsinizmi?', content: `İstifadəçini silmək istəyirsiniz?`, okText: 'Bəli', cancelText: 'Xeyr',
-                            onOk: () => handleDelete(record.id),
+                         modal.confirm({
+                            title: 'Əminsinizmi?',
+                            content: `İstifadəçini silmək istəyirsiniz?`,
+                            okText: 'Bəli',
+                            cancelText: 'Xeyr',
+                            okType: 'danger',
+                            onOk: async () => { 
+                                    await deleteItem(record.id); 
+                            },
                         });
                     }} />
                 </Space>
             ),
         },
-    ], [handleDelete, form]);
+    ], [form, deleteItem, modal]);  
 
     const ROLE_CHOICES = [ { value: "top_management", label: "Yuxarı İdarəetmə" }, { value: "department_lead", label: "Departament Rəhbəri" }, { value: "manager", label: "Menecer" }, { value: "employee", label: "İşçi" }];
 
     return (
         <div>
             <div className="flex flex-wrap gap-4 mb-4">
-                 <Input.Search placeholder="Ad, soyad, email ilə axtar..." onSearch={value => setFilters(f => ({ ...f, search: value }))} allowClear className="flex-1 min-w-[200px]" />
-                 <Select placeholder="Rola görə filterlə" onChange={value => setFilters(f => ({ ...f, role: value }))} allowClear options={ROLE_CHOICES} className="flex-1 min-w-[200px]" />
-                 <Select placeholder="Vəzifəyə görə filterlə" onChange={value => setFilters(f => ({ ...f, position: value }))} allowClear options={positions.map(p => ({label: p.name, value: p.id}))} className="flex-1 min-w-[200px]" />
-                 <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingItem(null); form.resetFields(); setIsModalOpen(true); }}>Yeni İstifadəçi</Button>
+                <Input.Search placeholder="Ad, soyad, email ilə axtar..." onSearch={value => setFilters(f => ({ ...f, search: value }))} allowClear className="flex-1 min-w-[200px]" />
+                <Select placeholder="Rola görə filterlə" onChange={value => setFilters(f => ({ ...f, role: value }))} allowClear options={ROLE_CHOICES} className="flex-1 min-w-[200px]" />
+                <Select placeholder="Vəzifəyə görə filterlə" onChange={value => setFilters(f => ({ ...f, position: value }))} allowClear options={positions.map(p => ({label: p.name, value: p.id}))} className="flex-1 min-w-[200px]" />
+                <Button type="primary" icon={<PlusOutlined />} onClick={() => { setEditingItem(null); form.resetFields(); setIsModalOpen(true); }}>Yeni İstifadəçi</Button>
             </div>
             <Table columns={columns} dataSource={users} rowKey="id" loading={loading} scroll={{ x: 1200 }} />
             <Modal title={editingItem ? 'İstifadəçini Redaktə Et' : 'Yeni İstifadəçi Yarat'} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} width={800} footer={(_, { OkBtn, CancelBtn }) => <><CancelBtn /><Button type="primary" onClick={handleOk}>Yadda Saxla</Button></>}>
                 <UserForm form={form} onFinish={onFinish} isEdit={!!editingItem} initialValues={editingItem} />
             </Modal>
+            
+             {contextHolder}
         </div>
     );
 };

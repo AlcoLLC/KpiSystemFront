@@ -8,6 +8,7 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
     const [departments, setDepartments] = useState([]);
     const [positions, setPositions] = useState([]);
     const [deptsLoading, setDeptsLoading] = useState(false);
+    const shouldShowDepartmentField = selectedRole === 'employee' || (!isEdit && ['manager', 'department_lead'].includes(selectedRole));
 
     const ROLE_CHOICES = [
         { value: "top_management", label: "Yuxarı İdarəetmə" },
@@ -70,7 +71,7 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
                 <Col span={12}><Form.Item name="password" label="Şifrə" rules={[{ required: !isEdit, message: 'Yeni istifadəçi üçün şifrə mütləqdir!' }]}><Input.Password placeholder={isEdit ? "Dəyişmirsə boş buraxın" : ""} autoComplete="new-password" /></Form.Item></Col>
                 <Col span={12}><Form.Item name="role" label="Rol" rules={[{ required: true }]}><Select options={ROLE_CHOICES} onChange={() => form.setFieldsValue({ department: null, top_managed_departments: [] })} /></Form.Item></Col>
                 
-                {['employee', 'manager', 'department_lead'].includes(selectedRole) && (
+                {shouldShowDepartmentField && (
                     <Col span={12}>
                         <Form.Item name="department" label="Departament" rules={[{ required: true }]}>
                             <Select showSearch optionFilterProp="children" loading={deptsLoading} placeholder="Departament seçin" allowClear>
