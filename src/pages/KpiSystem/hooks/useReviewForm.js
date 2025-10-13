@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react"; 
 import { message } from "antd";
 import kpiAPI from "../../../api/kpiApi";
 
@@ -12,7 +11,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
   const maxScore = isOwnEvaluation ? 10 : 100;
 
   const resetModal = () => {
-    setStarRating(isOwnEvaluation ? 5 : 50);
+    setStarRating(isOwnEvaluation ? 5 : 50); 
     setNote("");
   };
 
@@ -20,9 +19,11 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
     if (isOpen) {
       resetModal();
     }
-  }, [isOpen, isOwnEvaluation]);
+  }, [isOpen, isOwnEvaluation]); 
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
+    if (loading) return;
+    
     if (!task) return;
     setLoading(true);
 
@@ -39,15 +40,15 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
           ? "Dəyərləndirməniz qeydə alındı! Rəhbərinizə bildiriş göndərildi."
           : "Yekun dəyərləndirmə uğurla qeydə alındı!"
       );
-      onClose(true);
+      onClose(true); 
     } catch (error) {
       console.error("Failed to save evaluation:", error);
-      const errorMessage = error.response?.data?.detail || error.response?.data?.non_field_errors?.[0] || Object.values(error.response?.data || {})[0] || "Dəyərləndirməni yadda saxlamq mümkün olmadı.";
+      const errorMessage = error.response?.data?.detail || error.response?.data?.non_field_errors?.[0] || Object.values(error.response?.data || {})[0] || "Dəyərləndirməni yadda saxlamaq mümkün olmadı.";
       message.error(errorMessage);
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, task, starRating, note, isOwnEvaluation, onClose]); 
 
   const scoreDescription = useMemo(() => {
     const thresholds = isOwnEvaluation
