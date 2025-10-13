@@ -3,7 +3,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, ClockCircleOutlined, Calend
 import dayjs from 'dayjs';
 import { statusMap, priorityMap } from '../utils/constants';
 
-// Bu funksiyaları prop olaraq almamaq üçün birbaşa burada saxlamaq daha rahatdır
 const getStatusInfo = (status) => statusMap[status] || { text: status, color: '#d9d9d9' };
 const getPriorityInfo = (priority) => priorityMap[priority] || { text: priority, color: 'default' };
 
@@ -97,7 +96,6 @@ const CalendarSidebar = ({
                     </>
                 )}
             </Card>
-
             <Card title="Yaxın Tapşırıqlar" className="shadow-md" size="small">
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                     {upcomingTasks.length > 0 ? (upcomingTasks.map((task) => (
@@ -111,7 +109,6 @@ const CalendarSidebar = ({
                     ))) : (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Yaxın tapşırıq yoxdur" className="my-2" />)}
                 </div>
             </Card>
-
             <Card title="Aylıq Statistika (Görünən)" className="shadow-md" size="small">
                 <div className="space-y-3">
                     <div className="flex justify-between items-center"><span className="text-sm text-gray-600 dark:text-gray-400">Cəmi:</span><span className="font-semibold text-blue-600">{monthlyStats.total}</span></div>
