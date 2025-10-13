@@ -1,19 +1,18 @@
-import { useState, useMemo, useCallback } from 'react';
-import { ConfigProvider, Calendar as AntdCalendar, Badge, Tooltip, Spin, Alert, Card, message } from 'antd';
+import { useState } from 'react';
+import { ConfigProvider, Calendar as AntdCalendar, Badge, Tooltip, Spin, Alert, Card } from 'antd';
 import dayjs from 'dayjs';
+import 'dayjs/locale/az';
+import az from 'antd/locale/az_AZ';
+import '../../styles/calendar.css';
+import { useCalendarData } from './hooks/useCalendarData';
+import { useNoteManager } from './hooks/useNoteManager';
+import { useCalendarSelectors } from './hooks/useCalendarSelectors';
+import CalendarSidebar from './components/CalendarSidebar';
+import NoteModal from './components/NoteModal';
+import { statusMap } from './utils/constants';
 import isBetween from 'dayjs/plugin/isBetween';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import 'dayjs/locale/az';
-import az from 'antd/locale/az_AZ';
-import notesApi from "../../api/notesApi"
-import "../../styles/calendar.css";
-
-import { useCalendarData } from './hooks/useCalendarData';
-import { statusMap } from './utils/constants';
-import CalendarSidebar from './components/CalendarSidebar';
-import NoteModal from './components/NoteModal';
-
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -26,40 +25,12 @@ function Calendar() {
     const [calendarMode, setCalendarMode] = useState('month');
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [clickedDate, setClickedDate] = useState(null);
-
-    const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-    const [noteInput, setNoteInput] = useState('');
-    const [editingNote, setEditingNote] = useState(null);
-
     const { tasks, notes, loading, error, setNotes } = useCalendarData(viewDate, calendarMode);
 
-    // Memoized derived states
-    const getTasksForMonth = useCallback((monthDate) => tasks.filter(task => dayjs(task.endDate).isSame(monthDate, 'month')), [tasks]);
-    const getTasksForDate = useCallback((date) => tasks.filter((task) => dayjs(date).isSame(dayjs(task.endDate), 'day')), [tasks]);
-    const getNoteForDate = useCallback((date) => notes.find(note => dayjs(note.date).isSame(date, 'day')), [notes]);
+    const selectors = useCalendarSelectors({ tasks, notes, viewDate, clickedDate, selectedDate });
 
-    const isDayViewActive = !!clickedDate;
-    const tasksForMonth = useMemo(() => getTasksForMonth(viewDate).sort((a, b) => dayjs(a.endDate).diff(dayjs(b.endDate))), [getTasksForMonth, viewDate]);
-    const tasksForDay = useMemo(() => isDayViewActive ? getTasksForDate(clickedDate) : [], [isDayViewActive, getTasksForDate, clickedDate]);
-    const tasksToShow = isDayViewActive ? tasksForDay : tasksForMonth;
-    const selectedDateNote = useMemo(() => getNoteForDate(selectedDate), [getNoteForDate, selectedDate]);
-    
-    const upcomingTasks = useMemo(() => {
-        const today = dayjs().startOf('day');
-        const nextWeek = today.add(7, 'day').endOf('day');
-        return tasks.filter((task) => dayjs(task.endDate).isBetween(today, nextWeek, null, '[]') && task.status !== 'DONE')
-            .sort((a, b) => dayjs(a.endDate).diff(dayjs(b.endDate)));
-    }, [tasks]);
-    
-    const monthlyStats = useMemo(() => ({
-        total: tasksForMonth.length,
-        done: tasksForMonth.filter((t) => t.status === 'DONE').length,
-        inProgress: tasksForMonth.filter((t) => t.status === 'IN_PROGRESS').length,
-        todo: tasksForMonth.filter((t) => t.status === 'TODO').length,
-    }), [tasksForMonth]);
+    const { noteModalProps, handleOpenNoteModal, handleDeleteNote } = useNoteManager({ selectedDate, notes, setNotes });
 
-
-    // Handlers
     const handlePanelChange = (date, mode) => {
         setViewDate(date);
         setCalendarMode(mode);
@@ -80,62 +51,33 @@ function Calendar() {
         }
     };
 
-    const handleOpenNoteModal = (note = null) => {
-        setEditingNote(note);
-        setNoteInput(note ? note.content : '');
-        setIsNoteModalOpen(true);
-    };
-
-    const handleSaveNote = async () => {
-        if (!noteInput.trim()) {
-            message.warning('Qeyd boş ola bilməz.');
-            return;
-        }
-        const noteData = { id: editingNote?.id, date: selectedDate.format('YYYY-MM-DD'), content: noteInput.trim() };
-        try {
-            const response = await notesApi.saveNote(noteData);
-            if (editingNote) {
-                setNotes(notes.map(n => n.id === editingNote.id ? response.data : n));
-                message.success('Qeyd uğurla yeniləndi!');
-            } else {
-                setNotes([...notes, response.data]);
-                message.success('Qeyd uğurla əlavə edildi!');
-            }
-        } catch (error) {
-            message.error('Qeydi saxlamaq mümkün olmadı.', error);
-        } finally {
-            setIsNoteModalOpen(false);
-            setNoteInput('');
-            setEditingNote(null);
-        }
-    };
-    
-    const handleDeleteNote = async () => {
-        if (!selectedDateNote) return;
-        try {
-            await notesApi.deleteNote(selectedDateNote.id);
-            setNotes(notes.filter(n => n.id !== selectedDateNote.id));
-            message.success('Qeyd silindi.');
-        } catch (error) {
-            message.error('Qeydi silmək mümkün olmadı.', error);
-        }
-    };
-
-
-    // Renders
     const dateCellRender = (date) => {
-        const activeTasks = getTasksForDate(date);
-        const note = getNoteForDate(date);
+        const activeTasks = selectors.getTasksForDate(date);
+        const note = selectors.getNoteForDate(date);
         if (!activeTasks.length && !note) return null;
+        
         return (
             <div className="calendar-events">
-                {activeTasks.slice(0, 2).map((task) => (
-                    <Tooltip key={task.id} title={<div>...</div>} placement="topLeft">
-                        <div className="timeline-task single-day-task" style={{ backgroundColor: getStatusInfo(task.status).color }}>
-                            <div className="task-content"><span className="task-title">{task.title}</span></div>
-                        </div>
-                    </Tooltip>
-                ))}
+                {activeTasks.slice(0, 2).map((task) => {
+                    const statusInfo = getStatusInfo(task.status);
+                    return (
+                        <Tooltip 
+                            key={task.id} 
+                            title={
+                                <div>
+                                    <div className="font-medium">{task.title}</div>
+                                    <div className="text-xs mt-1">Bitmə Tarixi: {dayjs(task.endDate).format('DD.MM.YYYY')}</div>
+                                    <div className="text-xs">Status: {statusInfo.text}</div>
+                                </div>
+                            } 
+                            placement="topLeft"
+                        >
+                            <div className="timeline-task single-day-task" style={{ backgroundColor: statusInfo.color }}>
+                                <div className="task-content"><span className="task-title">{task.title}</span></div>
+                            </div>
+                        </Tooltip>
+                    );
+                })}
                 {note && (
                     <div className="note-indicator">
                         <Tooltip title={note.content}><Badge color="purple" text={<span className="note-text">📝</span>} /></Tooltip>
@@ -145,10 +87,10 @@ function Calendar() {
             </div>
         );
     };
-
+    
     const monthCellRender = (monthDate) => {
         if (!monthDate.isSame(viewDate, 'year')) return null;
-        const tasksInMonth = getTasksForMonth(monthDate);
+        const tasksInMonth = selectors.getTasksForMonth(monthDate);
         if (tasksInMonth.length === 0) return null;
         return (
             <div className="month-events">
@@ -180,36 +122,26 @@ function Calendar() {
                                     onSelect={handleSelect}
                                     onPanelChange={handlePanelChange}
                                     value={selectedDate}
-                                    className="custom-calendar"
                                 />
                             </Card>
                         </div>
                         <CalendarSidebar
-                            isDayViewActive={isDayViewActive}
+                            isDayViewActive={selectors.isDayViewActive}
                             clickedDate={clickedDate}
                             viewDate={viewDate}
-                            tasksToShow={tasksToShow}
+                            tasksToShow={selectors.tasksToShow}
                             calendarMode={calendarMode}
                             selectedDate={selectedDate}
-                            selectedDateNote={selectedDateNote}
-                            upcomingTasks={upcomingTasks}
-                            monthlyStats={monthlyStats}
+                            selectedDateNote={selectors.selectedDateNote}
+                            upcomingTasks={selectors.upcomingTasks}
+                            monthlyStats={selectors.monthlyStats}
                             onBackClick={() => setClickedDate(null)}
                             onOpenNoteModal={handleOpenNoteModal}
-                            onDeleteNote={handleDeleteNote}
+                            onDeleteNote={() => handleDeleteNote(selectors.selectedDateNote)}
                         />
                     </div>
                 </Spin>
-
-                <NoteModal
-                    open={isNoteModalOpen}
-                    onOk={handleSaveNote}
-                    onCancel={() => setIsNoteModalOpen(false)}
-                    noteInput={noteInput}
-                    onNoteInputChange={(e) => setNoteInput(e.target.value)}
-                    selectedDate={selectedDate}
-                    editingNote={editingNote}
-                />
+                <NoteModal {...noteModalProps} selectedDate={selectedDate} />
             </div>
         </ConfigProvider>
     );
