@@ -21,7 +21,7 @@ const filterOptions = [
     { value: 'needsSelfEvaluation', label: 'Özünü Qiymətləndirməli Olduqlarım', icon: <ProfileOutlined /> },
     { value: 'pendingSuperiorEvaluation', label: 'Rəhbər Qiymətləndirməsini Gözləyənlər', icon: <ClockCircleOutlined /> },
     { value: 'subordinatesAwaitingEval', label: 'Tabelikdəkilərin Gözləyən Tapşırıqları', icon: <TeamOutlined /> },
-    { value: 'evaluatedByMe', label: 'Mənim Qiymətləndirdiklərim', icon: <CheckCircleOutlined /> },
+    { value: 'evaluatedByMe', label: 'Mənim Qiymətləndirdiyim', icon: <CheckCircleOutlined /> },
     { value: 'otherTasks', label: 'Digər Tamamlanmış Tapşırıqlar', icon: <EyeOutlined /> },
 ];
 

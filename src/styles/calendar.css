@@ -32,3 +32,23 @@
   height: auto !important;
   min-height: 70px;
 }
+
+.dark
+  .calendar-page
+  .ant-picker-calendar-date-today
+  .ant-picker-calendar-date-value,
+.dark .calendar-page .month-events .text-xs .ml-1,
+.dark .ant-select-open .ant-select-selection-item,
+.dark .calendar-page .ant-picker-calendar-date-value {
+  color: #d1d5db !important;
+}
+
+.calendar-events {
+  display: flex;
+  gap: 3px;
+  flex-direction: column;
+}
+
+.dark .calendar-page .month-events li {
+    color: #d1d5db !important;
+}

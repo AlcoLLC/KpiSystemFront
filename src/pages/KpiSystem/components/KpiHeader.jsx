@@ -18,14 +18,7 @@ const KpiHeader = ({ currentUser }) => (
                     Xoş gəlmisiniz, {currentUser?.first_name || currentUser?.username}!
                 </span>
             </div>
-            {currentUser?.department && (
-                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-lg shadow-sm border border-blue-200">
-                    <ApartmentOutlined className="mr-2" />
-                    <span className="font-medium text-sm">
-                        {currentUser.department.name || "Department"}
-                    </span>
-                </div>
-            )}
+           
         </div>
     </div>
 );

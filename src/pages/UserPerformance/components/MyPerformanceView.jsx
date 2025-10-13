@@ -41,7 +41,7 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
                         {userCardData.selected_month_evaluation.score} / 10
                     </Tag>
                 ) : (
-                    <Tag style={{ fontSize: '18px', padding: '8px 16px', marginTop: '8px' }}>Daxil edilməyib</Tag>
+                    <Tag style={{ fontSize: '18px', padding: '8px 16px', marginTop: '8px' }}>-</Tag>
                 )}
             </div>
           </Card>
@@ -53,16 +53,16 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
             {summaryData ? (
               <Row gutter={[16, 16]}>
                 <Col xs={12} sm={6}>
-                  <Statistic title="Son 3 Ay" value={summaryData['3 ay'] || 'Daxil edilməyib'} suffix="/ 10" precision={2} />
+                  <Statistic title="Son 3 Ay" value={summaryData['3 ay'] || '-'} suffix="/ 10" precision={2} />
                 </Col>
                 <Col xs={12} sm={6}>
-                  <Statistic title="Son 6 Ay" value={summaryData['6 ay'] || 'Daxil edilməyib'} suffix="/ 10" precision={2} />
+                  <Statistic title="Son 6 Ay" value={summaryData['6 ay'] || '-'} suffix="/ 10" precision={2} />
                 </Col>
                 <Col xs={12} sm={6}>
-                  <Statistic title="Son 9 Ay" value={summaryData['9 ay'] || 'Daxil edilməyib'} suffix="/ 10" precision={2} />
+                  <Statistic title="Son 9 Ay" value={summaryData['9 ay'] || '-'} suffix="/ 10" precision={2} />
                 </Col>
                 <Col xs={12} sm={6}>
-                  <Statistic title="Son 1 İl" value={summaryData['1 il'] || 'Daxil edilməyib'} suffix="/ 10" precision={2} />
+                  <Statistic title="Son 1 İl" value={summaryData['1 il'] || '-'} suffix="/ 10" precision={2} />
                 </Col>
               </Row>
             ) : <Empty description="Statistika tapılmadı." />}

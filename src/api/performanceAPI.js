@@ -23,10 +23,11 @@ const performanceAPI = {
     return apiService.get('/performance/user-evaluations/monthly-scores/', params);
   },
 
-  getEvaluableUsers: (date, departmentId) => {
+  getEvaluableUsers: (date, departmentId, evaluationStatus) => {
     const params = {
       date: formatForAPI(date).substring(0, 7),
-      ...(departmentId && { department: departmentId })
+      ...(departmentId && { department: departmentId }),
+      ...(evaluationStatus && evaluationStatus !== 'all' && { evaluation_status: evaluationStatus })
     };
     return apiService.get('/performance/user-evaluations/evaluable-users/', { params });
   },
