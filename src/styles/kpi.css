@@ -2,15 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Kpi system */
-
 .dark .kpi-container .bg-white.dark\:bg-gray-800 {
   background-color: #1f2937;
 }
-
-/* ======================================== */
-/* ========= BaseModal & Ant Design ========= */
-/* ======================================== */
 
 .dark .kpi-container .bg-white.dark\:bg-gray-800 {
   background-color: #1f2937;
@@ -53,10 +47,6 @@
   color: #718096 !important;
   border-color: #2d3748 !important;
 }
-
-/* =========================================== */
-/* ========= BlockContent Task Card ========== */
-/* =========================================== */
 
 .dark .kpi-container .ant-card {
   background-color: #1b232d;
@@ -114,10 +104,6 @@
   color: #34d399;
   border-color: rgba(16, 185, 129, 0.4);
 }
-
-/* =========================================== */
-/* ========= EditReviewModal Styles ========== */
-/* =========================================== */
 
 .dark .kpi-container .text-gray-700 {
   color: #d1d5db;
@@ -303,10 +289,9 @@
 }
 
 .dark .kpi-container .text-gray-500 {
-  color: #9ca3af; /* Lighter sub-headline */
+  color: #9ca3af;
 }
 
-/* Header Kartları (Xoş gəlmisiniz, Departament və s.) */
 .dark .kpi-container .bg-gradient-to-r.from-green-100 {
   background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.4);

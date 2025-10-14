@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col, Card, Statistic, message } from 'antd';
 import {
@@ -26,7 +26,7 @@ function TaskStatsCards() {
         const response = await tasksApi.getHomeStats();
         setTaskStats(response.data);
       } catch (error) {
-        message.error("Tapşırıq statistikasını yükləmək mümkün olmadı.");
+        message.error("Tapşırıq statistikasını yükləmək mümkün olmadı.", error);
       } finally {
         setLoading(false);
       }

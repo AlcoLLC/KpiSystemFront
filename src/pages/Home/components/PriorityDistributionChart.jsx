@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Spin, message } from 'antd';
 import tasksApi from '../../../api/tasksApi';
-import { PRIORITY_COLORS } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const PriorityDistributionChart = () => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [loading, setLoading] = useState(true);
 
-  // Map priority display names to their colors
   const priorityColorMap = {
     'Çox vacib': 'rgba(245, 34, 45, 0.7)',
     'Yüksək': 'rgba(250, 173, 20, 0.7)',
@@ -32,7 +30,7 @@ const PriorityDistributionChart = () => {
           }]
         });
       } catch (error) {
-        message.error('Prioritet statistikasını yükləmək mümkün olmadı.');
+        message.error('Prioritet statistikasını yükləmək mümkün olmadı.', error);
       } finally {
         setLoading(false);
       }

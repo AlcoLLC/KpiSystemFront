@@ -1,8 +1,5 @@
-import React from 'react';
 import { Tag } from 'antd';
 import dayjs from 'dayjs';
-
-// === SABİT DƏYƏRLƏR (CONSTANTS) ===
 
 export const STATUS_COLORS = {
   Gözləmədə: 'orange',
@@ -38,7 +35,6 @@ export const STATUS_TRANSITIONS = {
   IN_PROGRESS: { next: 'DONE', label: 'Tamamla', color: 'success' }
 };
 
-// Form Konfiqurasiyası
 export const getFormConfig = (users, usersLoading, permissions) => {
   const allFields = [
     {

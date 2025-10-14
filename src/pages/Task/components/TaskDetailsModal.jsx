@@ -1,10 +1,7 @@
-import React from 'react';
 import { Modal, Tag, Avatar, Divider, Row, Col } from 'antd';
 import { 
     InfoCircleOutlined, 
     UserOutlined, 
-    TeamOutlined, 
-    CalendarOutlined,
     FlagOutlined,
     CheckCircleOutlined,
     SyncOutlined,
@@ -13,8 +10,6 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { STATUS_COLORS, PRIORITY_COLORS } from '../../../features/tasks/utils/taskUtils.jsx';
-
-// --- BÜTÜN KÖMƏKÇİ FUNKSİYALAR VƏ KOMPONENTLƏR BURADA, ƏSAS KOMPONENTDƏN ƏVVƏL TƏYİN OLUNUR ---
 
 const DetailSection = ({ icon, title, children }) => (
     <div>
@@ -43,7 +38,6 @@ const DateInfo = ({ label, date }) => (
     </div>
 );
 
-// DÜZƏLİŞ: Bu funksiyanı modal komponentindən əvvələ köçürdük
 const getStatusIcon = (status) => {
     switch(status) {
         case 'Tamamlanıb': return <CheckCircleOutlined className="text-green-500" />;
@@ -54,8 +48,6 @@ const getStatusIcon = (status) => {
         default: return <InfoCircleOutlined />;
     }
 };
-
-// --- ƏSAS KOMPONENT ---
 
 const TaskDetailsModal = ({ open, onCancel, record }) => {
   if (!record) return null;

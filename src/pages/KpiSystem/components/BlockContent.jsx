@@ -64,9 +64,7 @@ const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDet
             <UserOutlined className="mr-2" />
             {task?.assignee_details || "-"}
           </span>
-          {task?.priority === "CRITICAL" && (
-            <Badge count="CRITICAL" style={{ backgroundColor: "#ff4d4f" }} />
-          )}
+         
         </div>
       }
       hoverable

@@ -5,21 +5,19 @@ import { message } from 'antd';
 import ReusableTable from '../../../components/ReusableTable';
 import TaskDetailsModal from '../../Task/components/TaskDetailsModal';
 import tasksApi from '../../../api/tasksApi';
-import useAuth from '../../../hooks/useAuth'; // <-- useTaskPermissions yerinə bunu istifadə edirik
-import { getTaskTableColumns, generateDetailsItems } from '../../../features/tasks/utils/taskUtils.jsx';
+import useAuth from '../../../hooks/useAuth';
+import { getTaskTableColumns } from '../../../features/tasks/utils/taskUtils.jsx';
 
 const RecentTasksTable = () => {
-  const { user } = useAuth(); // <-- İstifadəçi məlumatını birbaşa alırıq
+  const { user } = useAuth(); 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   
-  // Home səhifəsi üçün sadə icazə məntiqi
   const permissions = useMemo(() => {
     if (!user) return { showAssigneeColumn: false };
     return {
-      // "İcraçı" sütunu yalnız istifadəçi "employee" deyilsə görünsün
       showAssigneeColumn: user.role !== 'employee'
     };
   }, [user]);
@@ -31,7 +29,7 @@ const RecentTasksTable = () => {
         const responseData = response.data;
         setTasks(responseData.results || responseData || []);
       } catch (error) {
-        message.error('Son tapşırıqları yükləmək mümkün olmadı.');
+        message.error('Son tapşırıqları yükləmək mümkün olmadı.', error);
       } finally {
         setLoading(false);
       }

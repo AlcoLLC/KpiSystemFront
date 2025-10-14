@@ -76,7 +76,6 @@ const CalendarSidebar = ({
                             )}
                         </div>
 
-                        {/* DÜZƏLİŞ: "Şəxsi Qeyd" bölməsini yalnız gün görünüşü aktiv olduqda göstər */}
                         {isDayViewActive && (
                             <>
                                 <div className="border-t border-gray-200 dark:border-gray-700 my-4"></div>

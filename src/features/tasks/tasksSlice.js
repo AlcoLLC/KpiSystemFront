@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import tasksApi from '../../api/tasksApi';
 
-// Asinxron Actions (Thunks)
 export const fetchTasks = createAsyncThunk(
   'tasks/fetchTasks', 
   async (params = {}, { rejectWithValue }) => {
@@ -58,7 +57,7 @@ export const deleteTask = createAsyncThunk(
 
 const initialState = {
   items: [],
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: 'idle',
   error: null,
 };
 
@@ -72,7 +71,6 @@ const tasksSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Tasks
       .addCase(fetchTasks.pending, (state) => { 
         state.status = 'loading';
         state.error = null;
@@ -86,20 +84,18 @@ const tasksSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload || action.error.message;
       })
-      // Add New Task
       .addCase(addNewTask.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(addNewTask.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items.unshift(action.payload); // Yeni taskı siyahının əvvəlinə əlavə edir
+        state.items.unshift(action.payload); 
         state.error = null;
       })
       .addCase(addNewTask.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || action.error.message;
       })
-      // Update Task
       .addCase(updateTask.pending, (state) => {
         state.status = 'loading';
       })
@@ -115,7 +111,6 @@ const tasksSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload || action.error.message;
       })
-      // Delete Task
       .addCase(deleteTask.pending, (state) => {
         state.status = 'loading';
       })

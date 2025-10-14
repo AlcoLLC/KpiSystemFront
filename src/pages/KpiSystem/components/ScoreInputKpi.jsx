@@ -1,5 +1,3 @@
-// src/components/kpi/ScoreInput.js
-
 import { Rate } from "antd";
 
 const ScoreInput = ({ isSelfEval, value, onChange }) => {

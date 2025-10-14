@@ -19,10 +19,10 @@ const TaskDetailsCard = ({ task }) => (
       )}
      <Descriptions.Item label="İşçi">{task.assignee_details}</Descriptions.Item>
       {task.assignee_obj && task.assignee_obj.position_details?.name && (
-  <Descriptions.Item label="Vəzifə">
-    {task.assignee_obj.position_details.name}
-  </Descriptions.Item>
-)}
+        <Descriptions.Item label="Vəzifə">
+          {task.assignee_obj.position_details.name}
+        </Descriptions.Item>
+      )}
       <Descriptions.Item label="Status">
         <Tag color="blue">{task.status_display}</Tag>
       </Descriptions.Item>

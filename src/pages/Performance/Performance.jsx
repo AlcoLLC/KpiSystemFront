@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
-import { Radio, Spin, message, Empty, Button } from 'antd';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Radio, message, Button } from 'antd';
 import { UserOutlined, TeamOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import useAuth from '../../hooks/useAuth';
 import tasksApi from '../../api/tasksApi';
@@ -17,14 +17,12 @@ import {
     Legend 
 } from 'chart.js';
 
-// Chart.js üçün lazımi elementləri qeydiyyatdan keçiririk
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function Performance() {
     const { slug } = useParams();
     const { user } = useAuth();
     
-    // Rəhbər üçün defolt 'team', işçi üçün 'my' olsun
     const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my');
     
     const [performanceData, setPerformanceData] = useState(null);
@@ -34,19 +32,16 @@ function Performance() {
     const isAdmin = user && user.role === 'admin';
     const showViewSwitcher = isSuperior && !isAdmin;
 
-    // "Mənim Performansım" və ya URL-dən gələn istifadəçi üçün datanı çəkir
     const fetchPerformance = useCallback(async () => {
-        // Yalnız dashboard görünməli olduğu hallarda data çəkirik
         if (viewMode !== 'my' && !slug) return;
 
         setLoading(true);
         setPerformanceData(null);
         try {
-            // slug varsa, həmin istifadəçinin, yoxsa 'me' endpoint-indən öz məlumatlarını çəkir
             const response = await tasksApi.getPerformanceSummary(slug || 'me');
             setPerformanceData(response.data);
         } catch (error) {
-            message.error("Performans məlumatlarını yükləmək mümkün olmadı.");
+            message.error("Performans məlumatlarını yükləmək mümkün olmadı.", error);
         } finally {
             setLoading(false);
         }

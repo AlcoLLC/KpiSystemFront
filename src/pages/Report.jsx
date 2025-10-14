@@ -1,79 +1,54 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { 
   FaPlusCircle, 
   FaCheckCircle, 
   FaSyncAlt, 
   FaStar 
 } from 'react-icons/fa';
+import reportsAPI from '../api/reportsAPI';
 
-// Nümunə məlumatlar. Gələcəkdə bu massiv API-dan gələcək.
-const activityLogData = [
-  {
-    id: 1,
-    type: 'TASK_RATED',
-    user: 'Rəşad Əliyev',
-    taskName: 'Backend Development',
-    details: 'tapşırığını 8/10 ulduz ilə qiymətləndirdi.',
-    timestamp: '12 Sentyabr 2025, 11:50',
-  },
-  {
-    id: 2,
-    type: 'STATUS_CHANGED',
-    user: 'Əhməd Məmmədov',
-    taskName: 'Hotel management system',
-    details: 'statusunu "IN_PROGRESS"-dən "DONE"-a dəyişdi.',
-    timestamp: '12 Sentyabr 2025, 10:15',
-  },
-  {
-    id: 3,
-    type: 'TASK_APPROVED',
-    user: 'Rəhbərlik',
-    taskName: 'UI/UX Design',
-    details: 'tapşırığını təsdiq etdi.',
-    timestamp: '11 Sentyabr 2025, 16:30',
-  },
-  {
-    id: 4,
-    type: 'TASK_CREATED',
-    user: 'Ayşə Həsənova',
-    taskName: 'UI/UX Design',
-    details: 'adlı yeni tapşırıq yaratdı.',
-    timestamp: '11 Sentyabr 2025, 14:00',
-  },
-];
+import { format } from 'date-fns';
+import { az } from 'date-fns/locale';
 
-// Fəaliyyət növünə görə uyğun ikona və rəngi təyin edən obyekt
 const eventVisuals = {
   TASK_CREATED: { Icon: FaPlusCircle, color: 'text-green-500' },
   TASK_APPROVED: { Icon: FaCheckCircle, color: 'text-blue-500' },
-  STATUS_CHANGED: { Icon: FaSyncAlt, color: 'text-purple-500' },
-  TASK_RATED: { Icon: FaStar, color: 'text-yellow-500' },
+  TASK_STATUS_CHANGED: { Icon: FaSyncAlt, color: 'text-purple-500' },
+  KPI_TASK_EVALUATED: { Icon: FaStar, color: 'text-yellow-500' },
+  KPI_USER_EVALUATED: { Icon: FaStar, color: 'text-orange-400' },
   default: { Icon: FaPlusCircle, color: 'text-gray-500' },
 };
 
-// Tək bir fəaliyyət kartını təsvir edən alt-komponent
+const formatTimestamp = (isoString) => {
+  if (!isoString) return '';
+  try {
+    const date = new Date(isoString);
+    return format(date, 'd MMMM yyyy, HH:mm', { locale: az });
+  } catch (error) {
+    console.error("Invalid date format:", isoString);
+    return isoString; 
+  }
+};
+
 const ActivityCard = ({ log }) => {
-  const { Icon, color } = eventVisuals[log.type] || eventVisuals.default;
+  const { Icon, color } = eventVisuals[log.action_type] || eventVisuals.default;
+  const actorName = log.actor_details ? `${log.actor_details.first_name} ${log.actor_details.last_name}`.trim() : 'Naməlum';
 
   return (
     <div className="flex items-start pb-4">
-      {/* İkona və zaman xətti üçün konteyner */}
       <div className="flex flex-col items-center mr-4">
-        <div className={`flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700`}>
+        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700">
           <Icon className={`w-5 h-5 ${color}`} />
         </div>
         <div className="w-px h-full bg-gray-300 dark:bg-gray-600 my-2"></div>
       </div>
-
-      {/* Məzmun hissəsi */}
       <div className="w-full bg-white dark:bg-[#1B232D] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
         <p className="text-gray-800 dark:text-gray-200">
-          <strong className="text-blue-600 dark:text-blue-400">{log.user}</strong>{' '}
-          <em>'{log.taskName}'</em>{' '}
-          {log.details}
+          <strong className="text-blue-600 dark:text-blue-400">{actorName}</strong>{' '}
+          {log.description}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-          {log.timestamp}
+          {formatTimestamp(log.timestamp)}
         </p>
       </div>
     </div>
@@ -81,6 +56,35 @@ const ActivityCard = ({ log }) => {
 };
 
 function Report() {
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchActivityLogs = async () => {
+      try {
+        setLoading(true);
+        const response = await reportsAPI.getActivityLogs({ page: 1 });
+        setLogs(response.data.results || []); 
+      } catch (err) {
+        setError('Fəaliyyət tarixçəsini yükləmək mümkün olmadı. Zəhmət olmasa, səhifəni yeniləyin.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivityLogs();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center p-10 dark:text-white">Yüklənir...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center p-10 text-red-500">{error}</div>;
+  }
+
   return (
     <div>
       <h2 className="px-1 text-xl font-medium mb-8 text-black dark:text-white">
@@ -88,18 +92,19 @@ function Report() {
       </h2>
       
       <div className="relative">
-        {/* Sonuncu elementdən sonra xəttin görünməməsi üçün xüsusi stil */}
         <div className="space-y-0">
-          {activityLogData.map((log, index) => (
-            <div key={log.id} className="relative">
-              {/* Bu div, ActivityCard-ın içindəki xətti gizlətmək üçün lazımdır */}
-              <ActivityCard log={log} />
-              {/* Sonuncu elementin altındakı xətti gizlədirik */}
-              {index === activityLogData.length - 1 && (
-                 <div className="absolute left-[19px] top-12 bottom-0 w-px bg-gray-50 dark:bg-[#131920]"></div>
-              )}
-            </div>
-          ))}
+          {logs.length > 0 ? (
+            logs.map((log, index) => (
+              <div key={log.id} className="relative">
+                <ActivityCard log={log} />
+                {index === logs.length - 1 && (
+                   <div className="absolute left-[19px] top-12 bottom-0 w-px bg-gray-50 dark:bg-[#131920]"></div>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="text-center dark:text-gray-400">Heç bir fəaliyyət qeydi tapılmadı.</p>
+          )}
         </div>
       </div>
     </div>

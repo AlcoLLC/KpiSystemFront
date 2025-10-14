@@ -11,9 +11,17 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
 
   const selfEvaluation = evaluations.find((e) => e.evaluation_type === "SELF");
   const superiorEvaluation = evaluations.find((e) => e.evaluation_type === "SUPERIOR");
+  const isAdmin = currentUser?.role === 'admin';
+  
+  const canEditSelf = selfEvaluation && (
+    (currentUser?.id === selfEvaluation.evaluator?.id && !superiorEvaluation) ||
+    isAdmin
+  );
 
-  const canEditSelf = selfEvaluation && currentUser?.id === selfEvaluation.evaluator?.id && !superiorEvaluation;
-  const canEditSuperior = superiorEvaluation && currentUser?.id === superiorEvaluation.evaluator?.id;
+  const canEditSuperior = superiorEvaluation && (
+    (currentUser?.id === superiorEvaluation.evaluator?.id) ||
+    isAdmin
+  );
 
   return (
     <BaseModal

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { message } from "antd";
 import useAuth from "../../../hooks/useAuth";
 import performanceAPI from "../../../api/performanceAPI";
+import accountsApi from "../../../api/accountsApi";
 
 const managerialRoles = [
   "admin",
@@ -10,7 +11,6 @@ const managerialRoles = [
   "manager",
 ];
 
-// DƏYİŞDİRİLDİ: Hook artıq üçüncü parametr olaraq "evaluationStatus"-u qəbul edir
 export const usePerformanceData = (
   selectedMonth,
   selectedDepartment,
@@ -33,17 +33,15 @@ export const usePerformanceData = (
     setLoading(true);
 
     try {
-      // Bu sorğular həmişə icra olunur
       const requests = [
         performanceAPI.getMyPerformanceCard(selectedMonth),
         performanceAPI.getPerformanceSummary(user.id, selectedMonth),
         performanceAPI.getMonthlyScores(user.id, selectedMonth),
       ];
 
-      // Rəhbər və ya admin üçün tabeliyində olanları gətirən sorğu
       if (canEvaluate) {
+        console.log("API'yə göndərilən departament ID:", selectedDepartment);
         requests.push(
-          // DƏYİŞDİRİLDİ: API sorğusuna yeni "evaluationStatus" parametri ötürülür
           performanceAPI.getEvaluableUsers(
             selectedMonth,
             selectedDepartment,
@@ -52,25 +50,23 @@ export const usePerformanceData = (
         );
       }
 
-      // Yalnız admin üçün departamentləri gətirən sorğu
       if (user.role === "admin") {
-        requests.push(performanceAPI.getDepartments());
+        requests.push(accountsApi.getDepartments());
       }
 
       const results = await Promise.all(requests);
 
-      // Nəticələri ardıcıllığa uyğun olaraq ayırırıq
       const [
         myCardRes,
         mySummaryRes,
         myScoresRes,
-        subordinatesRes, // Bu, yalnız "canEvaluate" true olduqda mövcud olacaq
-        departmentsRes,  // Bu, yalnız admin olduqda mövcud olacaq
+        subordinatesRes,
+        departmentsRes,  
       ] = results;
 
-      // DƏYİŞDİRİLDİ: Client-side çeşidləmə ləğv edildi.
-      // Artıq filtrləmə və çeşidləmə backend tərəfindən idarə olunur.
       const updatedSubordinates = canEvaluate && subordinatesRes ? subordinatesRes.data : [];
+      console.log("FİLTRLƏNMİŞ CAVAB:", subordinatesRes.data);
+      console.log("STATE'Ə YAZILAN İŞÇİ SİYAHISI:", updatedSubordinates);
 
       setData({
         myCard: myCardRes.data,
@@ -85,7 +81,6 @@ export const usePerformanceData = (
     } finally {
       setLoading(false);
     }
-  // DƏYİŞDİRİLDİ: "evaluationStatus" asılılıq (dependency) siyahısına əlavə edildi
   }, [user, selectedMonth, selectedDepartment, canEvaluate, evaluationStatus]);
 
   useEffect(() => {

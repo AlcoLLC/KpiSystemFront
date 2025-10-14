@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ========================================= */
-/* Ant Design Dark Mode Overrides            */
-/* Bütün stillər .dark sinifi altında cəmlənib */
-/* ========================================= */
-
-/* --- Ümumi Ant Design Elementləri --- */
 .dark .ant-input,
 .dark .ant-input-password,
 .dark .ant-select-selector,
@@ -38,7 +32,6 @@
   border-color: #4a5568 !important;
 }
 
-/* --- Table --- */
 .dark .ant-table {
   background-color: #1b232d;
 }
@@ -55,20 +48,17 @@
   background-color: #374151 !important;
 }
 
-/* Əsas yükləmə mətni */
 .dark .ant-upload-text {
-  color: #d1d5db !important; /* text-gray-300 rənginə uyğundur */
+  color: #d1d5db !important; 
 }
 
-/* İkinci dərəcəli mətn (hint) */
 .dark .ant-upload-hint {
-  color: #9ca3af !important; /* text-gray-400 rənginə uyğundur */
+  color: #9ca3af !important; 
 }
 
 .dark .ant-input-password-icon {
   color: rgba(255, 255, 255, 0.65) !important;
 }
-/* --- Modal --- */
 .dark .ant-modal-content {
   background-color: #1b232d !important;
   color: white !important;
@@ -82,15 +72,13 @@
   border-top-color: #4a5568 !important;
 }
 
-/* --- Pagination --- */
 .dark .ant-pagination-item a {
-  color: rgba(255, 255, 255, 0.726) !important; /* Default rəng */
+  color: rgba(255, 255, 255, 0.726) !important; 
 }
 
-/* Sağ-sol oxlarının olduğu düymələr */
 .dark .ant-pagination-prev .ant-pagination-item-link,
 .dark .ant-pagination-next .ant-pagination-item-link {
-  background-color: transparent; /* Default düymə fonunu silir */
+  background-color: transparent; 
   color: rgba(255, 255, 255, 0.85);
 }
 
@@ -99,24 +87,20 @@
   background-color: transparent !important;
   border: 1px solid rgba(255, 255, 255, 0.726) !important;
 }
-/* Aktiv olan səhifənin içindəki rəqəm (ağ rəngdə) */
 .dark .ant-pagination-item-active {
   background-color: #1677ff  !important;
   border: #1677ff !important;
 }
 
-/* Passiv (disabled) vəziyyətdəki oxlar və rəqəmlər */
 .dark .ant-pagination-disabled .ant-pagination-item-link,
 .dark .ant-pagination-disabled a {
   color: rgba(255, 255, 255, 0.562) !important;
 }
 
-/* Üç nöqtə (...) üçün rəng */
 .dark .ant-pagination-item-ellipsis {
   color: rgba(255, 255, 255, 0.45) !important;
 }
 
-/* Üzərinə gəldikdə rəng dəyişməsi */
 .dark .ant-pagination-item:not(.ant-pagination-item-active):hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: transparent;
@@ -125,13 +109,11 @@
   color: white;
 }
 
-/* Seçilməmiş ulduzların içindəki hər iki hissəni hədəf alırıq */
 .dark .ant-rate-star-zero .ant-rate-star-first,
 .dark .ant-rate-star-zero .ant-rate-star-second {
   color: rgba(255, 255, 255, 0.35) !important;
 }
 
-/* --- Ant Design Calendar Dark Mode --- */
 .dark .ant-picker-calendar {
   background: transparent !important;
   color: #e2e8f0 !important;
@@ -160,7 +142,6 @@
   color: #e2e8f0 !important;
 }
 
-/* Calendar Dark Mode */
 .dark .ant-picker-panel,
 .dark .ant-picker-dropdown,
 .dark .ant-picker-footer {
@@ -245,7 +226,6 @@
   color: #ffffff !important;
 }
 
-/* Date Range Dark Mode - Complete */
 .dark .ant-picker-range {
   background-color: #1f2937 !important;
   border-color: #374151 !important;
@@ -305,16 +285,10 @@
 .dark .ant-picker-header-next-btn,
 .dark .ant-picker-header-super-next-btn,
 .dark .ant-picker-now-btn,
-.dark .ant-picker-suffix
-
-
-
-
-{
+.dark .ant-picker-suffix{
   color: #bdc3cf !important;
 }
 
-/* --- Card Dark Mode --- */
 .dark .ant-card {
   background-color: #1b232d !important;
   border-color: #374151 !important;
@@ -336,7 +310,6 @@
   color: #e2e8f0 !important;
 }
 
-/* --- Empty State Dark Mode --- */
 .dark .ant-empty {
   color: #9ca3af !important;
 }
@@ -349,12 +322,10 @@
   opacity: 0.3;
 }
 
-/* --- Badge Dark Mode --- */
 .dark .ant-badge-status-text {
   color: #e2e8f0 !important;
 }
 
-/* --- Button Dark Mode --- */
 .dark .ant-btn-text {
   color: #e2e8f0 !important;
 }
@@ -364,7 +335,6 @@
   color: #e2e8f0 !important;
 }
 
-/* --- Modal Dark Mode --- */
 .dark .ant-modal-mask {
   background-color: rgba(0, 0, 0, 0.6) !important;
 }
@@ -381,7 +351,6 @@
   color: #e2e8f0 !important;
 }
 
-/* --- TextArea Dark Mode --- */
 .dark .ant-input {
   background-color: #2a3441 !important;
   border-color: #4a5568 !important;
@@ -398,7 +367,6 @@
   color: #9ca3af !important;
 }
 
-/* --- Progress Bar Dark Mode --- */
 .dark .ant-progress-bg {
   background-color: #1677ff !important;
 }
@@ -411,7 +379,6 @@
   color: #e2e8f0 !important;
 }
 
-/* --- Custom Calendar Styles Updated --- */
 .dark .calendar-events {
   color: #e2e8f0;
 }
@@ -433,7 +400,6 @@
   color: #9ca3af !important;
 }
 
-/* --- Tooltip Dark Mode --- */
 .dark .ant-tooltip-inner {
   background-color: #1f2937 !important;
   color: #e2e8f0 !important;
@@ -443,7 +409,6 @@
   background-color: #1f2937 !important;
 }
 
-/* --- Select Dropdown Dark Mode --- */
 .dark .ant-select-dropdown {
   background-color: #1f2937 !important;
   border-color: #4a5568 !important;
@@ -462,7 +427,6 @@
   color: white !important;
 }
 
-/* --- Calendar Cell Content Adjustments --- */
 .dark .custom-calendar .ant-picker-cell-in-view .ant-picker-cell-inner {
   background-color: transparent;
   border: 1px solid #374151;
@@ -483,7 +447,6 @@
   border-color: #6b7280 !important;
 }
 
-/* --- Scrollbar Dark Mode --- */
 .dark ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -557,3 +520,6 @@
   align-items: center;
 }
 
+.dark .ant-upload-list-item-name, .dark .anticon-close-circle {
+  color: #e2e8f0 !important;
+}

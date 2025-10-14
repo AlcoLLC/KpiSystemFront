@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom'; 
 import { Modal, message, Button, Input, Radio, Empty  } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,7 +17,6 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 const { useModal } = Modal;
 
-// Filterlər üçün defolt, boş vəziyyəti təyin edirik
 const initialFilters = { status: null, priority: null, assignee: null, date_range: null, overdue: null, department: null };
 
 function Task() {
@@ -92,7 +91,7 @@ function Task() {
       setData(responseData.results || responseData || []);
       setPagination(prev => ({ ...prev, total: responseData.count || 0 }));
     } catch (error) {
-      message.error('Tapşırıqları yükləmək mümkün olmadı.');
+      message.error('Tapşırıqları yükləmək mümkün olmadı.', error);
       setData([]);
     }
   }, [user, pagination.current, pagination.pageSize, debouncedSearchText, filters, viewMode, permissions.isEmployee, isReadyToFetch]);
@@ -104,7 +103,7 @@ function Task() {
             const response = await tasksApi.getAssignableUsers();
             setUsers(response.data.results || response.data || []);
         } catch (err) {
-            message.error('İcraçı siyahısını yükləmək mümkün olmadı.');
+            message.error('İcraçı siyahısını yükləmək mümkün olmadı.', err);
         } finally {
             setUsersLoading(false);
         }
@@ -119,7 +118,7 @@ function Task() {
         const response = await tasksApi.getFilterableDepartments();
         setDepartments(response.data || []);
       } catch (error) {
-        message.error('Departament siyahısını yükləmək mümkün olmadı.');
+        message.error('Departament siyahısını yükləmək mümkün olmadı.', error);
         setDepartments([]); 
       }
     }

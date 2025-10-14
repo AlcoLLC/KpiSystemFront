@@ -81,7 +81,6 @@ const kpiAPI = {
     return apiService.get("/kpis/kpi/subordinates-need-evaluation/");
   },
   
-  // YENİ FUNKSİYA
   getCompletedEvaluations: () => {
     return apiService.get("/kpis/kpi/completed-evaluations/");
   },

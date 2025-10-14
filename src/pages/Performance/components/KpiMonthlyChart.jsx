@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Button, Spin, message, Card, Empty, Radio } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -8,7 +8,6 @@ import kpiAPI from '../../../api/performanceAPI';
 
 dayjs.locale('az');
 
-// Chart üçün qabaqcıl konfiqurasiya
 const getChartOptions = (isDark, evaluations) => ({
     responsive: true,
     maintainAspectRatio: false,
@@ -42,12 +41,11 @@ const getChartOptions = (isDark, evaluations) => ({
         x: { ticks: { color: isDark ? '#a0aec0' : '#4a5568' } }
     },
     elements: {
-        line: { tension: 0.4 }, // Xətləri daha axıcı edir
+        line: { tension: 0.4 }, 
         point: { radius: 5, hoverRadius: 8, backgroundColor: '#fff' }
     }
 });
 
-// Qrafikin arxa fonu üçün gradient yaratmaq
 const createGradient = (ctx, chartArea, isDark) => {
     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
     if (isDark) {
@@ -61,7 +59,7 @@ const createGradient = (ctx, chartArea, isDark) => {
 };
 
 const KpiMonthlyChart = ({ userSlug, isDark }) => {
-    const [period, setPeriod] = useState('3m'); // '3m' (son 3 ay) və ya dayjs obyekti
+    const [period, setPeriod] = useState('3m'); 
     const [chartData, setChartData] = useState(null);
     const [evaluations, setEvaluations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -78,11 +76,10 @@ const KpiMonthlyChart = ({ userSlug, isDark }) => {
                         start_date: dayjs().subtract(3, 'month').format('YYYY-MM-DD'),
                         end_date: dayjs().format('YYYY-MM-DD')
                     };
-                } else { // period bir dayjs obyekti olduqda
+                } else {
                     params = { year: period.year(), month: period.month() + 1 };
                 }
                 
-                // Buradakı API funksiyası `kpiAPI`-də və ya `performanceAPI`-də ola bilər
                 const response = await kpiAPI.getKpiMonthlySummary(userSlug, params);
                 
                 const evals = response.data.evaluations || [];
@@ -90,7 +87,7 @@ const KpiMonthlyChart = ({ userSlug, isDark }) => {
 
                 if (evals.length > 0) {
                     setChartData({
-                        labels: evals.map(e => dayjs(e.completed_at).format('DD MMM')), // X oxu üçün tarixlər
+                        labels: evals.map(e => dayjs(e.completed_at).format('DD MMM')), 
                         datasets: [{
                             label: 'Yekun Bal',
                             data: evals.map(e => e.score),
@@ -108,7 +105,7 @@ const KpiMonthlyChart = ({ userSlug, isDark }) => {
                     setChartData(null);
                 }
             } catch (error) {
-                message.error('KPI statistikasını yükləmək mümkün olmadı.');
+                message.error('KPI statistikasını yükləmək mümkün olmadı.', error);
                 setChartData(null);
             } finally {
                 setLoading(false);
@@ -141,7 +138,7 @@ const KpiMonthlyChart = ({ userSlug, isDark }) => {
                     <Radio.Button value={dayjs()}>Bu Ay</Radio.Button>
                 </Radio.Group>
             </div>
-            <div className="relative h-80"> {/* Hündürlüyü artırdıq */}
+            <div className="relative h-80"> 
                 {loading ? <div className="absolute inset-0 flex justify-center items-center"><Spin /></div> : (
                     chartData ? <Line options={getChartOptions(isDark, evaluations)} data={chartData} /> : <Empty description="Göstərilən period üçün heç bir KPI balı tapılmadı." />
                 )}

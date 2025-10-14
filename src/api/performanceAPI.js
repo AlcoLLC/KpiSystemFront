@@ -29,7 +29,8 @@ const performanceAPI = {
       ...(departmentId && { department: departmentId }),
       ...(evaluationStatus && evaluationStatus !== 'all' && { evaluation_status: evaluationStatus })
     };
-    return apiService.get('/performance/user-evaluations/evaluable-users/', { params });
+    return apiService.get('/performance/user-evaluations/evaluable-users/', { params: params }); 
+    
   },
 
   createEvaluation: (data) => {
@@ -45,6 +46,9 @@ const performanceAPI = {
   getUserKpiScore: (slug) => {
         return apiService.get(`/performance/kpi-score/${slug}/`);
     },
+    getDepartments: () => {
+    return apiService.get('/accounts/departments/'); 
+  },
 };
 
 export default performanceAPI;
