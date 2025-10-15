@@ -16,6 +16,8 @@ import Papa from 'papaparse';
 import reportsAPI from '../api/reportsAPI';
 import "react-datepicker/dist/react-datepicker.css";
 
+// --- Helper Components & Constants ---
+
 const StatCard = ({ icon, title, value, color }) => (
     <div className="bg-white dark:bg-[#1B232D] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex items-center">
       <div className={`p-3 rounded-full mr-4 ${color}`}>
@@ -73,6 +75,7 @@ const ActivityCard = ({ log }) => {
     );
 };
 
+
 // --- Main Report Component ---
 
 function Report() {
@@ -81,6 +84,9 @@ function Report() {
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // YENİ: Aktiv tabı saxlamaq üçün state
+  const [activeTab, setActiveTab] = useState('details'); 
 
   const [filters, setFilters] = useState({
     user: 'all',
@@ -110,13 +116,10 @@ function Report() {
   useEffect(() => {
     const fetchLogs = async () => {
       setLoading(true);
-      setError(null); // Clear previous errors
+      setError(null);
       try {
         const [startDate, endDate] = filters.dateRange;
-        const params = {
-          page: 1,
-          page_size: 100, // You can implement full pagination later
-        };
+        const params = { page: 1, page_size: 100 };
 
         if (filters.user !== 'all') params.actor = filters.user;
         if (filters.actionType !== 'all') params.action_type = filters.actionType;
@@ -134,9 +137,8 @@ function Report() {
       }
     };
     fetchLogs();
-  }, [filters]); // Re-runs every time the 'filters' state changes
+  }, [filters]);
 
-  // Memoized data for charts and grouping, derived from server-filtered 'logs'
   const groupedLogs = useMemo(() => {
     return logs.reduce((acc, log) => {
       const dateKey = format(new Date(log.timestamp), 'd MMMM yyyy', { locale: az });
@@ -173,7 +175,6 @@ function Report() {
 
     const csv = Papa.unparse(dataToExport, { delimiter: ';' });
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
@@ -247,39 +248,71 @@ function Report() {
         <StatCard icon={<FaSyncAlt size={24} className="text-white"/>} title="İcrada Olan Tapşırıqlar" value={stats.inProgress} color="bg-blue-500" />
         <StatCard icon={<FaUsers size={24} className="text-white"/>} title="Komanda Üzvləri" value={stats.users} color="bg-purple-500" />
       </div>
-      <div className="bg-white dark:bg-[#1B232D] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 mb-8">
-        <h3 className="text-lg font-medium mb-4 dark:text-white">İstifadəçi üzrə Fəaliyyət Sayı</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={barChartData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip cursor={{fill: 'rgba(100,100,100,0.1)'}}/>
-            <Legend />
-            <Bar dataKey="fəaliyyət" fill="#8884d8" />
-          </BarChart>
-        </ResponsiveContainer>
+
+      {/* YENİ: Tab Naviqasiya Paneli */}
+      <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+          <ul className="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
+              <li className="mr-2 report-deactivetab" role="presentation">
+                  <button 
+                    className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'details' ? 'border-blue-500 text-blue-600 dark:text-blue-500' : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'}`}
+                    onClick={() => setActiveTab('details')}
+                    type="button" 
+                    role="tab"
+                  >
+                    Ətraflı Fəaliyyət Tarixçəsi
+                  </button>
+              </li>
+              <li className="mr-2 report-deactivetab" role="presentation">
+                  <button 
+                    className={`inline-block p-4 border-b-2 rounded-t-lg ${activeTab === 'summary' ? 'border-blue-500 text-blue-600 dark:text-blue-500' : 'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'}`}
+                    onClick={() => setActiveTab('summary')}
+                    type="button" 
+                    role="tab"
+                  >
+                    Qrafik Xülasə
+                  </button>
+              </li>
+          </ul>
       </div>
-      <h2 className="px-1 text-xl font-medium mb-4 text-black dark:text-white">
-        Ətraflı Fəaliyyət Tarixçəsi
-      </h2>
-      <div className="relative">
-        {loading ? (
-            <div className="text-center p-10 dark:text-white">Yüklənir...</div>
-        ) : error ? (
-            <div className="text-center p-10 text-red-500">{error}</div>
-        ) : Object.keys(groupedLogs).length > 0 ? (
-          Object.keys(groupedLogs).map(dateKey => (
-            <div key={dateKey} className="relative mb-4">
-              <h3 className="font-semibold text-lg dark:text-gray-300 bg-gray-50 dark:bg-[#131920] p-2 rounded-md mb-4 sticky top-0 z-10">{dateKey}</h3>
-              <div className="relative pl-4 border-l-2 border-gray-300 dark:border-gray-600">
-                {groupedLogs[dateKey].map((log) => (
-                   <ActivityCard key={log.id} log={log} />
-                ))}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center dark:text-gray-400 p-10">Seçilmiş filtrlərə uyğun heç bir fəaliyyət qeydi tapılmadı.</p>
+
+      {/* YENİ: Tab Məzmunu (Content) */}
+      <div>
+        {activeTab === 'summary' && (
+          <div className="bg-white dark:bg-[#1B232D] p-4 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-medium mb-4 dark:text-white">İstifadəçi üzrə Fəaliyyət Sayı</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={barChartData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip cursor={{fill: 'rgba(100,100,100,0.1)'}}/>
+                <Legend />
+                <Bar dataKey="fəaliyyət" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {activeTab === 'details' && (
+          <div className="relative">
+             {loading ? (
+                 <div className="text-center p-10 dark:text-white">Yüklənir...</div>
+             ) : error ? (
+                 <div className="text-center p-10 text-red-500">{error}</div>
+             ) : Object.keys(groupedLogs).length > 0 ? (
+               Object.keys(groupedLogs).map(dateKey => (
+                 <div key={dateKey} className="relative mb-4">
+                   <h3 className="font-semibold text-lg dark:text-gray-300 bg-gray-50 dark:bg-[#131920] p-2 rounded-md mb-4 sticky top-0 z-10">{dateKey}</h3>
+                   <div className="relative pl-4 border-l-2 border-gray-300 dark:border-gray-600">
+                     {groupedLogs[dateKey].map((log) => (
+                        <ActivityCard key={log.id} log={log} />
+                     ))}
+                   </div>
+                 </div>
+               ))
+             ) : (
+               <p className="text-center dark:text-gray-400 p-10">Seçilmiş filtrlərə uyğun heç bir fəaliyyət qeydi tapılmadı.</p>
+             )}
+          </div>
         )}
       </div>
     </div>

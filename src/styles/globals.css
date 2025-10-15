@@ -532,7 +532,7 @@ body {
   align-items: center;
 }
 
-.dark .ant-upload-list-item-name, .dark .anticon-close-circle, .dark .react-datepicker__input-container {
+.dark .ant-upload-list-item-name, .dark .anticon-close-circle, .dark .react-datepicker__input-container, .dark .report-deactivetab button {
   color: #e2e8f0 !important;
 }
 
@@ -542,4 +542,16 @@ body {
 
 .dark .react-datepicker__day, .dark .react-datepicker__day-name {
   color: rgb(255 255 255 / 1);
+}
+
+.report-deactivetab button{
+  transition: .5s;
+  -webkit-transition: .5s;
+  -moz-transition: .5s;
+  -ms-transition: .5s;
+  -o-transition: .5s;
+}
+
+.react-datepicker-popper {
+  z-index: 10000;
 }
