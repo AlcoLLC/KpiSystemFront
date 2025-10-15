@@ -1,18 +1,6 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { Modal } from 'antd';
 
-/**
- * @param {boolean} open 
- * @param {function} onOk 
- * @param {function} onCancel 
- * @param {string | React.ReactNode} title 
- * @param {React.ReactNode} children 
- * @param {number} width 
- * @param {string} okText 
- * @param {string} cancelText 
- * @param {React.ReactNode | null} footer 
- */
 function BaseModal({
   open,
   onOk,

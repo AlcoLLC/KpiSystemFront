@@ -1,21 +1,16 @@
 import { DatePicker, Select, Row, Col } from 'antd';
 import dayjs from 'dayjs';
-// Azərbaycan dilində ay adlarını göstərmək üçün lokalizasiya
 import 'dayjs/locale/az';
-
-// dayjs üçün Azərbaycan lokalını aktivləşdiririk
 dayjs.locale('az');
 
 const { Option } = Select;
 
 const PerformanceFilters = ({
-  // Mövcud props-lar
   user,
   selectedMonth,
   onMonthChange,
   departments,
   onDepartmentChange,
-  // Yeni əlavə olunan props-lar
   canEvaluate,
   activeTab,
   evaluationStatus,
@@ -24,7 +19,6 @@ const PerformanceFilters = ({
   return (
     <div className="mb-6 bg-white p-4 rounded-lg shadow">
       <Row gutter={[16, 16]} align="bottom">
-        {/* --- Ay seçimi (dəyişiklik yoxdur) --- */}
         <Col xs={24} sm={12} md={8}>
           <label className="font-semibold block mb-2">Ay seçin</label>
           <DatePicker
@@ -32,12 +26,11 @@ const PerformanceFilters = ({
             onChange={(date) => onMonthChange(date ? date.toDate() : new Date())}
             picker="month"
             style={{ width: '100%' }}
-            format="MMMM YYYY" // Format birbaşa təyin edildi
+            format="MMMM YYYY" 
             allowClear={false}
           />
         </Col>
 
-        {/* --- Departament seçimi (yalnız admin üçün) --- */}
         {user && user.role === 'admin' && (
           <Col xs={24} sm={12} md={8}>
             <label className="font-semibold block mb-2">Departament</label>
@@ -54,8 +47,6 @@ const PerformanceFilters = ({
           </Col>
         )}
         
-        {/* --- YENİ: Qiymətləndirmə Statusu filtri --- */}
-        {/* Bu blok yalnız rəhbər səlahiyyəti olduqda VƏ "Komandam" vərəqi aktiv olduqda görünür */}
         {canEvaluate && activeTab === 'team' && (
           <Col xs={24} sm={12} md={8}>
             <label className="font-semibold block mb-2">Qiymətləndirmə Statusu</label>

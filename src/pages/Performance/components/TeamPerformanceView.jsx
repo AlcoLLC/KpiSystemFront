@@ -1,22 +1,21 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, Select, Avatar, message, Spin } from 'antd';
+import { Input, Select, Avatar, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import ReusableTable from '../../../components/ReusableTable';
 import tasksApi from '../../../api/tasksApi';
 import { useDebounce } from '../../../hooks/useDebounce';
-import useAuth from '../../../hooks/useAuth'; // useAuth importu əlavə edirik
+import useAuth from '../../../hooks/useAuth'; 
 
 const TeamPerformanceView = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // İstifadəçi məlumatını alırıq
+  const { user } = useAuth(); 
   const [subordinates, setSubordinates] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ search: '', department: null });
   const debouncedSearch = useDebounce(filters.search, 500);
 
-  // Filterin görünməsi üçün icazə məntiqi
   const canViewDepartmentFilter = user && (user.role === 'admin' || user.role === 'top_management');
 
   useEffect(() => {
@@ -31,7 +30,7 @@ const TeamPerformanceView = () => {
         const response = await tasksApi.getSubordinates(params);
         setSubordinates(response.data);
       } catch (error) {
-        message.error("İşçilərin siyahısını yükləmək mümkün olmadı.");
+        message.error("İşçilərin siyahısını yükləmək mümkün olmadı.", error);
       } finally {
         setLoading(false);
       }

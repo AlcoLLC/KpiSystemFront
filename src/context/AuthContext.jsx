@@ -16,11 +16,9 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   
-  // Token yenilənməsini idarə etmək üçün
   const tokenRefreshTimer = useRef(null);
 
   const logout = useCallback(() => {
-    // Timer-i təmizlə
     if (tokenRefreshTimer.current) {
       clearTimeout(tokenRefreshTimer.current);
     }
@@ -33,15 +31,12 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   }, [navigate]);
 
-  // Token-in bitmə vaxtını hesablayan və avtomatik yeniləyən funksiya
   const scheduleTokenRefresh = useCallback((accessToken) => {
     try {
-      // JWT token-in payload hissəsini decode et
       const payload = JSON.parse(atob(accessToken.split('.')[1]));
-      const exp = payload.exp * 1000; // millisaniyəyə çevir
+      const exp = payload.exp * 1000; 
       const now = Date.now();
       
-      // Token bitməzdən 5 dəqiqə əvvəl yenilə
       const refreshTime = exp - now - (5 * 60 * 1000);
       
       if (refreshTime > 0) {
@@ -59,7 +54,6 @@ export const AuthProvider = ({ children }) => {
               localStorage.setItem("tokens", JSON.stringify(newTokens));
               axiosClient.defaults.headers.common["Authorization"] = `Bearer ${newTokens.access}`;
               
-              // Növbəti refresh üçün planla
               scheduleTokenRefresh(newTokens.access);
             }
           } catch (err) {
@@ -81,7 +75,6 @@ export const AuthProvider = ({ children }) => {
           "Authorization"
         ] = `Bearer ${storedTokens.access}`;
         
-        // Avtomatik token yeniləməsini planla
         scheduleTokenRefresh(storedTokens.access);
         
         try {
@@ -91,7 +84,6 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem("user", JSON.stringify(latestUserData));
         } catch (err) {
           console.error("İstifadəçi məlumatları sinxronizasiya edilərkən xəta baş verdi:", err);
-          // Əgər profile məlumatlarını ala bilmiriksə, logout et
           if (err.response?.status === 401 || err.response?.status === 403) {
             logout();
           }
@@ -101,7 +93,6 @@ export const AuthProvider = ({ children }) => {
 
     syncUserData();
     
-    // Cleanup funksiyası
     return () => {
       if (tokenRefreshTimer.current) {
         clearTimeout(tokenRefreshTimer.current);
@@ -125,7 +116,6 @@ export const AuthProvider = ({ children }) => {
 
       axiosClient.defaults.headers.common["Authorization"] = `Bearer ${access}`;
       
-      // Avtomatik token yeniləməsini planla
       scheduleTokenRefresh(access);
       
       navigate("/");
@@ -152,7 +142,6 @@ export const AuthProvider = ({ children }) => {
     logout();
   };
 
-  // İstifadəçi profilini yeniləmək üçün funksiya
   const refreshUserProfile = async () => {
     try {
       const response = await accountsApi.getProfile();

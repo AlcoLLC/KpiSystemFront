@@ -4,7 +4,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useManagementData } from '../hooks/useManagementData';
 import DepartmentForm from './forms/DepartmentForm';
 import { useDebounce } from '../../../hooks/useDebounce';
-import ActionButton from './ActionButton'; // DƏYİŞİKLİK: Yeni komponenti import edirik
+import ActionButton from './ActionButton'; 
 
 const { useModal } = Modal;
 
@@ -32,7 +32,7 @@ const DepartmentsTab = () => {
                 message.success('Departament uğurla yaradıldı!');
             }
             handleCancel();
-        } catch (error) { message.error('Əməliyyat uğursuz oldu.'); }
+        } catch (error) { message.error('Əməliyyat uğursuz oldu.', error); }
     };
     
     const columns = useMemo(() => [
@@ -41,7 +41,6 @@ const DepartmentsTab = () => {
             title: 'Əməliyyatlar', key: 'action', width: 120,
             render: (_, record) => (
                 <Space size={4}>
-                    {/* DƏYİŞİKLİK: Köhnə düymələri ActionButton ilə əvəz edirik */}
                     <ActionButton
                         tooltip="Redaktə et"
                         icon={<EditOutlined style={{ fontSize: '20px' }} />}

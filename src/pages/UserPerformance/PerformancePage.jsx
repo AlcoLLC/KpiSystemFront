@@ -22,6 +22,8 @@ const PerformancePage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEvalModalVisible, setIsEvalModalVisible] = useState(false);
   const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
+  const [evaluationStatus, setEvaluationStatus] = useState('all'); 
+
 
   const {
     myCard,
@@ -32,7 +34,7 @@ const PerformancePage = () => {
     loading,
     canEvaluate,
     refetchData,
-  } = usePerformanceData(selectedMonth, selectedDepartment);
+  } = usePerformanceData(selectedMonth, selectedDepartment, evaluationStatus);
 
   const handleOpenEvalModal = (userForModal) => {
     setSelectedUser(userForModal);
@@ -99,6 +101,8 @@ const PerformancePage = () => {
         onMonthChange={setSelectedMonth}
         departments={departments}
         onDepartmentChange={setSelectedDepartment}
+        evaluationStatus={evaluationStatus}
+        onEvaluationStatusChange={setEvaluationStatus}
       />
 
       <Spin spinning={loading}>{renderContent()}</Spin>

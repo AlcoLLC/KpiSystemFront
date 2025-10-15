@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Input, Select, message } from 'antd';
 import accountsApi from '../../../../api/accountsApi';
 
@@ -18,7 +18,7 @@ const DepartmentForm = ({ form, onFinish, initialValues }) => {
                 setLeads(leadsRes.data.results || leadsRes.data);
                 setManagers(managersRes.data.results || managersRes.data);
             } catch (error) {
-                message.error("Rəhbər və menecer siyahısını yükləmək olmadı.");
+                message.error("Rəhbər və menecer siyahısını yükləmək olmadı.", error);
             } finally {
                 setLoading(false);
             }

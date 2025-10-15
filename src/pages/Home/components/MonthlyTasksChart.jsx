@@ -49,7 +49,7 @@ const MonthlyTasksChart = () => {
           ]
         });
       } catch (error) {
-        message.error('Aylıq statistikanı yükləmək mümkün olmadı.');
+        message.error('Aylıq statistikanı yükləmək mümkün olmadı.', error);
       } finally {
         setLoading(false);
       }

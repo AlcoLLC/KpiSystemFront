@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Outlet, Link, NavLink } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { BsSun, BsMoon, BsBell } from 'react-icons/bs';
 import { FiUser, FiUsers } from 'react-icons/fi';
 import { AiFillHome, AiOutlineCalendar } from 'react-icons/ai';
@@ -96,7 +96,7 @@ export default function MainLayout() {
                 </li>
               )}
               <li className="mt-5 w-full">
-                <NavLink to="//" className={navLinkClasses}>
+                <NavLink to="/report/" className={navLinkClasses}>
                   <HiOutlineDocumentReport size={24} /> Tarixçə
                 </NavLink>
               </li>
@@ -164,14 +164,18 @@ export default function MainLayout() {
                           ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
                           : 'İstifadəçi Adı'}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{user ? user.role_display : 'Vəzifə'}</p> {/* Mətn rəngi dəyişdirildi */}
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{user ? user.role_display : 'Vəzifə'}</p>
                     </div>
                   </div>
-                  <Link to="/profile" className={navLinkClasses({ isActive: false })}>
+                  <NavLink                          
+                    to="/profile"
+                    className={navLinkClasses}            
+                    onClick={() => setDropdownOpen(false)}   
+                  >
                     <div className="flex items-center gap-2">
                       <FiUser className="w-5 h-5" /> Profilim
                     </div>
-                  </Link>
+                  </NavLink>
                   <button
                     onClick={logout}
                     className={`${navLinkClasses({ isActive: false })} w-full`}

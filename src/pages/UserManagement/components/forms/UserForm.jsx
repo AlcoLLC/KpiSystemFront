@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Input, Select, Upload, message, Row, Col, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import accountsApi from '../../../../api/accountsApi';
@@ -17,7 +17,6 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
         { value: "employee", label: "İşçi" },
     ];
 
-    // Vəzifələri bir dəfə yükləyirik
     useEffect(() => {
         const fetchPositions = async () => {
             try {
@@ -30,7 +29,6 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
         fetchPositions();
     }, []);
 
-    // Departamentləri isə yalnız "rol" dəyişdikdə yükləyirik
     useEffect(() => {
         const fetchDepartments = async () => {
             if (!selectedRole) {
@@ -52,7 +50,7 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
                 }
                 setDepartments(deptRes.data.results || deptRes.data || []);
             } catch (error) {
-                message.error("Departamentləri yükləmək mümkün olmadı.");
+                message.error("Departamentləri yükləmək mümkün olmadı.", error);
             } finally {
                 setDeptsLoading(false);
             }

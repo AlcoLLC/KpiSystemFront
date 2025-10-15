@@ -1,4 +1,3 @@
-import React from 'react';
 import TaskActions from '../components/TaskActions';
 import { getTaskTableColumns } from '../../../features/tasks/utils/taskUtils.jsx';
 

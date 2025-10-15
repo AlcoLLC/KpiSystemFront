@@ -1,7 +1,6 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty, Tooltip } from 'antd';
-import { UserOutlined, CheckCircleOutlined, SyncOutlined, WarningOutlined, TrophyOutlined, StarOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Statistic, Progress, Avatar, Tag, Skeleton, Empty } from 'antd';
+import { UserOutlined, CheckCircleOutlined, SyncOutlined, WarningOutlined, TrophyOutlined } from '@ant-design/icons';
 import KpiMonthlyChart from './KpiMonthlyChart';
 
 const PerformanceDashboard = ({ loading, performanceData }) => {
@@ -33,7 +32,6 @@ const PerformanceDashboard = ({ loading, performanceData }) => {
                                 <Tag color="blue" className="mt-2">{user.role}</Tag>
                             </div>
                             
-                            {/* DƏYİŞİKLİK BURADADIR */}
                             <div className="w-full pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col items-center">
                                 <p className="text-sm font-semibold mb-3 text-gray-600 dark:text-gray-300">Son 90 Günün Ortalama KPI Balı</p>
                                 <Progress 

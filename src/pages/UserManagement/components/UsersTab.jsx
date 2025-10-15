@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Table, Space, Modal, message, Form, Input, Select, Avatar, Button as AntButton } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useManagementData } from '../hooks/useManagementData';
 import UserForm from './forms/UserForm';
 import { useDebounce } from '../../../hooks/useDebounce';
 import accountsApi from '../../../api/accountsApi';
-import ActionButton from './ActionButton'; // DƏYİŞİKLİK: Yeni komponenti import edirik
+import ActionButton from './ActionButton';
 
 const { useModal } = Modal;
 
@@ -18,7 +18,6 @@ const UsersTab = () => {
     const [filters, setFilters] = useState({ search: '', role: null, position: null });
     const debouncedSearch = useDebounce(filters.search, 500);
 
-    // ... (qalan state və useEffect-lər eyni qalır)
     const [positions, setPositions] = useState([]);
     useEffect(() => {
         const fetchPositions = async () => {
@@ -94,7 +93,6 @@ const UsersTab = () => {
             title: 'Əməliyyatlar', key: 'action', width: 120, fixed: 'right', className: 'dark:bg-[#1B232D]',
             render: (_, record) => (
                 <Space size={4}>
-                    {/* DƏYİŞİKLİK: Köhnə düymələri ActionButton ilə əvəz edirik */}
                     <ActionButton
                         tooltip="Redaktə et"
                         icon={<EditOutlined style={{ fontSize: '20px' }} />}
