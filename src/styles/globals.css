@@ -532,6 +532,14 @@ body {
   align-items: center;
 }
 
-.dark .ant-upload-list-item-name, .dark .anticon-close-circle {
+.dark .ant-upload-list-item-name, .dark .anticon-close-circle, .dark .react-datepicker__input-container {
   color: #e2e8f0 !important;
+}
+
+.dark .react-datepicker {
+  background-color: rgb(55 65 81 / 1) !important;
+}
+
+.dark .react-datepicker__day, .dark .react-datepicker__day-name {
+  color: rgb(255 255 255 / 1);
 }
