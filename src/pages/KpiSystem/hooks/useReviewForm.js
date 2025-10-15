@@ -6,6 +6,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
   const [starRating, setStarRating] = useState(5);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
 
   const isOwnEvaluation = currentUser?.id === task?.assignee;
   const maxScore = isOwnEvaluation ? 10 : 100;
@@ -13,6 +14,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
   const resetModal = () => {
     setStarRating(isOwnEvaluation ? 5 : 50); 
     setNote("");
+    setFileList([]);
   };
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
         evaluatee_id: task.assignee,
         score: starRating,
         comment: note.trim() || null,
+        attachment: fileList.length > 0 ? fileList[0].originFileObj : null,
       };
       await kpiAPI.createEvaluation(evaluationData);
       message.success(
@@ -48,7 +51,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
     } finally {
       setLoading(false);
     }
-  }, [loading, task, starRating, note, isOwnEvaluation, onClose]); 
+  }, [loading, task, starRating, note, fileList, isOwnEvaluation, onClose]); 
 
   const scoreDescription = useMemo(() => {
     const thresholds = isOwnEvaluation
@@ -65,6 +68,8 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
     starRating,
     setStarRating,
     note,
+    fileList,
+    setFileList,
     setNote,
     loading,
     handleSave,

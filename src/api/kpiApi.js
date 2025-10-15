@@ -5,12 +5,44 @@ const kpiAPI = {
     return apiService.get("/kpis/kpi/", { params });
   },
 
-  createEvaluation: (data) => {
-    return apiService.post("/kpis/kpi/", data);
+   createEvaluation: (data) => {
+    const formData = new FormData();
+    
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      if (value !== null && value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    return apiService.post("/kpis/kpi/", formData, config);
   },
 
   updateEvaluation: (id, data) => {
-    return apiService.patch(`/kpis/kpi/${id}/`, data);
+    const formData = new FormData();
+
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      if (value === null) {
+        formData.append(key, ''); 
+      } else if (value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
+    return apiService.patch(`/kpis/kpi/${id}/`, formData, config);
   },
 
   deleteEvaluation: (id) => {

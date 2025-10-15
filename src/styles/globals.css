@@ -555,3 +555,8 @@ body {
 .react-datepicker-popper {
   z-index: 10000;
 }
+
+.react-datepicker-wrapper {
+  width: 100%;
+    max-width: 100%;
+}

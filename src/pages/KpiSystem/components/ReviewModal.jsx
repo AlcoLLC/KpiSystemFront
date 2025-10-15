@@ -1,9 +1,10 @@
-import { Input } from "antd";
+import { Input, Upload, Button, Form } from "antd"; // <--- DÜZƏLİŞ BURADADIR
 import { 
     MessageOutlined, 
     UserOutlined, 
     StarOutlined,
-    InfoCircleOutlined 
+    InfoCircleOutlined,
+    UploadOutlined 
 } from "@ant-design/icons";
 import { useReviewForm } from "../hooks/useReviewForm";
 import BaseModal from "./BaseModal";
@@ -24,6 +25,8 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
     maxScore,
     scoreDescription,
     resetModal,
+    fileList,
+    setFileList,
   } = useReviewForm({ isOpen, onClose, task, currentUser });
 
   const modalTitle = isOwnEvaluation 
@@ -33,6 +36,10 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
   const handleClose = () => {
     resetModal();
     onClose(false);
+  };
+
+  const handleFileChange = ({ fileList }) => {
+    setFileList(fileList.slice(-1));
   };
   
   const okText = isOwnEvaluation ? "Öz Dəyərləndirməni Qeyd Et" : "Yekun Dəyərləndirməni Qeyd Et";
@@ -90,6 +97,16 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
             </div>
           </div>
         </div>
+        <Form.Item label="Fayl Əlavə Et (Könüllü)">
+          <Upload
+            fileList={fileList}
+            onChange={handleFileChange}
+            beforeUpload={() => false} // Faylın avtomatik yüklənməsinin qarşısını al
+            maxCount={1}
+          >
+            <Button icon={<UploadOutlined />}>Fayl Seç</Button>
+          </Upload>
+        </Form.Item>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
             <MessageOutlined className="mr-2 text-blue-500" /> Qeyd:

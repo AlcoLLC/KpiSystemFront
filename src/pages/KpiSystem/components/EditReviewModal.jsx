@@ -1,5 +1,5 @@
-import { Input } from "antd";
-import { MessageOutlined, StarOutlined } from "@ant-design/icons";
+import { Input, Upload, Button, Form  } from "antd";
+import { MessageOutlined, StarOutlined, UploadOutlined  } from "@ant-design/icons";
 import { useEditReview } from "../hooks/useEditReview";
 import BaseModal from "./BaseModal";
 import ScoreDisplay from "./ScoreDisplay";
@@ -18,9 +18,15 @@ const EditReviewModal = ({ isOpen, onClose, evaluation }) => {
     isSelfEval,
     maxScore,
     scoreDescription,
+    fileList,
+    setFileList,
   } = useEditReview({ isOpen, onClose, evaluation });
 
   const modalTitle = `${isSelfEval ? "Şəxsi" : "Yekun"} Dəyərləndirməni Redaktə Et: ${evaluation?.task?.title || ""}`;
+
+  const handleFileChange = ({ fileList }) => {
+    setFileList(fileList.slice(-1));
+  }
 
   return (
     <BaseModal
@@ -51,6 +57,17 @@ const EditReviewModal = ({ isOpen, onClose, evaluation }) => {
             </div>
           </div>
         </div>
+
+        <Form.Item label="Fayl Əlavə Et (Könüllü)">
+          <Upload
+            fileList={fileList}
+            onChange={handleFileChange}
+            beforeUpload={() => false} 
+            maxCount={1}
+          >
+            <Button icon={<UploadOutlined />}>Fayl Seç</Button>
+          </Upload>
+        </Form.Item>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
