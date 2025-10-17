@@ -7,7 +7,7 @@ import PrivateRoute from '../components/PrivateRoute';
 import PublicRoute from '../components/PublicRoute';
 import Profile from '../pages/Profile';
 import KpiSystem from '../pages/KpiSystem/KpiSystem';
-import Report from '../pages/Report';
+import Report from '../pages/Report/Report';
 import Calendar from '../pages/Calendar/Calendar';
 import Performance from '../pages/Performance/Performance';
 import PerformancePage from '../pages/UserPerformance/PerformancePage';

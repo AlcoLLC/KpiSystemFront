@@ -1,5 +1,5 @@
-import { Card, Descriptions, Button, Tooltip } from "antd";
-import { UserOutlined, StarOutlined, EditOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Button, Tooltip, Tag } from "antd";
+import { UserOutlined, StarOutlined, EditOutlined, PaperClipOutlined  } from "@ant-design/icons";
 import ScoreDisplay from "./ScoreDisplay";
 import EvaluationHistory from "./EvaluationHistory";
 import { formatDate } from './../../../utils/dateUtils';
@@ -54,6 +54,15 @@ const SingleEvaluationCard = ({ evaluation, type, canEdit, onEdit }) => {
             <blockquote className="italic text-slate-600 m-0 p-0">
               "{evaluation.comment}"
             </blockquote>
+          </Descriptions.Item>
+        )}
+        {evaluation.attachment && (
+          <Descriptions.Item label="Əlavə">
+            <a href={evaluation.attachment} target="_blank" rel="noopener noreferrer">
+              <Tag icon={<PaperClipOutlined />} color="blue">
+                Əlavə edilmiş fayl
+              </Tag>
+            </a>
           </Descriptions.Item>
         )}
         

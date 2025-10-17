@@ -6,6 +6,7 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
   const [starRating, setStarRating] = useState(1);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
 
   const isSelfEval = evaluation?.evaluation_type === "SELF";
   const maxScore = isSelfEval ? 10 : 100;
@@ -15,6 +16,16 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
       const currentScore = isSelfEval ? evaluation.self_score : evaluation.superior_score;
       setStarRating(currentScore || (isSelfEval ? 5 : 50));
       setNote(evaluation.comment || "");
+      if (evaluation.attachment) {
+        setFileList([{
+          uid: '-1',
+          name: evaluation.attachment.split('/').pop(),
+          status: 'done',
+          url: evaluation.attachment,
+        }]);
+      } else {
+        setFileList([]);
+      }
     }
   }, [isOpen, evaluation, isSelfEval]);
 
@@ -24,6 +35,13 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
 
     try {
       const payload = { score: starRating, comment: note.trim() || null };
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        payload.attachment = fileList[0].originFileObj;
+      } 
+      else if (fileList.length === 0 && evaluation.attachment) {
+        payload.attachment = null;
+      }
+
       await kpiAPI.updateEvaluation(evaluation.id, payload);
       message.success("Dəyərləndirmə uğurla yeniləndi!");
       onClose(true);
@@ -52,6 +70,8 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
     setStarRating,
     note,
     setNote,
+    fileList,
+    setFileList,
     loading,
     handleSave,
     isSelfEval,
