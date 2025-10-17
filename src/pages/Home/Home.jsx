@@ -19,7 +19,6 @@ function Home() {
             <MonthlyTasksChart />
           </div>
           <div className="lg:col-span-2 p-4 rounded-lg shadow bg-gray-50 dark:bg-[#131920] flex items-center justify-center relative">
-            <h4 className="text-md font-semibold mb-4 absolute top-4 left-4 dark:text-gray-300">Prioritetə Görə Bölgü</h4>
             <PriorityDistributionChart />
           </div>
         </div>
