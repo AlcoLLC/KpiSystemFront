@@ -88,9 +88,9 @@ export default function MainLayout() {
                   <AiOutlineCalendar size={24} /> Təqvim
                 </NavLink>
               </li>
-                            {isAdmin && (
+               {isAdmin && (
                 <li className="mt-5 w-full">
-                  <NavLink to="/user-management" className={navLinkClasses}>
+                  <NavLink to="/user-management/" className={navLinkClasses}>
                     <FiUsers size={24} /> İstifadəçilər
                   </NavLink>
                 </li>
@@ -115,7 +115,7 @@ export default function MainLayout() {
             <button onClick={() => dispatch(toggleTheme())} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
               {isDark ? <BsSun className="w-6 h-6 text-yellow-400" /> : <BsMoon className="w-6 h-6 text-gray-600" />}
             </button>
-            <div className="relative">
+            {/* <div className="relative">
               <button className="p-2 rounded-full hover:bg-gray-400 transition">
                 <BsBell className="w-6 h-6" />
                 {notifications > 0 && (
@@ -124,7 +124,7 @@ export default function MainLayout() {
                   </span>
                 )}
               </button>
-            </div>
+            </div> */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
