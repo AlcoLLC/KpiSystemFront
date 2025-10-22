@@ -9,7 +9,7 @@ import { MdOutlineAnalytics, MdSpeed, MdLogout } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../features/theme/themeSlice';
 import useAuth from '../hooks/useAuth';
-
+import logo from "/images/kpi_logo.webp";
 export default function MainLayout() {
   const dispatch = useDispatch();
   const isDark = useSelector((state) => state.theme.isDark);
@@ -38,7 +38,7 @@ export default function MainLayout() {
   }, [dropdownRef]);
 
   const navLinkClasses = ({ isActive }) =>
-    `nav-link flex items-center gap-3 w-full p-3 rounded-md transition-colors duration-300 ease-in-out cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${
+    `nav-link flex items-center gap-3 w-full p-[0.6rem] rounded-md transition-colors duration-300 ease-in-out cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 text-base ${
       isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
 
@@ -48,10 +48,9 @@ export default function MainLayout() {
     <div className="flex">
       <aside className="main-layout-aside w-80 min-h-screen shadow-md bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border-r dark:border-gray-700">
         <div className="fixed w-80 p-6">
-          <div className="my-5 flex justify-center">
-            <h1 className="text-xl font-bold">ALCO KPI</h1>
+          <div className="flex justify-center"><img src={logo} alt="Alco Metrics" className='w-[26vh]' />
           </div>
-          <nav className="flex flex-col justify-between h-[85vh]">
+          <nav className="flex flex-col justify-between h-[69vh]">
             <ul className="space-y-2 text-lg">
               <li className="mt-5 w-full">
                 <NavLink to="/" className={navLinkClasses}>
@@ -104,7 +103,7 @@ export default function MainLayout() {
               
             </ul>
              <button onClick={logout} className={navLinkClasses({ isActive: false })}>
-              <div className="flex items-center gap-2"> <MdLogout size={24} /> Çıxış </div>
+              <div className="flex items-center gap-2 text-base"> <MdLogout size={24} /> Çıxış </div>
             </button>
           </nav>
         </div>
@@ -143,7 +142,7 @@ export default function MainLayout() {
                 )}
               </button>
               {dropdownOpen && (
-                 <div className="main-layout-dropdown absolute right-0 mt-2 w-72 rounded-lg shadow-lg p-3 z-50 bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
+                 <div className="main-layout-dropdown absolute right-0 mt-2 w-72 rounded-lg shadow-lg  p-[0.6rem] z-50 bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
                   <div className="flex mb-3 gap-3 items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                       {user && user.profile_photo ? (
