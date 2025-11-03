@@ -77,11 +77,11 @@ export default function MainLayout() {
                   <MdSpeed size={24} /> Performans
                 </NavLink>
               </li>
-              <li className="mt-5 w-full">
+              {/* <li className="mt-5 w-full">
                 <NavLink to="//" className={navLinkClasses}>
                   <FaTasks size={24} /> Dolum Sexi
                 </NavLink>
-              </li>
+              </li> */}
               <li className="mt-5 w-full">
                 <NavLink to="/calendar/" className={navLinkClasses}>
                   <AiOutlineCalendar size={24} /> Təqvim
