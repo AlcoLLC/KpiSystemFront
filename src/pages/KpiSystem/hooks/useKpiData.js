@@ -15,7 +15,7 @@ export const useKpiData = () => {
             const tasksResponse = await kpiAPI.getKpiDashboardTasks();
             let fetchedTasks = tasksResponse.data.results || tasksResponse.data || [];
 
-            const isManager = ["admin", "top_management", "department_lead", "manager"].includes(currentUser?.role);
+            const isManager = ["admin", "ceo", "top_management", "department_lead", "manager"].includes(currentUser?.role);
             if (isManager) {
                 const pendingResponse = await kpiAPI.getPendingForMe();
                 const pendingForMeIds = new Set((pendingResponse.data || []).map(t => t.id));

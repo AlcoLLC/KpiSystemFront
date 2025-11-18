@@ -70,15 +70,15 @@ export const getFormConfig = (users, usersLoading, permissions) => {
     }
   ];
 
-  if (permissions?.userRole === 'admin' || permissions?.userRole === 'top_management') {
-    allFields.splice(4, 0, {
-      name: 'status',
-      label: 'Status',
-      type: 'select',
-      options: STATUS_OPTIONS,
-      span: 12
-    });
-  }
+  if (permissions?.userRole === 'admin' || permissions?.userRole === 'top_management' || permissions?.userRole === 'ceo') {
+        allFields.splice(4, 0, {
+            name: 'status',
+            label: 'Status',
+            type: 'select',
+            options: STATUS_OPTIONS,
+            span: 12
+        });
+    }
 
   const hiddenFields = permissions.formConfig?.hideFields || [];
   return allFields.filter((field) => !hiddenFields.includes(field.name));

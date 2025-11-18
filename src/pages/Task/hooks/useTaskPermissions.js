@@ -13,6 +13,9 @@ export const useTaskPermissions = (viewMode) => {
     const isSuperior = !isEmployee;
     const isAdmin = user.role === 'admin';
 
+    const isCEO = user.role === 'ceo';
+    const isTopManagement = user.role === 'top_management';
+
     const showAssigneeColumn = isSuperior && viewMode === 'team';
     const showAssigneeFilter = isSuperior && viewMode === 'team';
 
@@ -40,7 +43,45 @@ export const useTaskPermissions = (viewMode) => {
       };
     }
 
-    if (isEmployee) {
+    if (isCEO) {
+            canCreate = true;
+            showViewSwitcher = true;
+            formConfig = {
+                hideFields: [], 
+                defaultValues: {}
+            };
+
+            return {
+                canViewPage: true,
+                userRole: 'ceo',
+                isEmployee: false,
+                isSuperior: true,
+                canCreate,
+                canEdit: (task) => isAdmin || (isCEO && task.assignee_obj?.role === 'top_management' && viewMode === 'team'),
+                canDelete: (task) => isAdmin || (isCEO && task.assignee_obj?.role === 'top_management' && viewMode === 'team'),
+                canChangeStatus: (task) => user.id === task.assignee, 
+                showAssigneeColumn: true,
+                showAssigneeFilter: true,
+                showViewSwitcher,
+                formConfig
+            };
+        }
+
+        if (isTopManagement) {
+            if (viewMode === 'my') {
+                formConfig = {
+                    hideFields: ['assignee', 'status'],
+                    defaultValues: { assignee: user.id }
+                };
+            } else {
+                 formConfig = {
+                    hideFields: ['status'],
+                    defaultValues: {}
+                 };
+            }
+        }
+
+      else if (isEmployee) {
       showViewSwitcher = false;
       formConfig = {
         hideFields: ['assignee', 'status'],

@@ -23,9 +23,11 @@ const TaskFormModal = ({ open, mode, initialData, onCancel, onFinish, loading, u
         });
       } else { 
         form.resetFields();
-        if (permissions.formConfig?.defaultValues) {
-            form.setFieldsValue(permissions.formConfig.defaultValues);
-        }
+        const defaultValues = permissions.formConfig?.defaultValues || {};
+
+        form.setFieldsValue({
+          ...defaultValues 
+        });
       }
     }
   }, [open, mode, initialData, form, permissions]);

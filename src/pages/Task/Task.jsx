@@ -27,7 +27,9 @@ function Task() {
   const [modal, contextHolder] = useModal();
   const location = useLocation();
   
-  const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my'); 
+  const [viewMode, setViewMode] = useState(
+    user?.role === 'ceo' ? 'team' : (user?.role !== 'employee' ? 'team' : 'my')
+);
   const permissions = useTaskPermissions(viewMode);
 
   const [data, setData] = useState([]);
@@ -61,40 +63,51 @@ function Task() {
   }, [location.state]);
 
   const fetchTasksWithFilters = useCallback(async () => {
-    if (!user || !user.id || !isReadyToFetch) return;
-    
-    const params = {
-      page: pagination.current, page_size: pagination.pageSize,
-      search: debouncedSearchText || undefined,
-      status: filters.status || undefined, 
-      priority: filters.priority || undefined, 
-      overdue: filters.overdue || undefined,
-      department: filters.department || undefined
-    };
+        if (!user || !user.id || !isReadyToFetch) return;
+        
+        const params = {
+            page: pagination.current, pageSize: pagination.pageSize,
+            search: debouncedSearchText || undefined,
+            status: filters.status || undefined, 
+            priority: filters.priority || undefined, 
+            overdue: filters.overdue || undefined,
+            department: filters.department || undefined
+        };
 
-    if (viewMode === 'my' || permissions.isEmployee) {
-        params.assignee = user.id;
-    } else {
-        params.assignee = filters.assignee || undefined;
-        params.exclude_assignee = user.id;
-    }
+        const isViewingMyTasks = viewMode === 'my' || permissions.isEmployee;
 
-    if (filters.date_range?.length === 2) {
-      params.start_date_after = filters.date_range[0].format('YYYY-MM-DD');
-      params.due_date_before = filters.date_range[1].format('YYYY-MM-DD');
-    }
-    Object.keys(params).forEach(key => (params[key] === undefined || params[key] === null) && delete params[key]);
+        if (isViewingMyTasks) {
+            params.assignee = user.id;
+        } else {
+            if (permissions.userRole === 'admin' || permissions.userRole === 'ceo') {
+                 params.assignee = filters.assignee || undefined;
+            } else if (permissions.isSuperior) {
+                params.assignee = filters.assignee || undefined;
+            }
 
-    try {
-      const response = await tasksApi.getTasks(params);
-      const responseData = response.data;
-      setData(responseData.results || responseData || []);
-      setPagination(prev => ({ ...prev, total: responseData.count || 0 }));
-    } catch (error) {
-      message.error('Tapşırıqları yükləmək mümkün olmadı.', error);
-      setData([]);
-    }
-  }, [user, pagination.current, pagination.pageSize, debouncedSearchText, filters, viewMode, permissions.isEmployee, isReadyToFetch]);
+            if (permissions.isSuperior && permissions.userRole !== 'ceo' && permissions.userRole !== 'admin') {
+                params.exclude_assignee = user.id;
+            }
+        }
+
+
+        if (filters.date_range?.length === 2) {
+            params.start_date_after = filters.date_range[0].format('YYYY-MM-DD');
+            params.due_date_before = filters.date_range[1].format('YYYY-MM-DD');
+        }
+        Object.keys(params).forEach(key => (params[key] === undefined || params[key] === null || (typeof params[key] === 'string' && params[key].trim() === '')) && delete params[key]);
+
+
+        try {
+            const response = await tasksApi.getTasks(params);
+            const responseData = response.data;
+            setData(responseData.results || responseData || []);
+            setPagination(prev => ({ ...prev, total: responseData.count || 0 }));
+        } catch (error) {
+            message.error('Tapşırıqları yükləmək mümkün olmadı.', error);
+            setData([]);
+        }
+    }, [user, pagination.current, pagination.pageSize, debouncedSearchText, filters, viewMode, permissions.isEmployee, permissions.isSuperior, permissions.userRole, isReadyToFetch]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -231,13 +244,13 @@ function Task() {
     <div>
       <h2 className="px-1 text-xl font-medium mb-6 text-black dark:text-white">Tapşırıqlar</h2>
       {permissions.showViewSwitcher && (
-        <div className="mb-4">
-          <Radio.Group value={viewMode} onChange={handleViewModeChange}>
-            <Radio.Button value="my"><UserOutlined /> Mənim tapşırıqlarım</Radio.Button>
-            <Radio.Button value="team"><TeamOutlined /> Əməkdaşların tapşırıqları</Radio.Button>
-          </Radio.Group>
-        </div>
-      )}
+        <div className="mb-4">
+          <Radio.Group value={viewMode} onChange={handleViewModeChange}>
+            {user?.role !== 'ceo' && <Radio.Button value="my"><UserOutlined /> Mənim tapşırıqlarım</Radio.Button>} 
+            <Radio.Button value="team"><TeamOutlined /> Əməkdaşların tapşırıqları</Radio.Button>
+          </Radio.Group>
+        </div>
+      )}
       <div className="p-6 rounded-lg shadow-md bg-white dark:bg-[#1B232D]">
         <div className="mb-6">
           <div className="flex flex-wrap gap-4 items-center justify-between mb-4">

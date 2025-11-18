@@ -130,8 +130,14 @@ const UsersTab = () => {
         },
     ], [form, deleteItem, modal]);
 
-    const ROLE_CHOICES = [ { value: "top_management", label: "Yuxarı İdarəetmə" }, { value: "department_lead", label: "Departament Rəhbəri" }, { value: "manager", label: "Menecer" }, { value: "employee", label: "İşçi" }];
-
+    const ROLE_CHOICES = [ 
+            { value: "admin", label: "Admin" }, 
+            { value: "ceo", label: "CEO" }, 
+            { value: "top_management", label: "Yuxarı İdarəetmə" }, 
+            { value: "department_lead", label: "Departament Rəhbəri" }, 
+            { value: "manager", label: "Menecer" }, 
+            { value: "employee", label: "İşçi" }
+        ];
     return (
         <div>
             <div className="flex flex-wrap gap-4 mb-4">

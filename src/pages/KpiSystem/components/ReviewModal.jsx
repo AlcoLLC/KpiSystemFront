@@ -1,4 +1,4 @@
-import { Input, Upload, Button, Form } from "antd"; // <--- DÜZƏLİŞ BURADADIR
+import { Input, Upload, Button, Form } from "antd";
 import { 
     MessageOutlined, 
     UserOutlined, 
@@ -101,7 +101,7 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
           <Upload
             fileList={fileList}
             onChange={handleFileChange}
-            beforeUpload={() => false} // Faylın avtomatik yüklənməsinin qarşısını al
+            beforeUpload={() => false} 
             maxCount={1}
           >
             <Button icon={<UploadOutlined />}>Fayl Seç</Button>

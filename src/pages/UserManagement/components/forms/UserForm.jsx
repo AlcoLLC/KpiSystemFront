@@ -9,8 +9,10 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
     const [positions, setPositions] = useState([]);
     const [deptsLoading, setDeptsLoading] = useState(false);
     const shouldShowDepartmentField = selectedRole === 'employee' || (!isEdit && ['manager', 'department_lead'].includes(selectedRole));
-
+    
     const ROLE_CHOICES = [
+        { value: "admin", label: "Admin" },
+        { value: "ceo", label: "CEO" }, 
         { value: "top_management", label: "Yuxarı İdarəetmə" },
         { value: "department_lead", label: "Departament Rəhbəri" },
         { value: "manager", label: "Menecer" },
@@ -41,7 +43,7 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
                 let deptRes;
                 if (['department_lead', 'manager'].includes(selectedRole)) {
                     deptRes = await accountsApi.getAvailableDepartments(selectedRole);
-                } else if (['employee', 'top_management'].includes(selectedRole)) {
+                } else if (['employee', 'top_management', 'ceo', 'admin'].includes(selectedRole)) {
                     deptRes = await accountsApi.getDepartments();
                 } else {
                     setDepartments([]);
@@ -58,6 +60,17 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
         
         fetchDepartments();
     }, [selectedRole]);
+
+    const handleRoleChange = () => {
+        form.setFieldsValue({ 
+            department: null, 
+            top_managed_departments: [], 
+            ceo_managed_departments: [] 
+        });
+    };
+
+    const showTopManagedDepartments = selectedRole === 'top_management';
+    const showCeoManagedDepartments = selectedRole === 'ceo'; 
 
     return (
         <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
@@ -79,9 +92,19 @@ const UserForm = ({ form, onFinish, isEdit = false, initialValues }) => {
                     </Col>
                 )}
                 
-                {selectedRole === 'top_management' && (
+                {showTopManagedDepartments && (
                      <Col span={24}>
-                        <Form.Item name="top_managed_departments" label="İdarə Edilən Departamentlər">
+                         <Form.Item name="top_managed_departments" label="Top Management - İdarə Edilən Departamentlər">
+                             <Select mode="multiple" allowClear showSearch optionFilterProp="children" loading={deptsLoading} placeholder="Departamentləri seçin">
+                                 {departments.map(d => <Select.Option key={d.id} value={d.id}>{d.name}</Select.Option>)}
+                             </Select>
+                         </Form.Item>
+                     </Col>
+                 )}
+                
+                {showCeoManagedDepartments && (
+                    <Col span={24}>
+                        <Form.Item name="ceo_managed_departments" label="CEO - İdarə Edilən Departamentlər">
                             <Select mode="multiple" allowClear showSearch optionFilterProp="children" loading={deptsLoading} placeholder="Departamentləri seçin">
                                 {departments.map(d => <Select.Option key={d.id} value={d.id}>{d.name}</Select.Option>)}
                             </Select>

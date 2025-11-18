@@ -11,7 +11,7 @@ const TaskFilters = React.memo(({
     departments,
     currentUserRole
 }) => {
-    const showDepartmentFilter = ['admin', 'top_management'].includes(currentUserRole);
+    const showDepartmentFilter = ['admin', 'top_management', 'ceo'].includes(currentUserRole);
 
 
     return (
