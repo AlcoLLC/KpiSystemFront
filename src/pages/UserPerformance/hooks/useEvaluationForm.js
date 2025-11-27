@@ -1,9 +1,12 @@
+// kpi-system-frontend\src\pages\UserPerformance\hooks\useEvaluationForm.js
+
 import { useState, useEffect, useMemo } from 'react';
 import { Form, message } from 'antd';
 import performanceAPI from '../../../api/performanceAPI';
 import { formatForAPI } from '../../../utils/dateFormatter';
 
-export const useEvaluationForm = ({ visible, onClose, user, initialData, evaluationMonth, canEdit }) => {
+// evaluationType əlavə edildi
+export const useEvaluationForm = ({ visible, onClose, user, initialData, evaluationMonth, evaluationType, canEdit }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [displayScore, setDisplayScore] = useState(5);
@@ -13,6 +16,7 @@ export const useEvaluationForm = ({ visible, onClose, user, initialData, evaluat
 
     useEffect(() => {
         if (visible) {
+            // initialData: SuperiorEval və ya TM-Eval ola bilər
             const initialValues = isEditing
                 ? { score: initialData.score, comment: initialData.comment }
                 : { score: 5, comment: '' };
@@ -33,13 +37,16 @@ export const useEvaluationForm = ({ visible, onClose, user, initialData, evaluat
             score: values.score || 0,
             comment: values.comment || "",
             evaluation_date: formatForAPI(dateForAPI),
+            evaluation_type: evaluationType, // ƏSAS DƏYİŞİKLİK: Qiymətləndirmə növü əlavə edilir
         };
 
         try {
             if (isEditing) {
+                // Redaktə edərkən URL-ə ID lazımdır
                 await performanceAPI.updateEvaluation(initialData.id, payload);
                 message.success(`${fullName} üçün dəyərləndirmə uğurla yeniləndi.`);
             } else {
+                // Yaratmaq üçün endpoint
                 await performanceAPI.createEvaluation(payload);
                 message.success(`${fullName} uğurla dəyərləndirildi.`);
             }

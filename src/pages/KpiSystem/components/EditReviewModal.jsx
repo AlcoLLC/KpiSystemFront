@@ -22,7 +22,13 @@ const EditReviewModal = ({ isOpen, onClose, evaluation }) => {
     setFileList,
   } = useEditReview({ isOpen, onClose, evaluation });
 
-  const modalTitle = `${isSelfEval ? "Şəxsi" : "Yekun"} Dəyərləndirməni Redaktə Et: ${evaluation?.task?.title || ""}`;
+  const isTopEval = evaluation?.evaluation_type === "TOP_MANAGEMENT"; // YENİ
+  
+  const modalTitle = isSelfEval 
+    ? "Şəxsi Dəyərləndirməni Redaktə Et" 
+    : isTopEval ? "Yuxarı İdarəetmə Dəyərləndirməsini Redaktə Et" : "Üst Rəhbər Dəyərləndirməsini Redaktə Et";
+  
+  const fullTitle = `${modalTitle}: ${evaluation?.task?.title || ""}`; // Başlığı birləşdiririk
 
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList.slice(-1));
@@ -33,7 +39,7 @@ const EditReviewModal = ({ isOpen, onClose, evaluation }) => {
       open={isOpen}
       onOk={handleSave}
       onCancel={() => onClose(false)}
-      title={modalTitle}
+      title={fullTitle}
       width={600}
       confirmLoading={loading}
       okText="Dəyişiklikləri Yadda Saxla"

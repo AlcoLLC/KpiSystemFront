@@ -24,6 +24,8 @@ const PerformancePage = () => {
   const [isSummaryModalVisible, setIsSummaryModalVisible] = useState(false);
   const [evaluationStatus, setEvaluationStatus] = useState('all'); 
 
+  const [activeEvaluationType, setActiveEvaluationType] = useState(null); 
+  const [activeInitialData, setActiveInitialData] = useState(null);
 
   const {
     myCard,
@@ -36,8 +38,10 @@ const PerformancePage = () => {
     refetchData,
   } = usePerformanceData(selectedMonth, selectedDepartment, evaluationStatus);
 
-  const handleOpenEvalModal = (userForModal) => {
+  const handleOpenEvalModal = (userForModal, type, initialData) => {
     setSelectedUser(userForModal);
+    setActiveEvaluationType(type);
+    setActiveInitialData(initialData); // Superior və ya TM balını ötürür
     setIsEvalModalVisible(true);
   };
 
@@ -50,16 +54,24 @@ const PerformancePage = () => {
     setIsEvalModalVisible(false);
     setIsSummaryModalVisible(false);
     setSelectedUser(null);
+    setActiveEvaluationType(null); // Təmizlə
+    setActiveInitialData(null); // Təmizlə
     if (refresh) {
       refetchData();
     }
   };
 
+  const canEditModal = selectedUser && activeEvaluationType 
+    ? (activeEvaluationType === 'SUPERIOR' ? selectedUser.can_evaluate_superior : selectedUser.can_evaluate_top_management) 
+    : false;
+
+
   const renderContent = () => {
-    const hiddenForRoles = ["top_management", "admin"];
+    const hiddenForRoles = ["ceo", "admin"];
 
     if (!canEvaluate) {
-      return (
+      // ... (canEvaluate false olduqda)
+       return (
         <MyPerformanceView
           userCardData={myCard}
           summaryData={mySummary}
@@ -72,7 +84,7 @@ const PerformancePage = () => {
         <TabPane tab="Komandam" key="team">
           <TeamView
             users={subordinates}
-            onEvaluateClick={handleOpenEvalModal}
+            onEvaluateClick={handleOpenEvalModal} 
             onSummaryClick={handleOpenSummaryModal}
           />
         </TabPane>
@@ -103,27 +115,31 @@ const PerformancePage = () => {
         onDepartmentChange={setSelectedDepartment}
         evaluationStatus={evaluationStatus}
         onEvaluationStatusChange={setEvaluationStatus}
+        canEvaluate={canEvaluate} // Bu filter üçün lazımdır
+        activeTab={activeTab} // Bu filter üçün lazımdır
       />
 
       <Spin spinning={loading}>{renderContent()}</Spin>
 
-      {selectedUser && (
-        <>
-          <UserEvaluationModal
+      {selectedUser && activeEvaluationType && (
+        <UserEvaluationModal
             visible={isEvalModalVisible}
             onClose={handleModalClose}
             user={selectedUser}
-            initialData={selectedUser.selected_month_evaluation}
+            initialData={activeInitialData} // Dəyişdirildi
             evaluationMonth={selectedMonth}
-            canEdit={selectedUser.can_evaluate}
-          />
+            evaluationType={activeEvaluationType} // Dəyişdirildi
+            canEdit={canEditModal} // Dəyişdirildi
+        />
+      )}
+      {/* SummaryModal dəyişməz qalır */}
+      {selectedUser && (
           <SummaryModal
             visible={isSummaryModalVisible}
             onClose={handleModalClose}
             user={selectedUser}
             selectedMonth={selectedMonth}
           />
-        </>
       )}
     </div>
   );

@@ -16,7 +16,7 @@ const TeamPerformanceView = () => {
   const [filters, setFilters] = useState({ search: '', department: null });
   const debouncedSearch = useDebounce(filters.search, 500);
 
-  const canViewDepartmentFilter = user && (user.role === 'admin' || user.role === 'top_management');
+  const canViewDepartmentFilter = user && (user.role === 'admin' || user.role === 'ceo');
 
   useEffect(() => {
     const fetchData = async () => {

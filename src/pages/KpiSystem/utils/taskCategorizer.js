@@ -3,12 +3,13 @@ export const categorizeTasks = (tasks, currentUser) => {
 
     const getEvaluationStatus = (task) => {
         if (!task || !task.evaluations) {
-            return { hasSelfEval: false, hasSuperiorEval: false, evaluations: [] };
-        }
+            return { hasSelfEval: false, hasSuperiorEval: false, hasTopEval: false, evaluations: [] };
+        }
         const evaluations = task.evaluations;
         const hasSelfEval = evaluations.some((e) => e.evaluation_type === "SELF");
         const hasSuperiorEval = evaluations.some((e) => e.evaluation_type === "SUPERIOR");
-        return { hasSelfEval, hasSuperiorEval, evaluations };
+        const hasTopEval = evaluations.some((e) => e.evaluation_type === "TOP_MANAGEMENT");
+        return { hasSelfEval, hasSuperiorEval, hasTopEval, evaluations };
     };
 
     const categorized = {
@@ -23,19 +24,31 @@ export const categorizeTasks = (tasks, currentUser) => {
     tasks.forEach(task => {
         if (!task?.assignee) return;
 
-        const { hasSelfEval, hasSuperiorEval, evaluations } = getEvaluationStatus(task);
+        const { hasSelfEval, hasSuperiorEval, hasTopEval, evaluations } = getEvaluationStatus(task);
+
+        const isEvaluatedByMe = evaluations.some(e => 
+            (e.evaluation_type === 'SUPERIOR' || e.evaluation_type === 'TOP_MANAGEMENT') && e.evaluator?.id === currentUser.id
+        );
+
+        const isCompletedByAssignee = task.assignee === currentUser.id;
 
         if (task.isPendingForMe) {
+            // isPendingForMe back-end tərəfindən dəqiq şəkildə yoxlanılır.
             categorized.pendingForMyEvaluation.push(task);
-        } else if (task.assignee === currentUser.id && !hasSelfEval) {
+        } else if (isCompletedByAssignee && !hasSelfEval) {
+            // 1. Özünü dəyərləndirmə yoxdur
             categorized.needsSelfEvaluation.push(task);
-        } else if (task.assignee === currentUser.id && hasSelfEval && !hasSuperiorEval) {
-            categorized.pendingSuperiorEvaluation.push(task);
-        } else if (evaluations.some(e => e.evaluation_type === 'SUPERIOR' && e.evaluator.id === currentUser.id)) {
+        } else if (isCompletedByAssignee && hasSelfEval && !hasSuperiorEval) {
+            // 2. Özünü dəyərləndirmə var, Superior yoxdur (Assignee gözləyir)
+            categorized.pendingSuperiorEvaluation.push(task); 
+        } else if (isEvaluatedByMe) {
+            // 3. Mənim tərəfimdən edilən dəyərləndirmələr (Top Eval gözlənilə bilər)
             categorized.evaluatedByMe.push(task);
-        } else if (task.assignee !== currentUser.id && !hasSelfEval) {
+        } else if (task.assignee !== currentUser.id && hasSelfEval && !hasTopEval) {
+            // 4. Astlara aiddir, Self Eval var, TM Eval tamamlanmayıb (Gözləmə statusundadırlar)
             categorized.subordinatesAwaitingEval.push(task);
-        } else if (hasSelfEval && hasSuperiorEval) {
+        } else {
+            // 5. Bütün zəncirlər tamamlanıb VƏ ya sadəcə tamamlanmış (final)
             categorized.otherTasks.push(task);
         }
     });

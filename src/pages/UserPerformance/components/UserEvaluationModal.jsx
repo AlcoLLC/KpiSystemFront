@@ -1,3 +1,5 @@
+// kpi-system-frontend\src\pages\UserPerformance\components\UserEvaluationModal.jsx
+
 import { Modal, Form, Rate, Input, Button, Timeline } from 'antd';
 import { UserOutlined, StarOutlined, MessageOutlined } from '@ant-design/icons';
 import { formatForDisplay, formatForHistory } from '../../../utils/dateFormatter';
@@ -5,7 +7,10 @@ import { useEvaluationForm } from '../hooks/useEvaluationForm';
 import ScoreDisplay from './ScoreDisplay';
 const { TextArea } = Input;
 
-const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMonth, canEdit }) => {
+// evaluationType əlavə edildi
+const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMonth, evaluationType, canEdit }) => {
+    
+    // evaluationType hook-a ötürülür
     const {
         form,
         loading,
@@ -14,11 +19,13 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
         scoreDescription,
         handleFormSubmit,
         handleValuesChange,
-    } = useEvaluationForm({ visible, onClose, user, initialData, evaluationMonth, canEdit });
+    } = useEvaluationForm({ visible, onClose, user, initialData, evaluationMonth, evaluationType, canEdit });
 
     const fullName = user ? `${user.first_name} ${user.last_name}` : '';
+    const typeText = evaluationType === 'SUPERIOR' ? 'Üst Rəhbər' : 'Yuxarı İdarəetmə';
+    
     const modalTitle = evaluationMonth
-        ? `${formatForDisplay(evaluationMonth)} Dəyərləndirməsi - ${fullName}`
+        ? `${typeText} Dəyərləndirməsi (${formatForDisplay(evaluationMonth)}) - ${fullName}`
         : `Dəyərləndirmə - ${fullName}`;
 
     const modalFooter = canEdit
@@ -50,13 +57,15 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
                         <div className="flex items-center text-blue-700">
                             <UserOutlined className="mr-2" />
-                            <span className="font-medium">Aylıq Performans Dəyərləndirməsi (1-10 şkala)</span>
+                            <span className="font-medium">{typeText} Dəyərləndirməsi (1-10 şkala)</span>
                         </div>
                         <p className="text-sm text-blue-600 mt-1">
                             Bu dəyərləndirmə işçinin seçilən ay üzrə ümumi performansını əks etdirir.
                         </p>
                     </div>
-
+                    
+                    {/* ... (ScoreDisplay, Rate, Comment sahələri eyni qalır) ... */}
+                    
                     <ScoreDisplay score={displayScore} />
 
                     <div>
@@ -112,6 +121,7 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                         )
                     )}
 
+                    {/* Dəyişiklik Tarixçəsi: initialData hələ də ümumi obyekt olduğuna görə, history buradan oxunur. */}
                     {isEditing && initialData?.history?.length > 0 && (
                         <div className="mt-6">
                             <h4 className="text-md font-semibold text-gray-700 mb-3">Dəyişiklik Tarixçəsi</h4>

@@ -354,3 +354,70 @@
 .dark .performance-view-position, .dark .user-kpi-system .ant-picker-input-placeholder input {
   color: #d1d5db;
 }
+
+
+/* kpi-system-frontend\src\styles\userkpi.css və ya uyğun stil faylı */
+
+/* --- TABS və STATISTIKALAR (Verdiyiniz Kod) --- */
+.dark .summary-modal .ant-tabs-nav {
+  margin: 0 -24px 16px -24px;
+  padding: 0 24px;
+  background-color: transparent;
+  border-bottom: 1px solid #374151; /* gray-700 */
+}
+.dark .summary-modal .ant-tabs-tab {
+  color: #9ca3af; /* gray-400 */
+}
+.dark .summary-modal .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #60a5fa; /* blue-400 */
+}
+.dark .summary-modal .ant-tabs-ink-bar {
+  background: #60a5fa; /* blue-400 */
+}
+
+.dark .summary-modal .ant-statistic {
+  background: #111827; /* gray-900 */
+  padding: 16px;
+  border-radius: 8px;
+}
+
+/* --- AYLIOQ NƏTİCƏLƏR ÜÇÜN ƏLAVƏ EDİLƏN STİLLƏR --- */
+
+/* Modalın fonu və List item-lərin sərhədləri */
+.dark .summary-modal .ant-list {
+  background: transparent; /* List fonu modalın fonu ilə uyğunlaşdırılır */
+}
+
+/* Hər bir aylıq nəticə qrupunun sərhədi (List.Item) */
+.dark .summary-modal .ant-list-item {
+  border-color: #374151 !important; /* gray-700 */
+}
+
+/* Ayın başlığı (h4) */
+.dark .summary-modal .ant-list-item h4 {
+  color: #f3f4f6; /* gray-100 */
+}
+
+/* Hər bir qiymətləndirmə balının kartı (div.bg-gray-50) */
+.dark .summary-modal .bg-gray-50 {
+  background-color: #1f2937 !important; /* dark:bg-gray-800 */
+  border-color: #374151 !important; /* dark:border-gray-700 */
+}
+
+/* Qiymətləndirmə Mətni (Rəhbərin növü) */
+.dark .summary-modal .bg-gray-50 .font-medium {
+  color: #f3f4f6; /* gray-100 */
+}
+
+/* Rəhbərin Adı (text-gray-400) */
+.dark .summary-modal .bg-gray-50 .text-gray-400 {
+  color: #9ca3af !important; /* gray-400 */
+}
+
+/* Statistika dəyərinin rəngini dark mode-a uyğunlaşdırma (gözəl görünmək üçün) */
+.dark .summary-modal .ant-statistic-title {
+    color: #d1d5db; /* gray-300 */
+}
+.dark .summary-modal .ant-statistic-content {
+    color: #f3f4f6; /* gray-100 */
+}

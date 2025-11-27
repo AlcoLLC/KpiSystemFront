@@ -6,6 +6,7 @@ import accountsApi from "../../../api/accountsApi";
 
 const managerialRoles = [
   "admin",
+  'ceo',
   "top_management",
   "department_lead",
   "manager",

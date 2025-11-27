@@ -10,25 +10,27 @@ import { formatDate } from "../../../utils/dateUtils";
 import { determineButtonConfig, getButtonStyle } from "../utils/BlockContent.helpers";
 
 const EvaluationTags = ({ evaluationStatus }) => {
-  if (!evaluationStatus) return null;
-  const { hasSelfEval, hasSuperiorEval, evaluations } = evaluationStatus;
+  if (!evaluationStatus) return null;
+  const { hasSelfEval, hasSuperiorEval, hasTopEval, evaluations } = evaluationStatus;
+  const finalEvaluation = evaluations.find(e => e.evaluation_type === "TOP_MANAGEMENT") || evaluations.find(e => e.evaluation_type === "SUPERIOR");
+  const finalScore = finalEvaluation?.final_score;
 
-  return (
-    <>
-      {hasSelfEval && (
-        <Tag color="orange" className="text-xs flex items-center">
-          <UserOutlined className="mr-1" />
-          {evaluations.find(e => e.evaluation_type === "SELF")?.self_score}/10
-        </Tag>
-      )}
-      {hasSuperiorEval && (
-        <Tag color="green" className="text-xs flex items-center">
-          <TrophyOutlined className="mr-1" />
-          Yekun: {evaluations.find(e => e.evaluation_type === "SUPERIOR")?.final_score}/100
-        </Tag>
-      )}
-    </>
-  );
+  return (
+    <>
+      {hasSelfEval && (
+        <Tag color="orange" className="text-xs flex items-center">
+          <UserOutlined className="mr-1" />
+          {evaluations.find(e => e.evaluation_type === "SELF")?.self_score}/10
+        </Tag>
+      )}
+      {(hasSuperiorEval || hasTopEval) && ( // Şərt yeniləndi
+        <Tag color={hasTopEval ? "purple" : "green"} className="text-xs flex items-center">
+          <TrophyOutlined className="mr-1" />
+          Yekun ({hasTopEval ? 'Top' : 'Üst'}): {finalScore || 0}/100
+        </Tag>
+      )}
+    </>
+  );
 };
 
 const BlockContent = ({ task, onReview, evaluationStatus, currentUser, onViewDetails, isPendingForMe }) => {

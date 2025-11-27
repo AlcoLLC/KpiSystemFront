@@ -1,14 +1,17 @@
 import { Row, Col, Divider } from "antd";
 const getEvaluationStatus = (task) => {
     if (!task || !task.evaluations) {
-        return { hasSelfEval: false, hasSuperiorEval: false, evaluations: [] };
+        return { hasSelfEval: false, hasSuperiorEval: false, hasTopEval: false, evaluations: [] }; 
     }
     const evaluations = task.evaluations;
     const hasSelfEval = evaluations.some((e) => e.evaluation_type === "SELF");
     const hasSuperiorEval = evaluations.some(
         (e) => e.evaluation_type === "SUPERIOR"
     );
-    return { hasSelfEval, hasSuperiorEval, evaluations };
+    const hasTopEval = evaluations.some( 
+        (e) => e.evaluation_type === "TOP_MANAGEMENT"
+    );
+    return { hasSelfEval, hasSuperiorEval, hasTopEval, evaluations };
 };
 
 import BlockContent from "./BlockContent"; 

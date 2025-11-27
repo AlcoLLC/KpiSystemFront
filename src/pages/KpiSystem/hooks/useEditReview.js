@@ -9,12 +9,21 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
   const [fileList, setFileList] = useState([]);
 
   const isSelfEval = evaluation?.evaluation_type === "SELF";
-  const maxScore = isSelfEval ? 10 : 100;
+  const isTopEval = evaluation?.evaluation_type === "TOP_MANAGEMENT"; // YENİ
+  const maxScore = isSelfEval ? 10 : 100;
 
   useEffect(() => {
     if (isOpen && evaluation) {
-      const currentScore = isSelfEval ? evaluation.self_score : evaluation.superior_score;
-      setStarRating(currentScore || (isSelfEval ? 5 : 50));
+      let currentScore;
+        if (isSelfEval) {
+            currentScore = evaluation.self_score;
+        } else if (isTopEval) {
+            currentScore = evaluation.top_management_score; 
+        } else {
+            currentScore = evaluation.superior_score;
+        }
+
+      setStarRating(currentScore || (isSelfEval ? 5 : 50));
       setNote(evaluation.comment || "");
       if (evaluation.attachment) {
         setFileList([{
@@ -27,7 +36,7 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
         setFileList([]);
       }
     }
-  }, [isOpen, evaluation, isSelfEval]);
+  }, [isOpen, evaluation, isSelfEval, isTopEval]);
 
   const handleSave = async () => {
     if (!evaluation) return;
@@ -75,6 +84,7 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
     loading,
     handleSave,
     isSelfEval,
+    isTopEval,
     maxScore,
     scoreDescription,
   };

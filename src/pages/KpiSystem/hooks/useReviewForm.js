@@ -9,6 +9,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
   const [fileList, setFileList] = useState([]);
 
   const isOwnEvaluation = currentUser?.id === task?.assignee;
+  const isTopManager = currentUser?.role === 'top_management';
   const maxScore = isOwnEvaluation ? 10 : 100;
 
   const resetModal = () => {
@@ -37,12 +38,19 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
         comment: note.trim() || null,
         attachment: fileList.length > 0 ? fileList[0].originFileObj : null,
       };
+
+      if (isTopManager) {
+           evaluationData.evaluation_type = "TOP_MANAGEMENT";
+      } else if (!isOwnEvaluation) {
+           evaluationData.evaluation_type = "SUPERIOR";
+      }
+
       await kpiAPI.createEvaluation(evaluationData);
-      message.success(
-        isOwnEvaluation
-          ? "Dəyərləndirməniz qeydə alındı! Rəhbərinizə bildiriş göndərildi."
-          : "Yekun dəyərləndirmə uğurla qeydə alındı!"
-      );
+      message.success(
+        isOwnEvaluation
+          ? "Dəyərləndirməniz qeydə alındı! Rəhbərinizə bildiriş göndərildi."
+          : "Yekun dəyərləndirmə uğurla qeydə alındı!"
+      );
       onClose(true); 
     } catch (error) {
       console.error("Failed to save evaluation:", error);
@@ -51,7 +59,7 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
     } finally {
       setLoading(false);
     }
-  }, [loading, task, starRating, note, fileList, isOwnEvaluation, onClose]); 
+  }, [loading, task, starRating, note, fileList, isOwnEvaluation, isTopManager, onClose]); 
 
   const scoreDescription = useMemo(() => {
     const thresholds = isOwnEvaluation
