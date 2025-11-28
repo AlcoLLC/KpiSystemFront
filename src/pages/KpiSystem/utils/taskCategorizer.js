@@ -33,22 +33,16 @@ export const categorizeTasks = (tasks, currentUser) => {
         const isCompletedByAssignee = task.assignee === currentUser.id;
 
         if (task.isPendingForMe) {
-            // isPendingForMe back-end tərəfindən dəqiq şəkildə yoxlanılır.
             categorized.pendingForMyEvaluation.push(task);
         } else if (isCompletedByAssignee && !hasSelfEval) {
-            // 1. Özünü dəyərləndirmə yoxdur
             categorized.needsSelfEvaluation.push(task);
         } else if (isCompletedByAssignee && hasSelfEval && !hasSuperiorEval) {
-            // 2. Özünü dəyərləndirmə var, Superior yoxdur (Assignee gözləyir)
             categorized.pendingSuperiorEvaluation.push(task); 
         } else if (isEvaluatedByMe) {
-            // 3. Mənim tərəfimdən edilən dəyərləndirmələr (Top Eval gözlənilə bilər)
             categorized.evaluatedByMe.push(task);
         } else if (task.assignee !== currentUser.id && hasSelfEval && !hasTopEval) {
-            // 4. Astlara aiddir, Self Eval var, TM Eval tamamlanmayıb (Gözləmə statusundadırlar)
             categorized.subordinatesAwaitingEval.push(task);
         } else {
-            // 5. Bütün zəncirlər tamamlanıb VƏ ya sadəcə tamamlanmış (final)
             categorized.otherTasks.push(task);
         }
     });

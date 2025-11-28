@@ -1,5 +1,3 @@
-// kpi-system-frontend\src\pages\UserPerformance\components\MyPerformanceView.jsx
-
 import { Card, Row, Col, Statistic, Typography, Avatar, Empty, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -11,13 +9,10 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
     return <Empty description="Performans məlumatınız tapılmadı." className="pt-10" />;
   }
 
-  // selected_month_evaluations obyektindən balları çıxarırıq
   const evaluations = userCardData.selected_month_evaluations || {};
   const superiorEval = evaluations.superior;
   const tmEval = evaluations.top_management;
   
-  // Qrafik üçün hələ də tək skor (Superior skorunu istifadə edirik, ya da TM varsa onu)
-  // Backend tərəfindən tək bir 'score' qaytarılmalıdır, amma hələlik Superior balını əsas götürürük
   const chartData = monthlyScores
     .map(item => ({
       ...item,
@@ -25,10 +20,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
     }))
     .reverse();
     
-    // Ən yüksək balı göstərən funksiya (yoxlama balı yoxdursa)
-    const displayScore = superiorEval?.score || tmEval?.score;
-    const isEvaluated = !!displayScore;
-
   return (
     <div className="p-4 bg-white rounded-lg">
       <Row gutter={[24, 24]}>
@@ -47,7 +38,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
             <div className="mt-6 text-center border-t pt-4">
                 <Text strong>Bu Aykı Nəticələr</Text>
                 <div className="mt-3">
-                    {/* Superior Score */}
                     <Text strong style={{ display: 'block' }}>Rəhbər Balı:</Text>
                     {superiorEval ? (
                         <Tag 
@@ -62,7 +52,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
                 </div>
 
                 <div className="mt-3">
-                    {/* Top Management Score */}
                     <Text strong style={{ display: 'block' }}>TM Balı:</Text>
                     {tmEval ? (
                         <Tag 
@@ -79,7 +68,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
           </Card>
         </Col>
         
-        {/* ... (Qalan hissə eyni qalır) ... */}
         <Col xs={24} md={16} lg={17}>
           <Card bordered={false}>
             <Title level={5} style={{ marginBottom: '24px' }}>Dövrlər üzrə ortalama nəticələr</Title>
@@ -110,7 +98,6 @@ const MyPerformanceView = ({ userCardData, summaryData, monthlyScores }) => {
                         <YAxis type="number" domain={[0, 10]} />
                         <Tooltip />
                         <Legend />
-                        {/* Burada fərz edirik ki, `monthlyScores` hələ də tək bal (məsələn, Superior balı) qaytarır */}
                         <Line type="monotone" dataKey="score" name="Aylıq Bal" stroke="#1677ff" strokeWidth={2} activeDot={{ r: 8 }} />
                     </LineChart>
                 </ResponsiveContainer>

@@ -421,3 +421,66 @@
 .dark .summary-modal .ant-statistic-content {
     color: #f3f4f6; /* gray-100 */
 }
+
+/* Buton Yüksekliğini Artırmak İçin */
+.button-increased-height {
+  /* Varsayılan Ant Design yüksekliği 32px'dir. Bunu artırıyoruz. */
+  height: 40px !important; /* Örnek olarak 40px yaptık */
+  line-height: 40px !important; 
+}
+
+/* --- Dark Mode Stilleri --- */
+
+/* Kart Arka Planı */
+.dark .user-kpi-system-card {
+  background-color: #1f2937; /* Varsayılan koyu arka plan */
+}
+
+/* Tamamlanmış Değerlendirme Kart Arka Planı (bg-gray-50) */
+.dark .user-kpi-system-card.bg-gray-50 {
+  background-color: #111827; /* En koyu arka plan */
+}
+
+/* Başlık Metinleri (text-gray-800) */
+.dark .user-kpi-system-card .text-gray-800 {
+  color: #f9fafb; /* Açık beyaz */
+}
+
+/* Alt Metinler (text-gray-500) */
+.dark .user-kpi-system-card .text-gray-500 {
+  color: #9ca3af; /* Orta gri */
+}
+
+/* Avatar Kenarlığı (border-gray-200) */
+.dark .user-kpi-system-card .border-gray-200 {
+  border-color: #4b5563; /* Koyu gri kenarlık */
+}
+
+/* Pozisyon Metni (text-gray-600) */
+.dark .user-kpi-system-card .text-gray-600 {
+  color: #d1d5db; /* Açık gri */
+}
+
+/* Superior Score - Mavi Tag (bg-blue-100, text-blue-700) */
+.dark .user-kpi-system-card .bg-blue-100 {
+  background-color: #1e3a8a; /* Koyu mavi arka plan */
+}
+.dark .user-kpi-system-card .text-blue-700 {
+  color: #93c5fd; /* Açık mavi metin */
+}
+
+/* TM Score - Mor Tag (bg-purple-100, text-purple-700) */
+.dark .user-kpi-system-card .bg-purple-100 {
+  background-color: #581c87; /* Koyu mor arka plan */
+}
+.dark .user-kpi-system-card .text-purple-700 {
+  color: #d8b4fe; /* Açık mor metin */
+}
+
+/* Debug Alanı (bg-gray-100) */
+.dark .user-kpi-system-card .bg-gray-100 {
+  background-color: #374151;
+}
+
+/* Not: Ant Design'in kendisi dark mode için yerleşik stillere sahip olabilir. 
+   Buradaki stiller sadece sizin bileşeninize ve Tailwind sınıflarına odaklanmıştır. */

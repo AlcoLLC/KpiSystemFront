@@ -48,6 +48,7 @@ const TaskFilters = React.memo(({
                     <Select
                         placeholder="İcraçı seçin"
                         allowClear
+                        
                         showSearch
                         style={{ width: '100%' }}
                         value={filters.assignee}

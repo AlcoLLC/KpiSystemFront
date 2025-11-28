@@ -9,7 +9,7 @@ export const useEditReview = ({ isOpen, onClose, evaluation }) => {
   const [fileList, setFileList] = useState([]);
 
   const isSelfEval = evaluation?.evaluation_type === "SELF";
-  const isTopEval = evaluation?.evaluation_type === "TOP_MANAGEMENT"; // YENİ
+  const isTopEval = evaluation?.evaluation_type === "TOP_MANAGEMENT";
   const maxScore = isSelfEval ? 10 : 100;
 
   useEffect(() => {

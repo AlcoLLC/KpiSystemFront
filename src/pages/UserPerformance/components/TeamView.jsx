@@ -1,5 +1,3 @@
-// kpi-system-frontend\src\pages\UserPerformance\components\TeamView.jsx
-
 import { Empty } from 'antd';
 import UserEvaluationCard from './UserEvaluationCard';
 
@@ -14,7 +12,6 @@ const TeamView = ({ users, onEvaluateClick, onSummaryClick }) => {
                 <UserEvaluationCard
                     key={u.id}
                     user={u}
-                    // onEvaluateClick artıq 3 arqument qəbul edir: user, type, initialData
                     onEvaluateClick={onEvaluateClick} 
                     onSummaryClick={() => onSummaryClick(u)}
                 />

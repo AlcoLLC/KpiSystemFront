@@ -1,5 +1,3 @@
-// kpi-system-frontend\src\pages\KpiSystem\components\SingleEvaluationCard.jsx
-
 import { Card, Descriptions, Button, Tooltip, Tag } from "antd";
 import { UserOutlined, StarOutlined, EditOutlined, PaperClipOutlined, CrownOutlined  } from "@ant-design/icons";
 import ScoreDisplay from "./ScoreDisplay";
@@ -12,8 +10,8 @@ const cardConfig = {
     icon: <UserOutlined />,
     titleClass: "text-slate-700",
   },
-  superior: { // Üst Rəhbər (Artıq yeganə yekun deyil)
-    title: "Üst Rəhbər Dəyərləndirməsi", // Başlığı dəqiqləşdirin
+  superior: {
+    title: "Üst Rəhbər Dəyərləndirməsi",
     icon: <StarOutlined />,
     titleClass: "text-blue-600",
   },
@@ -29,21 +27,14 @@ const SingleEvaluationCard = ({ evaluation, type, canEdit, onEdit }) => {
     
     let score;
 
-    // YENİLƏNMİŞ MƏNTİQ: Balı düzgün sahədən oxu
     if (type === 'self') {
         score = evaluation.self_score;
     } else if (type === 'superior') {
-        score = evaluation.superior_score; // İndi Superior üçün öz bal sahəsi var
+        score = evaluation.superior_score;
     } else if (type === 'TOP_MANAGEMENT') {
-        // TM qiymətləndirməsində final_score (və ya top_management_score) istifadə olunur
         score = evaluation.top_management_score || evaluation.final_score; 
         
-        // Front-end-də tipi "top" kimi ötürülə bilər, amma buradakı 'type' propu API-dən gələn 'evaluation_type' ilə uyğunlaşdırılmalıdır (TOP_MANAGEMENT)
-        // Lakin cardConfig-də 'top' istifadə etdiyiniz üçün onu düzəldirik
         if (config.title === "Naməlum Dəyərləndirmə") {
-            // Əgər API-dən gələn 'type' "TOP_MANAGEMENT" idisə və 'type' propu "top" kimi gəlməyibsə, onu düzəldək.
-            // Ən yaxşısı EvaluationDetailsModal-da 'type' propunu "top" olaraq göndərməkdir. 
-            // Burada sadəcə konfiqurasiya key-ni düzgün tapmaq üçün yoxlamaq olar:
             if (type === 'TOP_MANAGEMENT') {
                 score = evaluation.top_management_score || evaluation.final_score;
             }
@@ -54,7 +45,6 @@ const SingleEvaluationCard = ({ evaluation, type, canEdit, onEdit }) => {
     
     const maxScore = type === 'self' ? 10 : 100;
     
-    // Yuxarıdakı config məntiqindəki xətanın qarşısını almaq üçün 'type' propunu 'top' ilə yoxlamaq daha əlverişlidir:
     const displayConfig = cardConfig[type === 'TOP_MANAGEMENT' ? 'top' : type] || config;
 
   return (
@@ -78,7 +68,6 @@ const SingleEvaluationCard = ({ evaluation, type, canEdit, onEdit }) => {
           <ScoreDisplay score={score} maxScore={maxScore} type={type} />
         </Descriptions.Item>
 
-        {/* Superior və Top Management üçün dəyərləndirəni göstər */}
         {(type === 'superior' || type === 'top') && (
            <Descriptions.Item label="Dəyərləndirən">
              {evaluation.evaluator?.full_name || evaluation.evaluator?.username}
@@ -92,7 +81,6 @@ const SingleEvaluationCard = ({ evaluation, type, canEdit, onEdit }) => {
             </blockquote>
           </Descriptions.Item>
         )}
-        {/* Qalan hissə eynidir */}
         {evaluation.attachment && (
           <Descriptions.Item label="Əlavə">
             <a href={evaluation.attachment} target="_blank" rel="noopener noreferrer">

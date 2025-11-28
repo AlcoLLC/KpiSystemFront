@@ -22,13 +22,13 @@ const EditReviewModal = ({ isOpen, onClose, evaluation }) => {
     setFileList,
   } = useEditReview({ isOpen, onClose, evaluation });
 
-  const isTopEval = evaluation?.evaluation_type === "TOP_MANAGEMENT"; // YENİ
+  const isTopEval = evaluation?.evaluation_type === "TOP_MANAGEMENT";
   
   const modalTitle = isSelfEval 
     ? "Şəxsi Dəyərləndirməni Redaktə Et" 
     : isTopEval ? "Yuxarı İdarəetmə Dəyərləndirməsini Redaktə Et" : "Üst Rəhbər Dəyərləndirməsini Redaktə Et";
   
-  const fullTitle = `${modalTitle}: ${evaluation?.task?.title || ""}`; // Başlığı birləşdiririk
+  const fullTitle = `${modalTitle}: ${evaluation?.task?.title || ""}`;
 
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList.slice(-1));

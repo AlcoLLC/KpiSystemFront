@@ -1,5 +1,3 @@
-// kpi-system-frontend\src\pages\UserPerformance\components\UserEvaluationModal.jsx
-
 import { Modal, Form, Rate, Input, Button, Timeline } from 'antd';
 import { UserOutlined, StarOutlined, MessageOutlined } from '@ant-design/icons';
 import { formatForDisplay, formatForHistory } from '../../../utils/dateFormatter';
@@ -7,11 +5,8 @@ import { useEvaluationForm } from '../hooks/useEvaluationForm';
 import ScoreDisplay from './ScoreDisplay';
 const { TextArea } = Input;
 
-// evaluationType əlavə edildi
 const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMonth, evaluationType, canEdit }) => {
-    
-    // evaluationType hook-a ötürülür
-    const {
+        const {
         form,
         loading,
         displayScore,
@@ -63,9 +58,7 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                             Bu dəyərləndirmə işçinin seçilən ay üzrə ümumi performansını əks etdirir.
                         </p>
                     </div>
-                    
-                    {/* ... (ScoreDisplay, Rate, Comment sahələri eyni qalır) ... */}
-                    
+
                     <ScoreDisplay score={displayScore} />
 
                     <div>
@@ -121,7 +114,6 @@ const UserEvaluationModal = ({ visible, onClose, user, initialData, evaluationMo
                         )
                     )}
 
-                    {/* Dəyişiklik Tarixçəsi: initialData hələ də ümumi obyekt olduğuna görə, history buradan oxunur. */}
                     {isEditing && initialData?.history?.length > 0 && (
                         <div className="mt-6">
                             <h4 className="text-md font-semibold text-gray-700 mb-3">Dəyişiklik Tarixçəsi</h4>

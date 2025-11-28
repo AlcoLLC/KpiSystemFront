@@ -11,7 +11,7 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
 
   const selfEvaluation = evaluations.find((e) => e.evaluation_type === "SELF");
   const superiorEvaluation = evaluations.find((e) => e.evaluation_type === "SUPERIOR");
-  const topEvaluation = evaluations.find((e) => e.evaluation_type === "TOP_MANAGEMENT"); // YENİ
+  const topEvaluation = evaluations.find((e) => e.evaluation_type === "TOP_MANAGEMENT");
   const isAdmin = currentUser?.role === 'admin';
   
   const canEditSelf = selfEvaluation && (
@@ -60,7 +60,7 @@ const EvaluationDetailsModal = ({ open, onClose, task, evaluations, onEdit }) =>
           />
         )}
 
-        {topEvaluation && ( // YENİ: Top Management kartı
+        {topEvaluation && (
           <SingleEvaluationCard
             evaluation={topEvaluation}
             type="TOP_MANAGEMENT"

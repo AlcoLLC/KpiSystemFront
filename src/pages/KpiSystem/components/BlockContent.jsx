@@ -23,7 +23,7 @@ const EvaluationTags = ({ evaluationStatus }) => {
           {evaluations.find(e => e.evaluation_type === "SELF")?.self_score}/10
         </Tag>
       )}
-      {(hasSuperiorEval || hasTopEval) && ( // Şərt yeniləndi
+      {(hasSuperiorEval || hasTopEval) && ( 
         <Tag color={hasTopEval ? "purple" : "green"} className="text-xs flex items-center">
           <TrophyOutlined className="mr-1" />
           Yekun ({hasTopEval ? 'Top' : 'Üst'}): {finalScore || 0}/100

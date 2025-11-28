@@ -41,7 +41,7 @@ const PerformancePage = () => {
   const handleOpenEvalModal = (userForModal, type, initialData) => {
     setSelectedUser(userForModal);
     setActiveEvaluationType(type);
-    setActiveInitialData(initialData); // Superior və ya TM balını ötürür
+    setActiveInitialData(initialData);
     setIsEvalModalVisible(true);
   };
 
@@ -54,8 +54,8 @@ const PerformancePage = () => {
     setIsEvalModalVisible(false);
     setIsSummaryModalVisible(false);
     setSelectedUser(null);
-    setActiveEvaluationType(null); // Təmizlə
-    setActiveInitialData(null); // Təmizlə
+    setActiveEvaluationType(null);
+    setActiveInitialData(null);
     if (refresh) {
       refetchData();
     }
@@ -70,7 +70,6 @@ const PerformancePage = () => {
     const hiddenForRoles = ["ceo", "admin"];
 
     if (!canEvaluate) {
-      // ... (canEvaluate false olduqda)
        return (
         <MyPerformanceView
           userCardData={myCard}
@@ -115,8 +114,8 @@ const PerformancePage = () => {
         onDepartmentChange={setSelectedDepartment}
         evaluationStatus={evaluationStatus}
         onEvaluationStatusChange={setEvaluationStatus}
-        canEvaluate={canEvaluate} // Bu filter üçün lazımdır
-        activeTab={activeTab} // Bu filter üçün lazımdır
+        canEvaluate={canEvaluate} 
+        activeTab={activeTab}
       />
 
       <Spin spinning={loading}>{renderContent()}</Spin>
@@ -126,13 +125,12 @@ const PerformancePage = () => {
             visible={isEvalModalVisible}
             onClose={handleModalClose}
             user={selectedUser}
-            initialData={activeInitialData} // Dəyişdirildi
+            initialData={activeInitialData}
             evaluationMonth={selectedMonth}
-            evaluationType={activeEvaluationType} // Dəyişdirildi
-            canEdit={canEditModal} // Dəyişdirildi
+            evaluationType={activeEvaluationType}
+            canEdit={canEditModal}
         />
       )}
-      {/* SummaryModal dəyişməz qalır */}
       {selectedUser && (
           <SummaryModal
             visible={isSummaryModalVisible}
