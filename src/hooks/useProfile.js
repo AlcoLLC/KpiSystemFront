@@ -35,7 +35,8 @@ const useProfile = (form) => {
             email: userData.email,
             phone_number: userData.phone_number,
             role_display: userData.role_display,
-            all_departments: departmentsString,
+            all_departments: userData.all_departments?.join(", ") || "Təyin edilməyib",
+            position_display: userData.position_details?.name || "Təyin edilməyib",
           };
           form.setFieldsValue(formData);
         } else {

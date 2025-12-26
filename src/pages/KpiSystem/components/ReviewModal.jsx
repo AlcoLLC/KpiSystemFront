@@ -31,7 +31,6 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
     isCurrentUserTMEvaluator
   } = useReviewForm({ isOpen, onClose, task, currentUser });
 
-  // DÜZƏLİŞ: İşçi adının təyinatı (ReferenceError-ı aradan qaldırır)
   const assigneesFullName = task?.assignee_obj?.first_name 
     ? `${task.assignee_obj.first_name} ${task.assignee_obj.last_name}` 
     : task?.assignee_details || "İşçi";

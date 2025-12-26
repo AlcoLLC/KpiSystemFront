@@ -12,6 +12,8 @@ import Calendar from '../pages/Calendar/Calendar';
 import Performance from '../pages/Performance/Performance';
 import PerformancePage from '../pages/UserPerformance/PerformancePage';
 import UserManagement from '../pages/UserManagement/UserManagement';
+import FactoryUserManagement from '../pages/FactoryUserManagement/UserManagement';
+import Production from '../pages/Production/Production';
 
 export default function AppRouter() {
   return (
@@ -42,6 +44,8 @@ export default function AppRouter() {
         <Route path="/userperformance" element={<PerformancePage />} />
         <Route path="/performance/:slug" element={<Performance />} />
         <Route path="/user-management" element={<UserManagement />} />
+        <Route path="/factory-user-management" element={<FactoryUserManagement />} />
+        <Route path="/production" element={<Production />} />
       </Route>
     </Routes>
   );

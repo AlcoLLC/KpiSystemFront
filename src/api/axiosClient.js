@@ -18,7 +18,6 @@ const processQueue = (error, token = null) => {
       resolve(token);
     }
   });
-  
   failedQueue = [];
 };
 
@@ -38,16 +37,24 @@ axiosClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+    // Backend-dən gələn spesifik "Token is expired" mesajını yoxlayırıq
+    const isTokenExpired = error.response?.data?.messages?.some(
+      (msg) => msg.message === "Token is expired"
+    );
+
+    // Əgər status 401-dirsə VƏ YA token bitibsə VƏ bu sorğu təkrar sorğu deyilsə
+    if ((error.response?.status === 401 || isTokenExpired) && !originalRequest._retry) {
+      
       if (isRefreshing) {
+        // Əgər hal-hazırda başqa bir refresh prosesi gedirsə, bu sorğunu növbəyə at
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(token => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return axiosClient(originalRequest);
-        }).catch(err => {
-          return Promise.reject(err);
-        });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return axiosClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
       }
 
       originalRequest._retry = true;
@@ -55,47 +62,36 @@ axiosClient.interceptors.response.use(
 
       try {
         const tokens = JSON.parse(localStorage.getItem("tokens"));
-        
+
         if (!tokens?.refresh) {
-          processQueue(new Error('No refresh token'), null);
-          localStorage.removeItem("tokens");
-          localStorage.removeItem("user");
-          delete axiosClient.defaults.headers.common["Authorization"];
-          window.location.href = "/login";
-          return Promise.reject(error);
+          throw new Error("No refresh token");
         }
 
+        // Tokeni yeniləmək üçün birbaşa AXIOS (axiosClient deyil) ilə sorğu atırıq
         const refreshResponse = await axios.post(
           `${axiosClient.defaults.baseURL}/accounts/refresh/`,
           { refresh: tokens.refresh }
         );
 
-        const newAccessToken = refreshResponse.data.access;
-        const newRefreshToken = refreshResponse.data.refresh || tokens.refresh;
-        
-        const newTokens = { 
-          access: newAccessToken, 
-          refresh: newRefreshToken 
-        };
-        
+        const { access, refresh } = refreshResponse.data;
+        const newTokens = { access, refresh: refresh || tokens.refresh };
+
+        // Yeni tokenləri yaddaşa yazırıq
         localStorage.setItem("tokens", JSON.stringify(newTokens));
-        axiosClient.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+        axiosClient.defaults.headers.common["Authorization"] = `Bearer ${access}`;
         
-        processQueue(null, newAccessToken);
+        processQueue(null, access);
         
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        // Yarımçıq qalan ilk sorğunu yeni tokenlə təkrar icra edirik
+        originalRequest.headers["Authorization"] = `Bearer ${access}`;
         return axiosClient(originalRequest);
-        
+
       } catch (refreshError) {
-        console.error("Token yeniləmə uğursuz oldu:", refreshError);
-        
+        // Refresh alınmadısa, hər şeyi təmizlə və login-ə yönləndir
         processQueue(refreshError, null);
-        
         localStorage.removeItem("tokens");
         localStorage.removeItem("user");
-        delete axiosClient.defaults.headers.common["Authorization"];
         window.location.href = "/login";
-        
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

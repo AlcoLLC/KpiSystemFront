@@ -42,17 +42,12 @@ const isEvaluationComplete = (evaluationStatus, task) => {
     const hasTop = evaluationStatus.hasTopEval;
     
     if (needsDualEvaluation(task)) {
-        // Dual evaluation (Employee/Manager): Self + Superior + TM
         return hasSelf && hasSuperior && hasTop; 
     }
-    // Normal evaluation (DL/TM): Self + Superior
     return hasSelf && hasSuperior;
 };
 
 const BUTTON_RULES = [
-
-    // 1. MƏNDƏN GÖZLƏNİLİR (SUPERIOR/TM DƏYƏRLƏNDİRMƏSİ)
-    // isPendingForMe true olduğu halda hansı tipdə dəyərləndirmə ediləcəyini göstərir.
     {
         condition: ({ isPendingForMe }) => isPendingForMe, 
         config: ({ task, currentUser, evaluationStatus }) => {
@@ -62,7 +57,6 @@ const BUTTON_RULES = [
             let evalType;
             let color = 'red';
             
-            // TM Dəyərləndirməsi gözlənilirmi? (Superior tamamlanıb amma TM yoxdursa)
             const isTMEvaluationPending = needsDualEvaluation(task) && 
                                           evaluationStatus.hasSelfEval && 
                                           evaluationStatus.hasSuperiorEval && 
@@ -73,19 +67,15 @@ const BUTTON_RULES = [
                 evalType = 'Admin Dəyərləndirməsi';
                 color = 'green';
             } else if (isTMEvaluationPending) {
-                // Cari istifadəçi TM rolunda və TM dəyərləndirməsi gözlənilirsə
                 evalType = 'Yuxarı İdarəetmə';
                 color = 'purple';
             } else if (isTopManager && evalConfig?.superior_evaluator_id === currentUser.id) {
-                // Cari istifadəçi TM rolunda amma bu tapşırıqda Superior evaluatoridirsə
                 evalType = 'Üst Rəhbər';
                 color = 'red';
             } else if (evalConfig?.superior_evaluator_id === currentUser.id) {
-                // Normal Superior Dəyərləndirməsi
                 evalType = 'Üst Rəhbər';
                 color = 'red';
             } else {
-                 // Digər hallar (CEO, qeyri-standart hallar)
                 evalType = 'Dəyərləndirmə';
                 color = 'red';
             }
@@ -98,8 +88,6 @@ const BUTTON_RULES = [
             };
         }
     },
-
-    // 2. ÖZ DƏYƏRLƏNDİRMƏSİ GÖZLƏNİLİR (Assignee)
     {
         condition: ({ currentUser, task, evaluationStatus }) => 
             currentUser?.id === task?.assignee && 
@@ -111,23 +99,20 @@ const BUTTON_RULES = [
             isViewOnly: false,
         },
     },
-
-    // 3. YUXARI İDARƏETMƏ DƏYƏRLƏNDİRMƏSİ GÖZLƏNİLİR (TM Evaluatoru olmayanlar üçün)
     {
     condition: ({ evaluationStatus, task, currentUser }) => {
-        // Self VE Superior olmalı, TM Henüz OLMAMALI
         if (!evaluationStatus.hasSelfEval || !evaluationStatus.hasSuperiorEval || evaluationStatus.hasTopEval) {
             return false;
         }
         
         if (!needsDualEvaluation(task)) {
-            return false; // Çift değerlendirme gerekmeli
+            return false; 
         }
         
         const evalConfig = task?.assignee_obj?.evaluation_config;
         const isCurrentUserTMEvaluator = evalConfig?.tm_evaluator_id === currentUser?.id; 
         
-        return !isCurrentUserTMEvaluator; // Cari istifadəçi TM evaluatoru deyilsə
+        return !isCurrentUserTMEvaluator;
     },
     config: { 
         text: "Yuxarı İdarəetmə Qiymətləndirməsi Gözlənilir",
@@ -136,8 +121,6 @@ const BUTTON_RULES = [
         icon: ClockCircleOutlined 
     },
     },
-
-    // 4. ÜST RƏHBƏR DƏYƏRLƏNDİRMƏSİ GÖZLƏNİLİR (Assignee üçün)
     {
         condition: ({ currentUser, task, evaluationStatus }) => 
             currentUser?.id === task?.assignee && 
@@ -151,8 +134,6 @@ const BUTTON_RULES = [
             icon: ClockCircleOutlined 
         },
     },
-    
-    // 5. DƏYƏRLƏNDİRMƏ TAMAMLANDI (Ən sonda yoxlanılır)
     {
         condition: ({ evaluationStatus, task }) => 
             isEvaluationComplete(evaluationStatus, task),
@@ -177,8 +158,6 @@ const BUTTON_RULES = [
             };
         },
     },
-    
-    // 6. DƏYƏRLƏNDİRMƏ DETALLARI
     {
         condition: ({ evaluationStatus }) => evaluationStatus.hasSelfEval,
         config: { 

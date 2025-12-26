@@ -1,5 +1,3 @@
-// kpi-system-frontend\src\pages\KpiSystem\hooks\useReviewForm.js
-
 import { useState, useEffect, useMemo, useCallback } from "react"; 
 import { message } from "antd";
 import kpiAPI from "../../../api/kpiApi";
@@ -14,25 +12,13 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
   const isTopManager = currentUser?.role === 'top_management';
   const isAdmin = currentUser?.role === 'admin';
   
-  // Max skor: Öz dəyərləndirməsi üçün 10, başqaları üçün 100
   const maxScore = isOwnEvaluation ? 10 : 100;
-
-    // Dəyərləndirmə Konfiqurasiyasını çəkmək
     const evalConfig = task?.assignee_obj?.evaluation_config;
-    
-    // Yuxarı İdarəetmə Dəyərləndirməsi gözlənilirmi?
     const isTMEvaluationPending = useMemo(() => {
-        // Dual evaluation tələb olunmursa, yox
         if (!evalConfig || !evalConfig.is_dual_evaluation) return false;
-
-        // Cari istifadəçi TM evaluatorudursa
         const isCurrentUserTMEvaluator = evalConfig.tm_evaluator_id === currentUser.id;
-
-        // Tələb olunan: Self və Superior tamamlanıb, TM hələ yox
         const hasTopEval = task?.evaluation_status?.hasTopEval;
         const hasSuperiorEval = task?.evaluation_status?.hasSuperiorEval;
-        
-        // Cari istifadəçi TM evaluatorudursa VƏ Superior tamamlanıbsa VƏ TM hələ edilməyibsə
         return isCurrentUserTMEvaluator && hasSuperiorEval && !hasTopEval;
     }, [evalConfig, currentUser?.id, task?.evaluation_status]);
 
@@ -69,21 +55,15 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
             comment: note.trim() || null,
         };
 
-      // File attachment varsa əlavə et
       if (fileList.length > 0 && fileList[0].originFileObj) {
         evaluationData.attachment = fileList[0].originFileObj;
       }
-
-      // Evaluation type-ı təyin et
       if (isOwnEvaluation) {
         evaluationType = "SELF";
       } else {
-        // evalConfig yuxarıda hook-un scope-unda təyin edilib
         if (isAdmin) {
-          // Admin özü seçə bilər, amma default olaraq SUPERIOR göndər
           evaluationType = "SUPERIOR";
         } else if (isTopManager && evalConfig) {
-          // Top Management-in hansı rol ilə dəyərləndirdiyini təyin et
           if (evalConfig.tm_evaluator_id === currentUser.id) {
             evaluationType = "TOP_MANAGEMENT";
           } else if (evalConfig.superior_evaluator_id === currentUser.id) {
@@ -94,7 +74,6 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
             return;
           }
         } else {
-          // Digər rollarda SUPERIOR
           evaluationType = "SUPERIOR";
         }
       }
@@ -103,7 +82,6 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
 
       await kpiAPI.createEvaluation(evaluationData);
       
-      // Uğur mesajı
       let successMessage = "Dəyərləndirmə uğurla qeydə alındı!";
       if (isOwnEvaluation) {
         successMessage = "Öz dəyərləndirməniz qeydə alındı! Rəhbərinizə bildiriş göndərildi.";
@@ -114,11 +92,10 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
       }
       
       message.success(successMessage);
-      onClose(true); // Modal-ı bağla və data yenilə
+      onClose(true); 
     } catch (error) {
       console.error("Failed to save evaluation:", error);
       
-      // Error mesajını göstər
       const errorMessage = 
         error.response?.data?.detail || 
         error.response?.data?.non_field_errors?.[0] || 
@@ -131,7 +108,6 @@ export const useReviewForm = ({ isOpen, onClose, task, currentUser }) => {
     }
   }, [loading, task, starRating, note, fileList, isOwnEvaluation, isTopManager, isAdmin, currentUser, onClose, evalConfig]); 
 
-  // Skor təsviri (rəngli feedback)
   const scoreDescription = useMemo(() => {
     const thresholds = isOwnEvaluation
       ? { low: 3, mid: 6, high: 8 }

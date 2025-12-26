@@ -42,7 +42,24 @@ export default function MainLayout() {
       isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
 
-  const isAdmin = user?.role === 'admin';
+const isAdmin = user?.role === 'admin';
+const isCEO = user?.role === 'ceo';
+const isOfficeTM = user?.role === 'top_management';
+const isFactoryTM = user?.factory_role === 'top_management';
+
+const hasFullAccess = isAdmin || isCEO || isOfficeTM || isFactoryTM;
+
+// Ofis işçisi = (role: employee/manager/lead) VƏ (factory_role boşdur)
+const isOfficeStaff = 
+  ['employee', 'manager', 'department_lead'].includes(user?.role) && 
+  (!user?.factory_role || user?.factory_role === "" || user?.factory_role === null);
+
+// Fabrik işçisi = factory_role sahəsi dolu olan hər kəs (rəhbərlik xaric)
+const isFactoryStaff = 
+  ['deputy_director', 'department_lead', 'employee'].includes(user?.factory_role);
+
+const canSeeOfficePages = hasFullAccess || isOfficeStaff;
+const canSeeProduction = hasFullAccess || isFactoryStaff;
 
   return (
     <div className="flex">
@@ -52,54 +69,48 @@ export default function MainLayout() {
           </div>
           <nav className="flex flex-col justify-between h-[69vh]">
             <ul className="space-y-2 text-lg">
-              <li className="mt-5 w-full">
-                <NavLink to="/" className={navLinkClasses}>
-                  <AiFillHome size={24} /> Ana səhifə
-                </NavLink>
-              </li>
-              <li className="mt-5 w-full">
-                <NavLink to="/tasks" className={navLinkClasses}>
-                  <FaTasks size={24} /> Tapşırıqlar
-                </NavLink>
-              </li>
-              <li className="mt-5 w-full">
-                <NavLink to="/kpi_system" className={navLinkClasses}>
-                  <MdOutlineAnalytics size={24} /> Kpi Sistem
-                </NavLink>
-              </li>
-              <li className="mt-5 w-full">
-                <NavLink to="/userperformance/" className={navLinkClasses}>
-                  <HiOutlineDocumentReport size={24} /> İstifadəçi qiymətləndirməsi
-                </NavLink>
-              </li>
-              <li className="mt-5 w-full">
-                <NavLink to="/performance" className={navLinkClasses}>
-                  <MdSpeed size={24} /> Performans
-                </NavLink>
-              </li>
-              {/* <li className="mt-5 w-full">
-                <NavLink to="//" className={navLinkClasses}>
-                  <FaTasks size={24} /> Dolum Sexi
-                </NavLink>
-              </li> */}
-              <li className="mt-5 w-full">
-                <NavLink to="/calendar/" className={navLinkClasses}>
-                  <AiOutlineCalendar size={24} /> Təqvim
-                </NavLink>
-              </li>
-               {isAdmin && (
-                <li className="mt-5 w-full">
-                  <NavLink to="/user-management/" className={navLinkClasses}>
-                    <FiUsers size={24} /> İstifadəçilər
-                  </NavLink>
-                </li>
-              )}
-              <li className="mt-5 w-full">
-                <NavLink to="/report/" className={navLinkClasses}>
-                  <HiOutlineDocumentReport size={24} /> Tarixçə
-                </NavLink>
-              </li>
+              {canSeeOfficePages && (
+    <>
+      <li className="mt-5 w-full">
+        <NavLink to="/" className={navLinkClasses}><AiFillHome size={24} /> Ana səhifə</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/tasks" className={navLinkClasses}><FaTasks size={24} /> Tapşırıqlar</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/kpi_system" className={navLinkClasses}><MdOutlineAnalytics size={24} /> Kpi Sistem</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/userperformance/" className={navLinkClasses}><HiOutlineDocumentReport size={24} /> İstifadəçi qiymətləndirməsi</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/performance" className={navLinkClasses}><MdSpeed size={24} /> Performans</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/calendar/" className={navLinkClasses}><AiOutlineCalendar size={24} /> Təqvim</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/report/" className={navLinkClasses}><HiOutlineDocumentReport size={24} /> Tarixçə</NavLink>
+      </li>
+    </>
+  )}
 
+  {canSeeProduction && (
+    <li className="mt-5 w-full">
+      <NavLink to="/production/" className={navLinkClasses}><MdSpeed size={24} /> İstehsalat</NavLink>
+    </li>
+  )}
+
+  {isAdmin && (
+    <>
+      <li className="mt-5 w-full">
+        <NavLink to="/user-management/" className={navLinkClasses}><FiUsers size={24} /> İstifadəçilər</NavLink>
+      </li>
+      <li className="mt-5 w-full">
+        <NavLink to="/factory-user-management/" className={navLinkClasses}><FiUsers size={24} /> Zavod Məlumatları</NavLink>
+      </li>
+    </>
+  )}
               
             </ul>
              <button onClick={logout} className={navLinkClasses({ isActive: false })}>

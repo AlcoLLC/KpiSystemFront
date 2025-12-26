@@ -564,3 +564,13 @@ body {
   width: 100%;
     max-width: 100%;
 }
+
+  .dark .ant-table-tbody > tr.ant-table-row:hover > td,
+                .dark .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+                    background: #2a3441 !important; 
+                    color: white !important;
+                }
+                .ant-table-tbody > tr.ant-table-row:hover .text-blue-500,
+                .ant-table-tbody > tr.ant-table-row:hover .text-red-500 {
+                    opacity: 1;
+                }
