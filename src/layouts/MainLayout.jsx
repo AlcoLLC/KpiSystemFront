@@ -49,12 +49,10 @@ const isFactoryTM = user?.factory_role === 'top_management';
 
 const hasFullAccess = isAdmin || isCEO || isOfficeTM || isFactoryTM;
 
-// Ofis işçisi = (role: employee/manager/lead) VƏ (factory_role boşdur)
 const isOfficeStaff = 
   ['employee', 'manager', 'department_lead'].includes(user?.role) && 
   (!user?.factory_role || user?.factory_role === "" || user?.factory_role === null);
 
-// Fabrik işçisi = factory_role sahəsi dolu olan hər kəs (rəhbərlik xaric)
 const isFactoryStaff = 
   ['deputy_director', 'department_lead', 'employee'].includes(user?.factory_role);
 
