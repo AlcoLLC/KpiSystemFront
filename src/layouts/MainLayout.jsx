@@ -42,28 +42,55 @@ export default function MainLayout() {
       isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
 
-const isAdmin = user?.role === 'admin';
+// ... digər importlar eyni qalır
+
+const factoryRoles = [
+  'admin',
+  'top_management',
+  'deputy_director',
+  'department_lead',
+  'employee',
+];
+
+const officeStaffRoles = [
+  'employee',
+  'manager',
+  'department_lead',
+];
+
+// 1. Admin və CEO yoxlaması
+const isAdmin = user?.role === 'admin' || user?.factory_role === 'admin';
 const isCEO = user?.role === 'ceo';
-const isOfficeTM = user?.role === 'top_management';
-const isFactoryTM = user?.factory_role === 'top_management';
 
-const hasFullAccess = isAdmin || isCEO || isOfficeTM || isFactoryTM;
+// 2. User Type təyini (Backend-dən gələn user_type-a üstünlük veririk)
+const isFactoryUser = user?.user_type === 'factory' || !!user?.factory_role;
+const isOfficeUser = user?.user_type === 'office' || (!!user?.role && !user?.factory_role);
 
-const isOfficeStaff = 
-  ['employee', 'manager', 'department_lead'].includes(user?.role) && 
-  (!user?.factory_role || user?.factory_role === "" || user?.factory_role === null);
+// 3. Top Management yoxlaması
+const isOfficeTopManagement = user?.role === 'top_management';
+const isFactoryTopManagement = user?.role_display === "Zavod Direktoru" ;
 
-const isFactoryStaff = 
-  ['deputy_director', 'department_lead', 'employee'].includes(user?.factory_role);
+// 4. Tam giriş icazəsi (Admin, CEO və hər iki tərəfin rəhbərliyi)
+const hasFullAccess =
+  isAdmin ||
+  isCEO ||
+  isOfficeTopManagement ||
+  isFactoryTopManagement;
 
-const canSeeOfficePages = hasFullAccess || isOfficeStaff;
-const canSeeProduction = hasFullAccess || isFactoryStaff;
+// 5. Ofis səhifələrini görmə icazəsi
+const canSeeOfficePages =
+  hasFullAccess ||
+  (isOfficeUser && officeStaffRoles.includes(user?.role));
+
+// 6. İstehsalat (Zavod) səhifəsini görmə icazəsi
+// Response-da factory_role gəlməsə belə, role_display-ə və ya user_type-a baxırıq
+const canSeeProduction = hasFullAccess || isFactoryUser;
 
   return (
     <div className="flex">
       <aside className="main-layout-aside w-80 min-h-screen shadow-md bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border-r dark:border-gray-700">
         <div className="fixed w-80 p-6">
-          <div className="flex justify-center"><img src={logo} alt="Alco Metrics" className='w-[26vh]' />
+          <div className="flex justify-center"><NavLink to="/"><img src={logo} alt="Alco Metrics" className='w-[26vh]' /></NavLink>
           </div>
           <nav className="flex flex-col justify-between h-[69vh]">
             <ul className="space-y-2 text-lg">

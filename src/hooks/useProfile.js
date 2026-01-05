@@ -11,68 +11,56 @@ const useProfile = (form) => {
   const [isFactoryUser, setIsFactoryUser] = useState(false);
 
   useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!localStorage.getItem("tokens")) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const response = await accountsApi.getProfile();
-        const userData = response.data;
+  const fetchProfileData = async () => {
+    if (!localStorage.getItem("tokens")) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await accountsApi.getProfile();
+      const userData = response.data;
 
-        // DEBUG: Məlumatları yoxlayırıq
-        console.log("User Data:", userData);
+      console.log("User Data:", userData);
 
-        if (userData) {
-          setProfileData(userData);
-          
-          // Factory istifadəçi yoxlanışı
-          // factory_role varsa (null və ya boş deyilsə) true olacaq
-          const isFactory = !!userData.factory_role; 
-          setIsFactoryUser(isFactory);
+      if (userData) {
+        setProfileData(userData);
+        
+        const isFactory = !!userData.factory_role; 
+        setIsFactoryUser(isFactory);
 
-          let departmentsString = "Təyin edilməyib";
-          if (userData.all_departments?.length > 0) {
-            departmentsString = userData.all_departments.join(", ");
-          }
-
-          const formatFactoryType = (type) => {
-              if(!type) return "";
-              const strType = String(type);
-              return strType.charAt(0).toUpperCase() + strType.slice(1);
-          };
-
-          // Dəyişənin adı formValues-dur
-          const formValues = {
-            first_name: userData.first_name,
-            last_name: userData.last_name,
-            email: userData.email,
-            phone_number: userData.phone_number,
-            
-            role_display: userData.role_display, 
-            factory_role_display: userData.factory_role_display || userData.role_display,
-            
-            all_departments: departmentsString,
-            
-            factory_type: formatFactoryType(userData.factory_type),
-
-            position_display: userData.position_details?.name || "Təyin edilməyib",
-          };
-          
-          // DÜZƏLİŞ BURADA: formData əvəzinə formValues yazıldı
-          form.setFieldsValue(formValues);
+        let departmentsString = "Yoxdur";
+        if (userData.all_departments?.length > 0) {
+          departmentsString = userData.all_departments.join(", ");
         }
-      } catch (error) {
-        console.error("Profil xətası:", error);
-        if (error.response?.status !== 401) {
-          message.error("Profil yüklənmədi.");
-        }
-      } finally {
-        setLoading(false);
+
+        const formValues = {
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          email: userData.email,
+          phone_number: userData.phone_number,
+          
+          role_display: userData.role_display || "Təyin edilməyib", 
+          
+          all_departments: departmentsString,
+          
+          factory_type: userData.factory_type_display || "",
+
+          position_display: userData.position_details?.name || "Təyin edilməyib",
+        };
+        
+        form.setFieldsValue(formValues);
       }
-    };
-    fetchProfileData();
-  }, [form, setUser]);
+    } catch (error) {
+      console.error("Profil xətası:", error);
+      if (error.response?.status !== 401) {
+        message.error("Profil yüklənmədi.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchProfileData();
+}, [form, setUser]);
 
   const onFinish = async (values) => {
     if (!profileData) {

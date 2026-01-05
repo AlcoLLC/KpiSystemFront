@@ -117,6 +117,7 @@ export const AuthProvider = ({ children }) => {
       axiosClient.defaults.headers.common["Authorization"] = `Bearer ${access}`;
       
       scheduleTokenRefresh(access);
+      console.log("Login uğurlu oldu, istifadəçi məlumatları:", userData);
       
       navigate("/");
     } catch (err) {

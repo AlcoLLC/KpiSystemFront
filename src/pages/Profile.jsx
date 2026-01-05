@@ -10,15 +10,18 @@ function Profile() {
 
   const { loading, profileData, profilePhoto, onFinish, draggerProps } = useProfile(form);
 
-  useEffect(() => {
-    if (profileData) {
-      form.setFieldsValue({
-        ...profileData,
-        position_display: profileData.position_details?.name || 'Təyin edilməyib',
-        all_departments: profileData.all_departments?.join(', ')
-      });
-    }
-  }, [profileData, form]);
+useEffect(() => {
+  if (profileData) {
+    const positionName = profileData.position_details?.name || 'Təyin edilməyib';
+    const departments = profileData.all_departments?.join(', ') || 'Yoxdur';
+
+    form.setFieldsValue({
+      ...profileData,
+      position_display: positionName,
+      all_departments: departments
+    });
+  }
+}, [profileData, form]);
 
   if (loading) {
     return (
