@@ -45,6 +45,9 @@ const Production = () => {
             setData(prodRes.data.results || prodRes.data);
             setEquipments(eqRes.data.results || eqRes.data);
             setEmployees(empRes.data.results || empRes.data);
+            console.log("Fetched productions:", prodRes.data);
+            console.log("Fetched equipments:", eqRes.data);
+            console.log("Fetched employees:", empRes.data);
         } catch (error) {
             message.error("Məlumatlar yüklənərkən xəta baş verdi");
         } finally {

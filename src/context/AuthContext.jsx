@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import accountsApi from "../api/accountsApi";
 import axiosClient from "../api/axiosClient";
 
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   
   const tokenRefreshTimer = useRef(null);
 
@@ -67,9 +68,17 @@ export const AuthProvider = ({ children }) => {
     }
   }, [logout]);
 
+  // Səhifə yüklənəndə user məlumatlarını yeniləmək
   useEffect(() => {
     const syncUserData = async () => {
       const storedTokens = JSON.parse(localStorage.getItem("tokens"));
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      
+      // Login səhifəsindəsə, heç nə etmə
+      if (location.pathname === "/login") {
+        return;
+      }
+      
       if (storedTokens?.access) {
         axiosClient.defaults.headers.common[
           "Authorization"
@@ -82,6 +91,14 @@ export const AuthProvider = ({ children }) => {
           const latestUserData = response.data;
           setUser(latestUserData);
           localStorage.setItem("user", JSON.stringify(latestUserData));
+          
+          // Əgər root path-da isək və user factory user-dirsə, production-a yönləndir
+          if (location.pathname === "/" && storedUser) {
+            const isFactoryUser = latestUserData.user_type === 'factory' || !!latestUserData.factory_role;
+            if (isFactoryUser) {
+              navigate("/production/", { replace: true });
+            }
+          }
         } catch (err) {
           console.error("İstifadəçi məlumatları sinxronizasiya edilərkən xəta baş verdi:", err);
           if (err.response?.status === 401 || err.response?.status === 403) {
@@ -98,7 +115,7 @@ export const AuthProvider = ({ children }) => {
         clearTimeout(tokenRefreshTimer.current);
       }
     };
-  }, [scheduleTokenRefresh, logout]);
+  }, [scheduleTokenRefresh, logout, location.pathname, navigate]);
 
   const login = async (email, password) => {
     setIsLoading(true);
@@ -117,9 +134,23 @@ export const AuthProvider = ({ children }) => {
       axiosClient.defaults.headers.common["Authorization"] = `Bearer ${access}`;
       
       scheduleTokenRefresh(access);
-      console.log("Login uğurlu oldu, istifadəçi məlumatları:", userData);
       
-      navigate("/");
+      console.log("Login uğurlu oldu, istifadəçi məlumatları:", userData);
+      console.log("User type:", userData.user_type);
+      console.log("Factory role:", userData.factory_role);
+      
+      // Factory user yoxlaması
+      const isFactoryUser = userData.user_type === 'factory' || !!userData.factory_role;
+      
+      console.log("Is factory user:", isFactoryUser);
+      
+      if (isFactoryUser) {
+        console.log("Yönləndirilir: /production/");
+        navigate("/production/", { replace: true });
+      } else {
+        console.log("Yönləndirilir: /");
+        navigate("/", { replace: true });
+      }
     } catch (err) {
       const errorMessage =
         err.response?.data?.detail || 

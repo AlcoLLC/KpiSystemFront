@@ -246,7 +246,7 @@ function Task() {
       {permissions.showViewSwitcher && (
         <div className="mb-4">
           <Radio.Group value={viewMode} onChange={handleViewModeChange}>
-            {user?.role !== 'ceo' && <Radio.Button value="my"><UserOutlined /> Mənim tapşırıqlarım</Radio.Button>} 
+            {user?.role !== 'ceo' && user?.factory_role !== "top_management" && <Radio.Button value="my"><UserOutlined /> Mənim tapşırıqlarım</Radio.Button>} 
             <Radio.Button value="team"><TeamOutlined /> Əməkdaşların tapşırıqları</Radio.Button>
           </Radio.Group>
         </div>

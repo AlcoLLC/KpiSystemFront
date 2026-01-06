@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { BsSun, BsMoon, BsBell } from 'react-icons/bs';
+import { BsSun, BsMoon } from 'react-icons/bs';
 import { FiUser, FiUsers } from 'react-icons/fi';
 import { AiFillHome, AiOutlineCalendar } from 'react-icons/ai';
 import { FaTasks } from 'react-icons/fa';
@@ -10,11 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleTheme } from '../features/theme/themeSlice';
 import useAuth from '../hooks/useAuth';
 import logo from "/images/kpi_logo.webp";
+
 export default function MainLayout() {
   const dispatch = useDispatch();
   const isDark = useSelector((state) => state.theme.isDark);
   const { user, logout } = useAuth();
-  const notifications = 3;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -42,124 +42,171 @@ export default function MainLayout() {
       isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
 
-// ... digər importlar eyni qalır
+  // =============== İCAZƏ MƏNTİQİ ===============
+  
+  // 1. Əsas rollar
+  const isAdmin = user?.role === 'admin' || user?.factory_role === 'admin';
+  const isCEO = user?.role === 'ceo';
 
-const factoryRoles = [
-  'admin',
-  'top_management',
-  'deputy_director',
-  'department_lead',
-  'employee',
-];
+  // 2. User Type
+  const isFactoryUser = user?.user_type === 'factory' || !!user?.factory_role;
+  const isOfficeUser = user?.user_type === 'office' || (!!user?.role && !user?.factory_role);
 
-const officeStaffRoles = [
-  'employee',
-  'manager',
-  'department_lead',
-];
+  // 3. Spesifik Factory rolları
+  const isFactoryTopManagement = isFactoryUser && user?.factory_role === 'top_management';
+  const isFactoryDeputyDirector = isFactoryUser && user?.factory_role === 'deputy_director';
+  const isFactoryDepartmentLead = isFactoryUser && user?.factory_role === 'department_lead';
+  const isFactoryEmployee = isFactoryUser && user?.factory_role === 'employee';
 
-// 1. Admin və CEO yoxlaması
-const isAdmin = user?.role === 'admin' || user?.factory_role === 'admin';
-const isCEO = user?.role === 'ceo';
+  // 4. Spesifik Office rolları
+  const isOfficeTopManagement = isOfficeUser && user?.role === 'top_management';
+  const isOfficeDepartmentLead = isOfficeUser && user?.role === 'department_lead';
+  const isOfficeManager = isOfficeUser && user?.role === 'manager';
+  const isOfficeEmployee = isOfficeUser && user?.role === 'employee';
 
-// 2. User Type təyini (Backend-dən gələn user_type-a üstünlük veririk)
-const isFactoryUser = user?.user_type === 'factory' || !!user?.factory_role;
-const isOfficeUser = user?.user_type === 'office' || (!!user?.role && !user?.factory_role);
+  // 5. İcazə qrupları
+  
+  // Sadəcə istehsalat səhifəsini görənlər
+  const canOnlySeeProduction = 
+    isFactoryDeputyDirector || 
+    isFactoryDepartmentLead || 
+    isFactoryEmployee;
 
-// 3. Top Management yoxlaması
-const isOfficeTopManagement = user?.role === 'top_management';
-const isFactoryTopManagement = user?.role_display === "Zavod Direktoru" ;
+  // Məhdud ofis səhifələrini görənlər (7 səhifə)
+  const canSeeLimitedOfficePages = 
+    isOfficeDepartmentLead || 
+    isOfficeManager || 
+    isOfficeEmployee;
 
-// 4. Tam giriş icazəsi (Admin, CEO və hər iki tərəfin rəhbərliyi)
-const hasFullAccess =
-  isAdmin ||
-  isCEO ||
-  isOfficeTopManagement ||
-  isFactoryTopManagement;
+  // User management xaric bütün səhifələri görənlər
+  const canSeeAllExceptUserManagement = 
+    isFactoryTopManagement || 
+    isOfficeTopManagement;
 
-// 5. Ofis səhifələrini görmə icazəsi
-const canSeeOfficePages =
-  hasFullAccess ||
-  (isOfficeUser && officeStaffRoles.includes(user?.role));
+  // Bütün səhifələri görənlər
+  const canSeeEverything = isAdmin || isCEO;
 
-// 6. İstehsalat (Zavod) səhifəsini görmə icazəsi
-// Response-da factory_role gəlməsə belə, role_display-ə və ya user_type-a baxırıq
-const canSeeProduction = hasFullAccess || isFactoryUser;
+  // 6. Səhifə icazələri
+  
+  // İstehsalat səhifəsi
+  const canSeeProduction = 
+    canSeeEverything || 
+    canOnlySeeProduction || 
+    canSeeAllExceptUserManagement;
+
+  // Əsas 7 ofis səhifəsi
+  const canSeeLimitedOffice = 
+    canSeeEverything || 
+    canSeeLimitedOfficePages || 
+    canSeeAllExceptUserManagement;
+
+  // User Management səhifələri
+  const canSeeUserManagement = canSeeEverything;
+
+  // =============== İCAZƏ MƏNTİQİ SONU ===============
 
   return (
     <div className="flex">
       <aside className="main-layout-aside w-80 min-h-screen shadow-md bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border-r dark:border-gray-700">
         <div className="fixed w-80 p-6">
-          <div className="flex justify-center"><NavLink to="/"><img src={logo} alt="Alco Metrics" className='w-[26vh]' /></NavLink>
+          <div className="flex justify-center">
+            <NavLink to="/">
+              <img src={logo} alt="Alco Metrics" className='w-[26vh]' />
+            </NavLink>
           </div>
           <nav className="flex flex-col justify-between h-[69vh]">
             <ul className="space-y-2 text-lg">
-              {canSeeOfficePages && (
-    <>
-      <li className="mt-5 w-full">
-        <NavLink to="/" className={navLinkClasses}><AiFillHome size={24} /> Ana səhifə</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/tasks" className={navLinkClasses}><FaTasks size={24} /> Tapşırıqlar</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/kpi_system" className={navLinkClasses}><MdOutlineAnalytics size={24} /> Kpi Sistem</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/userperformance/" className={navLinkClasses}><HiOutlineDocumentReport size={24} /> İstifadəçi qiymətləndirməsi</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/performance" className={navLinkClasses}><MdSpeed size={24} /> Performans</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/calendar/" className={navLinkClasses}><AiOutlineCalendar size={24} /> Təqvim</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/report/" className={navLinkClasses}><HiOutlineDocumentReport size={24} /> Tarixçə</NavLink>
-      </li>
-    </>
-  )}
+              
+              {/* Əsas 7 Ofis Səhifəsi */}
+              {canSeeLimitedOffice && (
+                <>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/" className={navLinkClasses}>
+                      <AiFillHome size={24} /> Ana səhifə
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/tasks" className={navLinkClasses}>
+                      <FaTasks size={24} /> Tapşırıqlar
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/kpi_system" className={navLinkClasses}>
+                      <MdOutlineAnalytics size={24} /> Kpi Sistem
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/userperformance/" className={navLinkClasses}>
+                      <HiOutlineDocumentReport size={24} /> İstifadəçi qiymətləndirməsi
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/performance" className={navLinkClasses}>
+                      <MdSpeed size={24} /> Performans
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/calendar/" className={navLinkClasses}>
+                      <AiOutlineCalendar size={24} /> Təqvim
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/report/" className={navLinkClasses}>
+                      <HiOutlineDocumentReport size={24} /> Tarixçə
+                    </NavLink>
+                  </li>
+                </>
+              )}
 
-  {canSeeProduction && (
-    <li className="mt-5 w-full">
-      <NavLink to="/production/" className={navLinkClasses}><MdSpeed size={24} /> İstehsalat</NavLink>
-    </li>
-  )}
+              {/* İstehsalat Səhifəsi */}
+              {canSeeProduction && (
+                <li className="mt-5 w-full">
+                  <NavLink to="/production/" className={navLinkClasses}>
+                    <MdSpeed size={24} /> İstehsalat
+                  </NavLink>
+                </li>
+              )}
 
-  {isAdmin && (
-    <>
-      <li className="mt-5 w-full">
-        <NavLink to="/user-management/" className={navLinkClasses}><FiUsers size={24} /> İstifadəçilər</NavLink>
-      </li>
-      <li className="mt-5 w-full">
-        <NavLink to="/factory-user-management/" className={navLinkClasses}><FiUsers size={24} /> Zavod Məlumatları</NavLink>
-      </li>
-    </>
-  )}
+              {/* User Management Səhifələri - Yalnız Admin və CEO */}
+              {canSeeUserManagement && (
+                <>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/user-management/" className={navLinkClasses}>
+                      <FiUsers size={24} /> İstifadəçilər
+                    </NavLink>
+                  </li>
+                  <li className="mt-5 w-full">
+                    <NavLink to="/factory-user-management/" className={navLinkClasses}>
+                      <FiUsers size={24} /> Zavod Məlumatları
+                    </NavLink>
+                  </li>
+                </>
+              )}
               
             </ul>
-             <button onClick={logout} className={navLinkClasses({ isActive: false })}>
-              <div className="flex items-center gap-2 text-base"> <MdLogout size={24} /> Çıxış </div>
+            <button onClick={logout} className={navLinkClasses({ isActive: false })}>
+              <div className="flex items-center gap-2 text-base">
+                <MdLogout size={24} /> Çıxış
+              </div>
             </button>
           </nav>
         </div>
       </aside>
-       <main className="main-layout-main-content flex-1 p-6 transition-colors duration-500 bg-[#EFF3F9] dark:bg-[#131920]">
+      
+      <main className="main-layout-main-content flex-1 p-6 transition-colors duration-500 bg-[#EFF3F9] dark:bg-[#131920]">
         <nav className="main-layout-navbar p-4 shadow-md mb-6 rounded-lg bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
           <div className="flex justify-end items-center space-x-4">
-            <button onClick={() => dispatch(toggleTheme())} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
-              {isDark ? <BsSun className="w-6 h-6 text-yellow-400" /> : <BsMoon className="w-6 h-6 text-gray-600" />}
+            <button 
+              onClick={() => dispatch(toggleTheme())} 
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+            >
+              {isDark ? (
+                <BsSun className="w-6 h-6 text-yellow-400" />
+              ) : (
+                <BsMoon className="w-6 h-6 text-gray-600" />
+              )}
             </button>
-            {/* <div className="relative">
-              <button className="p-2 rounded-full hover:bg-gray-400 transition">
-                <BsBell className="w-6 h-6" />
-                {notifications > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {notifications}
-                  </span>
-                )}
-              </button>
-            </div> */}
+            
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -177,8 +224,9 @@ const canSeeProduction = hasFullAccess || isFactoryUser;
                   </div>
                 )}
               </button>
+              
               {dropdownOpen && (
-                 <div className="main-layout-dropdown absolute right-0 mt-2 w-72 rounded-lg shadow-lg  p-[0.6rem] z-50 bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
+                <div className="main-layout-dropdown absolute right-0 mt-2 w-72 rounded-lg shadow-lg p-[0.6rem] z-50 bg-white text-black dark:bg-[#1B232D] dark:text-white dark:border dark:border-gray-700">
                   <div className="flex mb-3 gap-3 items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                       {user && user.profile_photo ? (
@@ -199,7 +247,9 @@ const canSeeProduction = hasFullAccess || isFactoryUser;
                           ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
                           : 'İstifadəçi Adı'}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{user ? user.role_display : 'Vəzifə'}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {user ? user.role_display : 'Vəzifə'}
+                      </p>
                     </div>
                   </div>
                   <NavLink                          
