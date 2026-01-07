@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button, Input, message, Space, Tag, Select, DatePicker, Modal } from 'antd';
 import { PlusOutlined, SearchOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ReusableTable from '../../components/ReusableTable';
@@ -6,6 +6,7 @@ import productionApi from '../../api/productionApi';
 import ProductionFormModal from './components/ProductionFormModal';
 import dayjs from 'dayjs';
 import '../../styles/production.css';
+import { useSelector } from 'react-redux';
 
 const { RangePicker } = DatePicker;
 
@@ -25,6 +26,9 @@ const Production = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState(null);
     const [dateRange, setDateRange] = useState(null);
+
+    const { user } = useSelector((state) => state.auth || {});
+    const isAdmin = user?.role === 'admin';
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -112,7 +116,7 @@ const handleDelete = (id, e) => {
             key: 'employees',
             render: (emps) => emps?.map(e => e.full_name).join(', ')
         },
-        {
+        ...(isAdmin ? [{
             title: 'Əməliyyatlar',
             key: 'actions',
             fixed: 'right',
@@ -129,7 +133,7 @@ const handleDelete = (id, e) => {
                     />
                 </Space>
             )
-        }
+        }] : [])
     ];
 
     return (
@@ -161,7 +165,6 @@ const handleDelete = (id, e) => {
                 </Button>
             </div>
 
-            {/* Vizual problemi rowClassName və xüsusi CSS selectorları ilə həll edirik */}
             <ReusableTable 
                 columns={columns} 
                 dataSource={data} 
@@ -170,7 +173,6 @@ const handleDelete = (id, e) => {
                 onRow={(record) => ({
                     onClick: () => handleAction(record, 'view')
                 })}
-                // Satırların hover effektini tünd mövzuya uyğunlaşdırmaq üçün
                 rowClassName={() => 'custom-table-row cursor-pointer dark:hover:bg-gray-800'}
             />
 

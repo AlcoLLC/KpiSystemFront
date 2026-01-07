@@ -65,12 +65,16 @@ const PerformancePage = () => {
     ? (activeEvaluationType === 'SUPERIOR' ? selectedUser.can_evaluate_superior : selectedUser.can_evaluate_top_management) 
     : false;
 
+  // Factory top management-in öz User KPI-ı yoxdur
+  const isFactoryTopManagement = user?.factory_role === "top_management";
+  const hiddenForRoles = ["ceo", "admin"];
+  
+  // Factory top management və ya öz performansına baxa bilməyənlər üçün yalnız komandam tab-ı
+  const shouldHideMyPerformanceTab = isFactoryTopManagement || !canEvaluate || hiddenForRoles.includes(user?.role);
 
   const renderContent = () => {
-    const hiddenForRoles = ["ceo", "admin"];
-
     if (!canEvaluate) {
-       return (
+      return (
         <MyPerformanceView
           userCardData={myCard}
           summaryData={mySummary}
@@ -78,6 +82,7 @@ const PerformancePage = () => {
         />
       );
     }
+    
     return (
       <Tabs activeKey={activeTab} onChange={setActiveTab}>
         <TabPane tab="Komandam" key="team">
@@ -87,7 +92,7 @@ const PerformancePage = () => {
             onSummaryClick={handleOpenSummaryModal}
           />
         </TabPane>
-        {user && !hiddenForRoles.includes(user.role) && (
+        {!shouldHideMyPerformanceTab && (
           <TabPane tab="Mənim Performansım" key="me">
             <MyPerformanceView
               userCardData={myCard}

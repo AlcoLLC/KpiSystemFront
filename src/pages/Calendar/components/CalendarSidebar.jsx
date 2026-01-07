@@ -18,7 +18,8 @@ const CalendarSidebar = ({
     monthlyStats,
     onBackClick,
     onOpenNoteModal,
-    onDeleteNote
+    onDeleteNote,
+    isFactoryTopManagement = false
 }) => {
     const panelTitle = isDayViewActive ? clickedDate.format('D MMMM YYYY') : viewDate.format('MMMM YYYY');
     const listTitle = isDayViewActive ? 'Günün Tapşırıqları' : 'Ay üzrə Tapşırıqlar';
@@ -84,9 +85,11 @@ const CalendarSidebar = ({
                                         <h4 className="font-medium text-gray-700 dark:text-gray-300">
                                             Şəxsi Qeyd <span className='text-xs text-gray-500'>({selectedDate.format('D MMM')})</span>
                                         </h4>
+                                        {!isFactoryTopManagement && selectedDate && (
                                         <Button type="text" size="small" icon={<PlusOutlined />} onClick={() => onOpenNoteModal(selectedDateNote)}>
                                             {selectedDateNote ? "Redaktə et" : "Əlavə et"}
                                         </Button>
+                                        )}
                                     </div>
                                     {selectedDateNote ? (
                                         <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700">

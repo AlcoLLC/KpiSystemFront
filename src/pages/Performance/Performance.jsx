@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Radio, message, Button } from 'antd';
+import { Radio, message, Button, Alert } from 'antd';
 import { UserOutlined, TeamOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import useAuth from '../../hooks/useAuth';
 import tasksApi from '../../api/tasksApi';
@@ -23,14 +23,19 @@ function Performance() {
     const { slug } = useParams();
     const { user } = useAuth();
     
-    const [viewMode, setViewMode] = useState(user?.role !== 'employee' ? 'team' : 'my');
+    // Factory top management yalnız team view görə bilər
+    const isFactoryTopManagement = user?.factory_role === "top_management";
+    const defaultView = isFactoryTopManagement ? 'team' : (user?.role !== 'employee' ? 'team' : 'my');
     
+    const [viewMode, setViewMode] = useState(defaultView);
     const [performanceData, setPerformanceData] = useState(null);
     const [loading, setLoading] = useState(false);
     
-    const isSuperior = user && user.role !== 'employee';
+    const isSuperior = user && (user.role !== 'employee' || isFactoryTopManagement);
     const isAdmin = user && user.role === 'admin';
-    const showViewSwitcher = isSuperior && !isAdmin;
+    
+    // Factory top management view switcher görə bilməz
+    const showViewSwitcher = isSuperior && !isAdmin && !isFactoryTopManagement;
 
     const fetchPerformance = useCallback(async () => {
         if (viewMode !== 'my' && !slug) return;
@@ -41,17 +46,28 @@ function Performance() {
             const response = await tasksApi.getPerformanceSummary(slug || 'me');
             setPerformanceData(response.data);
         } catch (error) {
-            message.error("Performans məlumatlarını yükləmək mümkün olmadı.", error);
+            // Factory top management-in özü üçün 403 expected
+            if (isFactoryTopManagement && error.response?.status === 403 && !slug) {
+                console.log("Factory top management - own performance not available (expected)");
+                return;
+            }
+            message.error("Performans məlumatlarını yükləmək mümkün olmadı.");
+            console.error(error);
         } finally {
             setLoading(false);
         }
-    }, [slug, viewMode]);
+    }, [slug, viewMode, isFactoryTopManagement]);
 
     useEffect(() => {
         fetchPerformance();
     }, [fetchPerformance]);
 
     const renderContent = () => {
+        // Factory top management üçün yalnız team view
+        if (isFactoryTopManagement && !slug) {
+            return <TeamPerformanceView />;
+        }
+        
         if (slug || viewMode === 'my') {
             return (
                 <PerformanceDashboard
@@ -75,6 +91,15 @@ function Performance() {
                     </Link>
                 )}
             </div>
+
+            {isFactoryTopManagement && !slug && (
+                <Alert
+                    message="Zavod Direktoru"
+                    description="Siz bütün ofis əməkdaşlarının performans məlumatlarını görə bilərsiniz."
+                    type="info"
+                    showIcon
+                />
+            )}
 
             {showViewSwitcher && !slug && (
                 <div>

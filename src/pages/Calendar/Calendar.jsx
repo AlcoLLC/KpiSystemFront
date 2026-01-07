@@ -10,6 +10,7 @@ import { useCalendarSelectors } from './hooks/useCalendarSelectors';
 import CalendarSidebar from './components/CalendarSidebar';
 import NoteModal from './components/NoteModal';
 import { statusMap } from './utils/constants';
+import useAuth from '../../hooks/useAuth';
 import isBetween from 'dayjs/plugin/isBetween';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -21,6 +22,7 @@ dayjs.locale('az');
 const getStatusInfo = (status) => statusMap[status] || { text: status, color: '#d9d9d9' };
 
 function Calendar() {
+    const { user } = useAuth();
     const [viewDate, setViewDate] = useState(dayjs());
     const [calendarMode, setCalendarMode] = useState('month');
     const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -31,6 +33,9 @@ function Calendar() {
 
     const { noteModalProps, handleOpenNoteModal, handleDeleteNote } = useNoteManager({ selectedDate, notes, setNotes });
 
+    // Factory top management qeyd əlavə edə bilməz
+    const isFactoryTopManagement = user?.factory_role === "top_management";
+
     const handlePanelChange = (date, mode) => {
         setViewDate(date);
         setCalendarMode(mode);
@@ -38,19 +43,19 @@ function Calendar() {
     };
 
     const handleSelect = (date) => {
-    if (calendarMode === 'year') {
-        handlePanelChange(date, 'month');
-        setSelectedDate(date); 
-    } else {
-        if (!date.isSame(viewDate, 'month')) {
-            setViewDate(date);
-            setClickedDate(null);
+        if (calendarMode === 'year') {
+            handlePanelChange(date, 'month');
+            setSelectedDate(date); 
         } else {
-            setClickedDate(date);
+            if (!date.isSame(viewDate, 'month')) {
+                setViewDate(date);
+                setClickedDate(null);
+            } else {
+                setClickedDate(date);
+            }
+            setSelectedDate(date);
         }
-        setSelectedDate(date);
-    }
-};
+    };
 
     const dateCellRender = (date) => {
         const activeTasks = selectors.getTasksForDate(date);
@@ -113,6 +118,15 @@ function Calendar() {
         <ConfigProvider locale={az}>
             <div className='calendar-page'>
                 <h2 className="px-1 text-xl font-medium mb-6 text-black dark:text-white">Təqvim</h2>
+                {isFactoryTopManagement && (
+                    <Alert
+                        message="Görünüş Rejimi"
+                        description="Siz yalnız ofis tapşırıqlarını görə bilərsiniz. Yeni tapşırıq yaratmaq və ya redaktə etmək mümkün deyil."
+                        type="info"
+                        showIcon
+                        className="mb-4"
+                    />
+                )}
                 <Spin spinning={loading} tip="Məlumatlar yüklənir..." size="large">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                         <div className="lg:col-span-3">
@@ -137,12 +151,15 @@ function Calendar() {
                             upcomingTasks={selectors.upcomingTasks}
                             monthlyStats={selectors.monthlyStats}
                             onBackClick={() => setClickedDate(null)}
-                            onOpenNoteModal={handleOpenNoteModal}
-                            onDeleteNote={() => handleDeleteNote(selectors.selectedDateNote)}
+                            onOpenNoteModal={isFactoryTopManagement ? null : handleOpenNoteModal}
+                            onDeleteNote={isFactoryTopManagement ? null : () => handleDeleteNote(selectors.selectedDateNote)}
+                            isFactoryTopManagement={isFactoryTopManagement}
                         />
                     </div>
                 </Spin>
-                <NoteModal {...noteModalProps} selectedDate={selectedDate} />
+                {!isFactoryTopManagement && (
+                    <NoteModal {...noteModalProps} selectedDate={selectedDate} />
+                )}
             </div>
         </ConfigProvider>
     );

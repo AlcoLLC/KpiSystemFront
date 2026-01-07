@@ -16,7 +16,13 @@ const TeamPerformanceView = () => {
   const [filters, setFilters] = useState({ search: '', department: null });
   const debouncedSearch = useDebounce(filters.search, 500);
 
-  const canViewDepartmentFilter = user && (user.role === 'admin' || user.role === 'ceo');
+  // Factory top management də department filter-i görə bilər
+  const isFactoryTopManagement = user?.factory_role === "top_management";
+  const canViewDepartmentFilter = user && (
+    user.role === 'admin' || 
+    user.role === 'ceo' || 
+    isFactoryTopManagement
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +36,8 @@ const TeamPerformanceView = () => {
         const response = await tasksApi.getSubordinates(params);
         setSubordinates(response.data);
       } catch (error) {
-        message.error("İşçilərin siyahısını yükləmək mümkün olmadı.", error);
+        message.error("İşçilərin siyahısını yükləmək mümkün olmadı.");
+        console.error(error);
       } finally {
         setLoading(false);
       }
