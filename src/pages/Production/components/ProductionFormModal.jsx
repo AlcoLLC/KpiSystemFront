@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 const { Text } = Typography;
 
-const ProductionFormModal = ({ open, onCancel, onFinish, equipments, employees, mode, initialData, isAdmin }) => {
+const ProductionFormModal = ({ open, onCancel, onFinish, equipments, employees, mode, initialData }) => {
     const [form] = Form.useForm();
     const [selectedVolumes, setSelectedVolumes] = useState([]);
     const [calculatedEff, setCalculatedEff] = useState({});
@@ -59,7 +59,7 @@ const ProductionFormModal = ({ open, onCancel, onFinish, equipments, employees, 
     };
 
     const submit = async (values) => {
-        if (mode === 'view' || !isAdmin) return onCancel();
+        if (mode === 'view') return onCancel();
         
         const payload = {
             ...values,
@@ -84,8 +84,6 @@ const ProductionFormModal = ({ open, onCancel, onFinish, equipments, employees, 
         } catch (e) { message.error("Xəta baş verdi"); }
     };
 
-    const isFormDisabled = mode === 'view' || !isAdmin;
-
     return (
         <Modal
             title={mode === 'view' ? "Hesabat Təfərrüatı" : (mode === 'edit' ? "Redaktə" : "Yeni Hesabat")}
@@ -94,18 +92,37 @@ const ProductionFormModal = ({ open, onCancel, onFinish, equipments, employees, 
             onOk={() => form.submit()} 
             width={1000} 
             destroyOnClose
-            okButtonProps={{ style: isFormDisabled ? { display: 'none' } : {} }}
+            okButtonProps={{ style: mode === 'view' ? { display: 'none' } : {} }}
         >
-            <Form form={form} layout="vertical" onFinish={submit} disabled={isFormDisabled}>
+            <Form form={form} layout="vertical" onFinish={submit} disabled={mode === 'view'}>
                 <Row gutter={16}>
-                    <Col span={8}><Form.Item name="date" label="Tarix"><DatePicker className="w-full" format="DD.MM.YYYY" /></Form.Item></Col>                
-                    <Col span={8}><Form.Item name="shift" label="Smen"><Select options={[{value:1, label:'1s'},{value:2, label:'2s'},{value:3, label:'3s'}]}/></Form.Item></Col>
-                    <Col span={8}><Form.Item name="equipment" label="Avadanlıq"><Select onChange={handleEquipmentChange} options={equipments.map(e => ({value:e.id, label:e.name}))}/></Form.Item></Col>
+                    <Col span={8}>
+                        <Form.Item name="date" label="Tarix">
+                            <DatePicker className="w-full" format="DD.MM.YYYY" />
+                        </Form.Item>
+                    </Col>                
+                    <Col span={8}>
+                        <Form.Item name="shift" label="Smen">
+                            <Select options={[{value:1, label:'1s'},{value:2, label:'2s'},{value:3, label:'3s'}]}/>
+                        </Form.Item>
+                    </Col>
+                    <Col span={8}>
+                        <Form.Item name="equipment" label="Avadanlıq">
+                            <Select 
+                                onChange={handleEquipmentChange} 
+                                options={equipments.map(e => ({value:e.id, label:e.name}))}
+                            />
+                        </Form.Item>
+                    </Col>
                 </Row>
+
                 <Form.Item name="employees" label="İşçilər">
-                    <Select mode="multiple" options={employees.map(emp => ({value:emp.id, label:`${emp.first_name} ${emp.last_name}`}))}/>
+                    <Select 
+                        mode="multiple" 
+                        options={employees.map(emp => ({value:emp.id, label:`${emp.first_name} ${emp.last_name}`}))}
+                    />
                 </Form.Item>
-                
+
                 <Divider>Göstəricilər</Divider>
 
                 {selectedVolumes.length > 0 && (
@@ -121,16 +138,37 @@ const ProductionFormModal = ({ open, onCancel, onFinish, equipments, employees, 
                 {selectedVolumes.map((vol, idx) => (
                     <Row gutter={12} key={vol.id} align="middle" className="mb-2">
                         <Col span={4}>
-                            <Text strong className="dark:text-gray-300">{vol.volume} L</Text>
-                            <Form.Item name={['items', idx, 'volume']} initialValue={vol.id} hidden><Input/></Form.Item>
+                            <Text strong>{vol.volume} L</Text>
+                            <Form.Item name={['items', idx, 'volume']} initialValue={vol.id} hidden>
+                                <Input/>
+                            </Form.Item>
                         </Col>
-                        <Col span={4}><Form.Item name={['items', idx, 'production_hours']} noStyle><InputNumber min={0} max={24} className="w-full" placeholder="Saat"/></Form.Item></Col>
-                        <Col span={4}><Form.Item name={['items', idx, 'actual_count']} noStyle><InputNumber min={0} className="w-full" onChange={()=>handleCalc(idx)} placeholder="Sayı"/></Form.Item></Col>
-                        <Col span={4}><Form.Item name={['items', idx, 'target_norm']} noStyle><InputNumber min={0} className="w-full" onChange={()=>handleCalc(idx)} placeholder="Norma"/></Form.Item></Col>
-                        <Col span={4}><Tag color="cyan" className="w-full text-center py-1">{calculatedEff[idx] || 0}%</Tag></Col>
+                        <Col span={4}>
+                            <Form.Item name={['items', idx, 'production_hours']} noStyle>
+                                <InputNumber min={0} max={24} className="w-full" placeholder="Saat"/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item name={['items', idx, 'actual_count']} noStyle>
+                                <InputNumber min={0} className="w-full" onChange={()=>handleCalc(idx)} placeholder="Sayı"/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Form.Item name={['items', idx, 'target_norm']} noStyle>
+                                <InputNumber min={0} className="w-full" onChange={()=>handleCalc(idx)} placeholder="Norma"/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                            <Tag color="cyan" className="w-full text-center py-1">
+                                {calculatedEff[idx] || 0}%
+                            </Tag>
+                        </Col>
                     </Row>
                 ))}
-                <Form.Item name="note" label="Qeyd" className="mt-4"><Input.TextArea rows={2}/></Form.Item>
+
+                <Form.Item name="note" label="Qeyd" className="mt-4">
+                    <Input.TextArea rows={2}/>
+                </Form.Item>
             </Form>
         </Modal>
     );
