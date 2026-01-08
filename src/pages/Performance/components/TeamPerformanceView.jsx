@@ -16,7 +16,6 @@ const TeamPerformanceView = () => {
   const [filters, setFilters] = useState({ search: '', department: null });
   const debouncedSearch = useDebounce(filters.search, 500);
 
-  // Factory top management də department filter-i görə bilər
   const isFactoryTopManagement = user?.factory_role === "top_management";
   const canViewDepartmentFilter = user && (
     user.role === 'admin' || 

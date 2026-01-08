@@ -68,7 +68,6 @@ const useProfile = (form) => {
         return;
     }
 
-    // ReadOnly sahələri təmizləyirik
     const { 
         role_display, 
         factory_role_display, 
@@ -82,7 +81,6 @@ const useProfile = (form) => {
         delete submitValues.password;
     }
 
-    // Serverə göndəriləcək FormData (bu ayrı dəyişəndir)
     const formData = new FormData();
     Object.keys(submitValues).forEach((key) => {
       if (submitValues[key] !== null && submitValues[key] !== undefined && submitValues[key] !== "") {

@@ -81,7 +81,6 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
             <div className="flex items-center text-green-700">
               <StarOutlined className="mr-2" />
-              {/* DÜZƏLİŞ: Həqiqi evaluator roluna uyğun başlığı göstər */}
               <span className="font-medium">{evaluationRoleType} Dəyərləndirməsi</span>
             </div>
           </div>
@@ -96,7 +95,6 @@ const ReviewModal = ({ isOpen, onClose, task, currentUser }) => {
           </div>
         )}
         <div className="text-center">
-          {/* DÜZƏLİŞ: ScoreDisplay tipini TM olub-olmadığına görə təyin et */}
           <ScoreDisplay 
             score={starRating} 
             maxScore={maxScore} 

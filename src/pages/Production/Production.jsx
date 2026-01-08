@@ -6,7 +6,7 @@ import productionApi from '../../api/productionApi';
 import ProductionFormModal from './components/ProductionFormModal';
 import dayjs from 'dayjs';
 import '../../styles/production.css';
-import { useSelector } from 'react-redux';
+import useAuth from '../../hooks/useAuth';
 
 const { RangePicker } = DatePicker;
 
@@ -27,8 +27,8 @@ const Production = () => {
     const [typeFilter, setTypeFilter] = useState(null);
     const [dateRange, setDateRange] = useState(null);
 
-    const { user } = useSelector((state) => state.auth || {});
-    const isAdmin = user?.role === 'admin';
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'admin' || user?.factory_role === 'admin';
 
     const fetchData = useCallback(async () => {
         setLoading(true);

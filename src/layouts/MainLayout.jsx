@@ -42,68 +42,49 @@ export default function MainLayout() {
       isActive ? 'active bg-blue-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400' : ''
     }`;
 
-  // =============== İCAZƏ MƏNTİQİ ===============
-  
-  // 1. Əsas rollar
   const isAdmin = user?.role === 'admin' || user?.factory_role === 'admin';
   const isCEO = user?.role === 'ceo';
 
-  // 2. User Type
   const isFactoryUser = user?.user_type === 'factory' || !!user?.factory_role;
   const isOfficeUser = user?.user_type === 'office' || (!!user?.role && !user?.factory_role);
 
-  // 3. Spesifik Factory rolları
   const isFactoryTopManagement = isFactoryUser && user?.factory_role === 'top_management';
   const isFactoryDeputyDirector = isFactoryUser && user?.factory_role === 'deputy_director';
   const isFactoryDepartmentLead = isFactoryUser && user?.factory_role === 'department_lead';
   const isFactoryEmployee = isFactoryUser && user?.factory_role === 'employee';
 
-  // 4. Spesifik Office rolları
   const isOfficeTopManagement = isOfficeUser && user?.role === 'top_management';
   const isOfficeDepartmentLead = isOfficeUser && user?.role === 'department_lead';
   const isOfficeManager = isOfficeUser && user?.role === 'manager';
   const isOfficeEmployee = isOfficeUser && user?.role === 'employee';
 
-  // 5. İcazə qrupları
-  
-  // Sadəcə istehsalat səhifəsini görənlər
   const canOnlySeeProduction = 
     isFactoryDeputyDirector || 
     isFactoryDepartmentLead || 
     isFactoryEmployee;
 
-  // Məhdud ofis səhifələrini görənlər (7 səhifə)
   const canSeeLimitedOfficePages = 
     isOfficeDepartmentLead || 
     isOfficeManager || 
     isOfficeEmployee;
 
-  // User management xaric bütün səhifələri görənlər
   const canSeeAllExceptUserManagement = 
     isFactoryTopManagement || 
     isOfficeTopManagement;
 
-  // Bütün səhifələri görənlər
   const canSeeEverything = isAdmin || isCEO;
 
-  // 6. Səhifə icazələri
-  
-  // İstehsalat səhifəsi
   const canSeeProduction = 
     canSeeEverything || 
     canOnlySeeProduction || 
     canSeeAllExceptUserManagement;
 
-  // Əsas 7 ofis səhifəsi
   const canSeeLimitedOffice = 
     canSeeEverything || 
     canSeeLimitedOfficePages || 
     canSeeAllExceptUserManagement;
 
-  // User Management səhifələri
   const canSeeUserManagement = canSeeEverything;
-
-  // =============== İCAZƏ MƏNTİQİ SONU ===============
 
   return (
     <div className="flex">
@@ -117,7 +98,6 @@ export default function MainLayout() {
           <nav className="flex flex-col justify-between h-[69vh]">
             <ul className="space-y-2 text-lg">
               
-              {/* Əsas 7 Ofis Səhifəsi */}
               {canSeeLimitedOffice && (
                 <>
                   <li className="mt-5 w-full">
@@ -158,7 +138,6 @@ export default function MainLayout() {
                 </>
               )}
 
-              {/* İstehsalat Səhifəsi */}
               {canSeeProduction && (
                 <li className="mt-5 w-full">
                   <NavLink to="/production/" className={navLinkClasses}>
@@ -167,7 +146,6 @@ export default function MainLayout() {
                 </li>
               )}
 
-              {/* User Management Səhifələri - Yalnız Admin və CEO */}
               {canSeeUserManagement && (
                 <>
                   <li className="mt-5 w-full">

@@ -68,13 +68,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, [logout]);
 
-  // Səhifə yüklənəndə user məlumatlarını yeniləmək
   useEffect(() => {
     const syncUserData = async () => {
       const storedTokens = JSON.parse(localStorage.getItem("tokens"));
       const storedUser = JSON.parse(localStorage.getItem("user"));
       
-      // Login səhifəsindəsə, heç nə etmə
       if (location.pathname === "/login") {
         return;
       }
@@ -92,7 +90,6 @@ export const AuthProvider = ({ children }) => {
           setUser(latestUserData);
           localStorage.setItem("user", JSON.stringify(latestUserData));
           
-          // Əgər root path-da isək və user factory user-dirsə, production-a yönləndir
           if (location.pathname === "/" && storedUser) {
             const isFactoryUser = latestUserData.user_type === 'factory' || !!latestUserData.factory_role;
             if (isFactoryUser) {
@@ -135,20 +132,13 @@ export const AuthProvider = ({ children }) => {
       
       scheduleTokenRefresh(access);
       
-      console.log("Login uğurlu oldu, istifadəçi məlumatları:", userData);
-      console.log("User type:", userData.user_type);
-      console.log("Factory role:", userData.factory_role);
-      
-      // Factory user yoxlaması
       const isFactoryUser = userData.user_type === 'factory' || !!userData.factory_role;
       
       console.log("Is factory user:", isFactoryUser);
       
       if (isFactoryUser) {
-        console.log("Yönləndirilir: /production/");
         navigate("/production/", { replace: true });
       } else {
-        console.log("Yönləndirilir: /");
         navigate("/", { replace: true });
       }
     } catch (err) {

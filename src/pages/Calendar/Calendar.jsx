@@ -33,7 +33,6 @@ function Calendar() {
 
     const { noteModalProps, handleOpenNoteModal, handleDeleteNote } = useNoteManager({ selectedDate, notes, setNotes });
 
-    // Factory top management qeyd əlavə edə bilməz
     const isFactoryTopManagement = user?.factory_role === "top_management";
 
     const handlePanelChange = (date, mode) => {

@@ -23,7 +23,6 @@ function Performance() {
     const { slug } = useParams();
     const { user } = useAuth();
     
-    // Factory top management yalnız team view görə bilər
     const isFactoryTopManagement = user?.factory_role === "top_management";
     const defaultView = isFactoryTopManagement ? 'team' : (user?.role !== 'employee' ? 'team' : 'my');
     
@@ -34,7 +33,6 @@ function Performance() {
     const isSuperior = user && (user.role !== 'employee' || isFactoryTopManagement);
     const isAdmin = user && user.role === 'admin';
     
-    // Factory top management view switcher görə bilməz
     const showViewSwitcher = isSuperior && !isAdmin && !isFactoryTopManagement;
 
     const fetchPerformance = useCallback(async () => {
@@ -46,7 +44,6 @@ function Performance() {
             const response = await tasksApi.getPerformanceSummary(slug || 'me');
             setPerformanceData(response.data);
         } catch (error) {
-            // Factory top management-in özü üçün 403 expected
             if (isFactoryTopManagement && error.response?.status === 403 && !slug) {
                 console.log("Factory top management - own performance not available (expected)");
                 return;
@@ -63,7 +60,6 @@ function Performance() {
     }, [fetchPerformance]);
 
     const renderContent = () => {
-        // Factory top management üçün yalnız team view
         if (isFactoryTopManagement && !slug) {
             return <TeamPerformanceView />;
         }

@@ -574,3 +574,31 @@ body {
                 .ant-table-tbody > tr.ant-table-row:hover .text-red-500 {
                     opacity: 1;
                 }
+
+                .production-form-header {
+    text-align: center;
+    background-color: #f5f5f5;
+    padding: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #e8e8e8;
+}
+
+.header-text {
+    color: #555 !important;
+    font-size: 13px;
+}
+
+.dark .production-form-header {
+    background-color: #1B232D;
+    border-color: #30363d;
+}
+
+.dark .header-text {
+    color: #ecf0f1 !important;
+}
+
+.dark .ant-input-number {
+    background-color: #252d38;
+    border-color: #434c5e;
+    color: white;
+}
