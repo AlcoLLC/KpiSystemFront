@@ -36,6 +36,11 @@ export const STATUS_TRANSITIONS = {
 };
 
 export const getFormConfig = (users, usersLoading, permissions) => {
+  const canSelectMultiple = 
+    permissions?.userRole === 'admin' || 
+    permissions?.userRole === 'ceo' || 
+    permissions?.userRole === 'top_management';
+
   const allFields = [
     {
       name: 'title',
@@ -48,18 +53,23 @@ export const getFormConfig = (users, usersLoading, permissions) => {
     { name: 'start_date', label: 'Başlama tarixi', type: 'datepicker', span: 12 },
     { name: 'due_date', label: 'Bitmə tarixi', type: 'datepicker', span: 12 },
     {
-      name: 'assignee',
-      label: 'İcraçı',
-      type: 'select',
-      rules: [{ required: true, message: 'İcraçı seçin!' }],
-      options: users.map((user) => ({
-        value: user.id,
-        label:
-          user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username
-      })),
-      loading: usersLoading,
-      span: 12
-    },
+  name: 'assignee',
+  label: 'İcraçı',
+  type: 'select',
+  rules: [{ required: true, message: 'İcraçı seçin!' }],
+  props: {
+    mode: canSelectMultiple ? 'multiple' : undefined, 
+    maxTagCount: 'responsive',
+    placeholder: canSelectMultiple ? 'İcraçıları seçin' : 'İcraçı seçin',
+    allowClear: true,
+  },
+  options: users.map((user) => ({
+    value: user.id,
+    label: user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : user.username
+  })),
+  loading: usersLoading,
+  span: 12
+},
     {
       name: 'priority',
       label: 'Prioritet',
@@ -70,15 +80,15 @@ export const getFormConfig = (users, usersLoading, permissions) => {
     }
   ];
 
-  if (permissions?.userRole === 'admin' || permissions?.userRole === 'top_management' || permissions?.userRole === 'ceo') {
-        allFields.splice(4, 0, {
-            name: 'status',
-            label: 'Status',
-            type: 'select',
-            options: STATUS_OPTIONS,
-            span: 12
-        });
-    }
+  if (canSelectMultiple) {
+    allFields.splice(4, 0, {
+      name: 'status',
+      label: 'Status',
+      type: 'select',
+      options: STATUS_OPTIONS,
+      span: 12
+    });
+  }
 
   const hiddenFields = permissions.formConfig?.hideFields || [];
   return allFields.filter((field) => !hiddenFields.includes(field.name));

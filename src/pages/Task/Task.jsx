@@ -220,6 +220,9 @@ function Task() {
         await dispatch(addNewTask(payload)).unwrap();
         message.success('Tapşırıq uğurla yaradıldı');
       } else {
+        if (Array.isArray(payload.assignee)) {
+                payload.assignee = payload.assignee[0];
+            }
         await dispatch(updateTask({ id: currentRecord.id, taskData: payload })).unwrap();
         message.success('Tapşırıq uğurla yeniləndi');
       }
